@@ -6,8 +6,6 @@ public class Evento
 {
     public int Id { get; set; }
     public EventoEnum Code { get; set; }
-    public int AnimalEventoId { get; set; }
 
-    public AnimalEvento AnimalEvento { get; set; }
-    public ICollection<AnimalEvento> Acompanhamentos { get; set; }
+    public ICollection<AnimalEvento> AnimalEventos { get; set; }
 }

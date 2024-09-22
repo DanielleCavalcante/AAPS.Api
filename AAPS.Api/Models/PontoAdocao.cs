@@ -11,6 +11,7 @@ public class PontoAdocao
     public string Responsavel { get; set; }
     [Required]
     public string Cnpj { get; set; }
+    [Required]
     public string Logradouro { get; set; }
     [Required]
     public int Numero { get; set; }
@@ -21,6 +22,7 @@ public class PontoAdocao
     public string Uf { get; set; }
     [Required]
     public string Cidade { get; set; }
+    [Required]
     public int Cep { get; set; }
     
     // Relacionamentos

@@ -12,10 +12,9 @@ public class Adotante
     public string Rg { get; set; }
     [Required]
     public string Cpf { get; set; }
-    [Required]
     public string  LocalTrabalho { get; set; }
     [Required]
-    public int Status { get; set; } // TODO: rever se pode ser bool
+    public bool Status { get; set; } 
     public string Facebook { get; set; }
     public string Instagram { get; set; }
     [Required]

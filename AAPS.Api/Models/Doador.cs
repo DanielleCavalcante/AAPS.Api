@@ -12,6 +12,7 @@ public class Doador
     public string Rg { get; set; }
     [Required]
     public string Cpf { get; set; }
+    [Required]
     public string Logradouro { get; set; }
     [Required]
     public int Numero { get; set; }
@@ -22,10 +23,10 @@ public class Doador
     public string Uf { get; set; }
     [Required]
     public string Cidade { get; set; }
-    public int Cep { get; set; }
     [Required]
+    public int Cep { get; set; }
 
-    // Relacionamentos - vários animais
+    // Relacionamentos
     public ICollection<Animal> Animais { get; set; }
     public ICollection<Telefone> Telefones { get; set; }
 }
