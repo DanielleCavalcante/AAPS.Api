@@ -1,4 +1,5 @@
 using AAPS.Api.Context;
+using AAPS.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
@@ -11,6 +12,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// REGISTRO DE SERVICES
+builder.Services.AddScoped<IAnimalService, AnimalService>();
 
 // configurações para o banco DbAaps
 var businessConnectionString =
@@ -57,7 +61,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();                           
+    app.UseSwagger();
     app.UseSwaggerUI();
 }
 
