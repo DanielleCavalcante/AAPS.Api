@@ -1,6 +1,5 @@
 using AAPS.Api.Context;
 using AAPS.Api.Services.Interfaces;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -15,6 +14,7 @@ builder.Services.AddSwaggerGen();
 
 // REGISTRO DE SERVICES
 builder.Services.AddScoped<IAnimalService, AnimalService>();
+builder.Services.AddScoped<IDoadorService, DoadorService>();
 
 // configurações para o banco DbAaps
 var businessConnectionString =

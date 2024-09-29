@@ -1,6 +1,5 @@
 ﻿using AAPS.Api.DTO;
 using AAPS.Api.Models;
-using Microsoft.AspNetCore.Mvc;
 
 namespace AAPS.Api.Services.Interfaces;
 

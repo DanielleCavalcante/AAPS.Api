@@ -2,7 +2,6 @@
 using AAPS.Api.DTO;
 using AAPS.Api.Models;
 using AAPS.Api.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 public class AnimalService : IAnimalService
@@ -21,8 +20,7 @@ public class AnimalService : IAnimalService
 
     public async Task<Animal> ObterAnimalPorId(int id)
     {
-        var animal = await _context.Animais.FindAsync(id);
-        return animal;
+        return await _context.Animais.FindAsync(id);
     }
 
     public async Task<IEnumerable<Animal>> ObterAnimalPorNome(string nome)
@@ -58,7 +56,7 @@ public class AnimalService : IAnimalService
         await _context.SaveChangesAsync();
     }
 
-    public async Task AtualizarAnimal([FromRoute] int id, AnimalDto animalDto)
+    public async Task AtualizarAnimal(int id, AnimalDto animalDto)
     {
         var buscaRegistro = await _context.Animais.FindAsync(id);
 
@@ -84,7 +82,7 @@ public class AnimalService : IAnimalService
     {
         var excluirRegistro = await _context.Animais.FindAsync(id); //verificar se id existe
 
-        if (excluirRegistro != null) 
+        if (excluirRegistro != null)
         {
             _context.Animais.Remove(excluirRegistro); //fazer validação de id antes de excluir
             _context.SaveChanges();
