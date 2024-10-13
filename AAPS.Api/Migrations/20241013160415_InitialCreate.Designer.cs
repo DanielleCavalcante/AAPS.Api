@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AAPS.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241013154810_AddOutrasTabelas")]
-    partial class AddOutrasTabelas
+    [Migration("20241013160415_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
