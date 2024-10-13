@@ -18,16 +18,16 @@ public class AnimalController : ControllerBase
     [Route("ObterTodos")]
     public async Task<ActionResult<IAsyncEnumerable<Animal>>> ObterAnimais()
     {
-        var animaisDto = await _animalService.ObterAnimais();
-        return Ok(animaisDto);
+        var animais = await _animalService.ObterAnimais();
+        return Ok(animais);
     }
 
     [HttpGet]
     [Route("ObterUmAnimal/{id:int}", Name = "ObterAnimaisPorId")]
     public async Task<ActionResult<Animal>> ObterAnimaisPorId(int id)
     {
-        var animalDto = await _animalService.ObterAnimalPorId(id);
-        return Ok(animalDto);
+        var animal = await _animalService.ObterAnimalPorId(id);
+        return Ok(animal);
     }
 
     [HttpGet]
