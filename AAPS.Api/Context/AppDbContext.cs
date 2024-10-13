@@ -16,8 +16,8 @@ public class AppDbContext : DbContext
     public DbSet<AnimalEvento> AnimalEvento { get; set; }
     public DbSet<Evento> Eventos { get; set; }
     public DbSet<PontoAdocao> PontosAdocao { get; set; }
-    public DbSet<Animal> Telefones { get; set; }
-    public DbSet<Usuario> Usuarios { get; set; }
+    public DbSet<Telefone> Telefones { get; set; }
+    public DbSet<Voluntario> Voluntarios { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -31,7 +31,7 @@ public class AppDbContext : DbContext
             entity.Property(x => x.DataAdocao).HasColumnType("date").IsRequired();
             entity.Property(x => x.AdotanteId).HasColumnType("int").IsRequired();
             entity.Property(x => x.AnimalId).HasColumnType("int").IsRequired();
-            entity.Property(x => x.UsuarioId).HasColumnType("int").IsRequired();
+            entity.Property(x => x.VoluntarioId).HasColumnType("int").IsRequired();
             entity.Property(x => x.PontoAdocaoId).HasColumnType("int").IsRequired();
 
             // Relações
@@ -40,14 +40,9 @@ public class AppDbContext : DbContext
                 .HasForeignKey(x => x.AnimalId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            entity.HasOne(x => x.Usuario)
+            entity.HasOne(x => x.Voluntario)
                 .WithMany(x => x.Adocoes)
-                .HasForeignKey(x => x.UsuarioId)
-                .OnDelete(DeleteBehavior.NoAction);
-
-            entity.HasOne(x => x.Usuario)
-                .WithMany(x => x.Adocoes)
-                .HasForeignKey(x => x.UsuarioId)
+                .HasForeignKey(x => x.VoluntarioId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             entity.HasOne(x => x.Adotante)
@@ -251,21 +246,21 @@ public class AppDbContext : DbContext
         #endregion
 
         #region USUARIO - Mapeamento
-        modelBuilder.Entity<Usuario>(entity =>
+        modelBuilder.Entity<Voluntario>(entity =>
         {
-            entity.ToTable("Usuario", "dbo");
+            entity.ToTable("Voluntario", "dbo");
 
             entity.HasKey(x => x.Id);
 
             entity.Property(x => x.Nome).HasColumnType("nvarchar(60)").IsRequired();
             entity.Property(x => x.Cpf).HasColumnType("nvarchar(11)").IsRequired();
-            entity.Property(x => x.Senha).HasColumnType("nvarchar(15)").IsRequired();
+            //entity.Property(x => x.Senha).HasColumnType("nvarchar(15)").IsRequired();
             entity.Property(x => x.Nivel).HasColumnType("tinyint").IsRequired();
             entity.Property(x => x.Status).HasColumnType("bit").IsRequired();
 
             // Relações
             entity.HasMany(x => x.Adocoes)
-                .WithOne(x => x.Usuario);
+                .WithOne(x => x.Voluntario);
         });
         #endregion
     }

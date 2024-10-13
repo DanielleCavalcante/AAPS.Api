@@ -12,13 +12,13 @@ public class Adocao
     [Required]
     public int AnimalId { get; set; }
     [Required]
-    public int UsuarioId { get; set; }
+    public int VoluntarioId { get; set; }
     [Required]
     public int PontoAdocaoId { get; set; }
 
     // Relacionamentos
     public Animal Animal { get; set; }
-    public Usuario Usuario { get; set; }
+    public Voluntario Voluntario { get; set; }
     public Adotante Adotante { get; set; }
     public PontoAdocao PontoAdocao { get; set; }
 }
