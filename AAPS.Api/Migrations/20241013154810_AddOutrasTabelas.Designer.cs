@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AAPS.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240922031528_AddOFC")]
-    partial class AddOFC
+    [Migration("20241013154810_AddOutrasTabelas")]
+    partial class AddOutrasTabelas
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,7 +45,7 @@ namespace AAPS.Api.Migrations
                     b.Property<int>("PontoAdocaoId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UsuarioId")
+                    b.Property<int>("VoluntarioId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -56,7 +56,7 @@ namespace AAPS.Api.Migrations
 
                     b.HasIndex("PontoAdocaoId");
 
-                    b.HasIndex("UsuarioId");
+                    b.HasIndex("VoluntarioId");
 
                     b.ToTable("Adocao", "dbo");
                 });
@@ -358,7 +358,7 @@ namespace AAPS.Api.Migrations
                     b.ToTable("Telefone", "dbo");
                 });
 
-            modelBuilder.Entity("AAPS.Api.Models.Usuario", b =>
+            modelBuilder.Entity("AAPS.Api.Models.Voluntario", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -377,16 +377,12 @@ namespace AAPS.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(60)");
 
-                    b.Property<string>("Senha")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(15)");
-
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Usuario", "dbo");
+                    b.ToTable("Voluntario", "dbo");
                 });
 
             modelBuilder.Entity("AAPS.Api.Models.Adocao", b =>
@@ -409,9 +405,9 @@ namespace AAPS.Api.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("AAPS.Api.Models.Usuario", "Usuario")
+                    b.HasOne("AAPS.Api.Models.Voluntario", "Voluntario")
                         .WithMany("Adocoes")
-                        .HasForeignKey("UsuarioId")
+                        .HasForeignKey("VoluntarioId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -421,7 +417,7 @@ namespace AAPS.Api.Migrations
 
                     b.Navigation("PontoAdocao");
 
-                    b.Navigation("Usuario");
+                    b.Navigation("Voluntario");
                 });
 
             modelBuilder.Entity("AAPS.Api.Models.Animal", b =>
@@ -514,7 +510,7 @@ namespace AAPS.Api.Migrations
                     b.Navigation("Telefones");
                 });
 
-            modelBuilder.Entity("AAPS.Api.Models.Usuario", b =>
+            modelBuilder.Entity("AAPS.Api.Models.Voluntario", b =>
                 {
                     b.Navigation("Adocoes");
                 });

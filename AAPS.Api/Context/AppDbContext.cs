@@ -245,7 +245,7 @@ public class AppDbContext : DbContext
         });
         #endregion
 
-        #region USUARIO - Mapeamento
+        #region VOLUNTARIO - Mapeamento
         modelBuilder.Entity<Voluntario>(entity =>
         {
             entity.ToTable("Voluntario", "dbo");
