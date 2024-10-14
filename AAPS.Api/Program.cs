@@ -1,7 +1,8 @@
 using AAPS.Api.Context;
+using AAPS.Api.Services.Impl;
 using AAPS.Api.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,12 +16,23 @@ builder.Services.AddSwaggerGen();
 // REGISTRO DE SERVICES
 builder.Services.AddScoped<IAnimalService, AnimalService>();
 builder.Services.AddScoped<IDoadorService, DoadorService>();
+builder.Services.AddScoped<IAutenticacao, AutenticacaoService>();
 
 // configurações para o banco DbAaps
-var businessConnectionString =
-builder.Configuration.GetConnectionString("DbAaps");
-builder.Services.AddDbContext<AppDbContext>(options =>
-options.UseSqlServer(businessConnectionString));
+var businessConnectionString = builder.Configuration.GetConnectionString("DbAaps");
+
+builder.Services.AddDbContext<AppDbContext>(
+    options => options.UseSqlServer(businessConnectionString));
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddAuthentication();
+builder.Services.AddAuthorization();
+
+//builder.Services.AddIdentityApiEndpoints<>()
+//    .AddEntityFrameworkStores<AppDbContext>();
 
 // configurações para o banco gerenciador de Acessos via Identity
 //var identityConnectionString =
@@ -39,8 +51,8 @@ options.UseSqlServer(businessConnectionString));
 
 
 // **** IMPORTANTE INDICAR ESTE SERVICE PARA LIDAR COM TODOS OS JOINS DA API
-builder.Services.AddControllers().AddJsonOptions(x =>
-   x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+//builder.Services.AddControllers().AddJsonOptions(x =>
+//   x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 // ADICIONAR O SERVICE PARA INICIALIZAÇÃO DO CORS - TEM COMO OBJETIVO "HABILITAR" O CROSS-DOMAIN (CRUZAMENTO DE DOMÍNIO DE APLICAÇÕES)
 // adicionar as políticas de aceitação de qualquer solicitação de aplicações client/front - a partir de qualquer outro domínio/ambiente
@@ -57,6 +69,8 @@ builder.Services.AddCors(
     });
 
 var app = builder.Build();
+
+//app.MapIdentityApi<Voluntario>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
