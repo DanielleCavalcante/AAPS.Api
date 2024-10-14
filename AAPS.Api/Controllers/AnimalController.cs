@@ -1,10 +1,13 @@
-﻿using AAPS.Api.DTO;
+﻿using AAPS.Api.Dtos;
 using AAPS.Api.Models;
 using AAPS.Api.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class AnimalController : ControllerBase
 {
     private readonly IAnimalService _animalService;

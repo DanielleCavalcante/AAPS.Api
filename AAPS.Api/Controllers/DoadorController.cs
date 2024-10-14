@@ -1,12 +1,15 @@
-﻿using AAPS.Api.Dto;
+﻿using AAPS.Api.Dtos;
 using AAPS.Api.Models;
 using AAPS.Api.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AAPS.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class DoadorController : Controller
 {
     private readonly IDoadorService _doadorService;

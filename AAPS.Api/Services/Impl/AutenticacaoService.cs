@@ -14,15 +14,6 @@ public class AutenticacaoService : IAutenticacao
         _userManager = userManager;
     }
 
-    public async Task<bool> Autenticacao(string nomeUsuario, string senha)
-    {
-        var resultado = await _signInManager
-            .PasswordSignInAsync(nomeUsuario, senha, false, lockoutOnFailure: false); 
-        // cookie de entrada false (não fica salvo o login depois de sair), não bloquear conta se falhar o login.
-
-        return resultado.Succeeded;
-    }
-
     public async Task<bool> RegistrarUsuario(string nomeUsuario, string senha)
     {
         var appUsuario = new IdentityUser
@@ -37,7 +28,16 @@ public class AutenticacaoService : IAutenticacao
         {
             await _signInManager.SignInAsync(appUsuario, isPersistent: false); // não persistir cookie de login
         }
-        
+
+        return resultado.Succeeded;
+    }
+
+    public async Task<bool> Autenticacao(string nomeUsuario, string senha)
+    {
+        var resultado = await _signInManager
+            .PasswordSignInAsync(nomeUsuario, senha, false, lockoutOnFailure: false); 
+        // cookie de entrada false (não fica salvo o login depois de sair), não bloquear conta se falhar o login.
+
         return resultado.Succeeded;
     }
 

@@ -1,5 +1,5 @@
 ﻿using AAPS.Api.Context;
-using AAPS.Api.Dto;
+using AAPS.Api.Dtos;
 using AAPS.Api.Models;
 using AAPS.Api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;

@@ -1,4 +1,4 @@
-﻿using AAPS.Api.DTO;
+﻿using AAPS.Api.Dtos;
 using AAPS.Api.Models;
 
 namespace AAPS.Api.Services.Interfaces;

@@ -1,4 +1,4 @@
-﻿namespace AAPS.Api.DTO;
+﻿namespace AAPS.Api.Dtos;
 
 public class AnimalDto
 {

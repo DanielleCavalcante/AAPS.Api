@@ -2,8 +2,8 @@
 
 public interface IAutenticacao
 {
-    Task<bool> Autenticacao(string nomeUsuario, string senha);
     Task<bool> RegistrarUsuario(string nomeUsuario, string senha);
+    Task<bool> Autenticacao(string nomeUsuario, string senha);
     Task Logout();
     
 }
