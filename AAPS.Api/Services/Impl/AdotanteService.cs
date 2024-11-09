@@ -57,7 +57,8 @@ public class AdotanteService : IAdotanteService
             Bairro = adotanteDto.Bairro,
             Uf = adotanteDto.Uf,
             Cidade = adotanteDto.Cidade,
-            Cep = adotanteDto.Cep
+            Cep = adotanteDto.Cep,
+            SituacaoEndereco = adotanteDto.SituacaoEndereco
         };
 
         _context.Adotantes.Add(adotante);
@@ -87,6 +88,7 @@ public class AdotanteService : IAdotanteService
         buscaRegistro.Uf = adotanteDto.Uf;
         buscaRegistro.Cidade = adotanteDto.Cidade;
         buscaRegistro.Cep = adotanteDto.Cep;
+        buscaRegistro.SituacaoEndereco = adotanteDto.SituacaoEndereco;
 
         _context.Entry(buscaRegistro).State = EntityState.Modified;
         await _context.SaveChangesAsync();

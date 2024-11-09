@@ -49,6 +49,7 @@ builder.Services.AddSwaggerGen(c =>
 // REGISTRO DE SERVICES
 builder.Services.AddScoped<IAnimalService, AnimalService>();
 builder.Services.AddScoped<IDoadorService, DoadorService>();
+builder.Services.AddScoped<IAdotanteService, AdotanteService>();
 builder.Services.AddScoped<IAutenticacao, AutenticacaoService>();
 
 // configurações para o banco DbAaps
