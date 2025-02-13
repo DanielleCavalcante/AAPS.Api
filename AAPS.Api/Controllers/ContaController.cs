@@ -1,6 +1,5 @@
 ﻿using AAPS.Api.Services.Interfaces;
 using AAPS.Api.ViewModels;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,11 +13,11 @@ namespace AAPS.Api.Controllers;
 public class ContaController : Controller
 {
     private readonly IConfiguration _configuration;
-    private readonly IAutenticacao _autenticacao;
+    private readonly IAutenticacaoService _autenticacao;
 
-    public ContaController(IConfiguration configuration, IAutenticacao autenticacao)
+    public ContaController(IConfiguration configuration, IAutenticacaoService autenticacao)
     {
-        _configuration = configuration ?? 
+        _configuration = configuration ??
             throw new ArgumentNullException(nameof(configuration));
 
         _autenticacao = autenticacao ??
@@ -28,13 +27,13 @@ public class ContaController : Controller
     [HttpPost("CriarUsuario")]
     public async Task<ActionResult<UsuarioToken>> CriarUsuario([FromBody] RegistroViewModel modelo)
     {
-        if(modelo.Senha != modelo.ConfirmarSenha)
+        if (modelo.Senha != modelo.ConfirmarSenha)
         {
             ModelState.AddModelError("ConfirmarSenha", "As senhas não conferem!");
             return BadRequest(ModelState);
         }
 
-        var resultado = await _autenticacao.RegistrarUsuario(modelo.NomeUsuario, modelo.Senha);
+        var resultado = await _autenticacao.RegistrarUsuario(modelo.NomeCompleto, modelo.NomeUsuario, modelo.Cpf, modelo.Email, modelo.Telefone, modelo.Senha, modelo.Acesso);
 
         if (resultado)
         {

@@ -258,9 +258,14 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
 
             entity.Property(x => x.Nome).HasColumnType("nvarchar(60)").IsRequired();
             entity.Property(x => x.Cpf).HasColumnType("nvarchar(11)").IsRequired();
-            //entity.Property(x => x.Senha).HasColumnType("nvarchar(15)").IsRequired();
-            entity.Property(x => x.Nivel).HasColumnType("tinyint").IsRequired();
-            entity.Property(x => x.Status).HasColumnType("bit").IsRequired();
+            //entity.Property(x => x.Senha).HasColumnType("nvarchar(15)").IsRequired(); -- esse ta identity
+            //entity.Property(x => x.Nivel).HasColumnType("tinyint").IsRequired();
+            entity.Property(x => x.Status).HasColumnType("tinyint").IsRequired(); // ativo ou inativo
+
+            // mudanças:
+            entity.Property(x => x.IdentityUserId).HasColumnType("nvarchar(450)").IsRequired(); // id do user identity
+            entity.Property(x => x.IdentityRoleId).HasColumnType("nvarchar(450)").IsRequired(); // id do role identity
+            entity.Property(x => x.RedefinirSenha).HasColumnType("bit").IsRequired(); // talvez depois mudar para o identity
 
             // Relações
             entity.HasMany(x => x.Adocoes)
