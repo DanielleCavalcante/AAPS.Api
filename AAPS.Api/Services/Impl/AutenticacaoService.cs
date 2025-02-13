@@ -42,7 +42,7 @@ public class AutenticacaoService : IAutenticacaoService
             Status = StatusEnum.Ativo,
             RedefinirSenha = true,
             IdentityUserId = appUsuario.Id,
-            IdentityRoleId = "1",
+            IdentityRoleId = await _perfilAcesso.ObterIdPorNomeAsync(acesso),
         };
 
         var resultadoVoluntario = _voluntarioService.RegistrarVoluntario(appUsuarioVoluntario);
@@ -67,21 +67,5 @@ public class AutenticacaoService : IAutenticacaoService
     public async Task Logout()
     {
         await _signInManager.SignOutAsync();
-    }
-
-    // METODOS PRIVADOS
-
-    private string ObterIdAcessoPerfil(string acesso)
-    {
-        var perfis = _perfilAcesso.ObterPerfis();
-
-        if (acesso == "Admin")
-        {
-            return null;
-        }
-        else
-        {
-            return acesso;
-        }
     }
 }

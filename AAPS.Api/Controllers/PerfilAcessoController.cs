@@ -1,4 +1,5 @@
-﻿using AAPS.Api.Services.Interfaces;
+﻿using AAPS.Api.Models;
+using AAPS.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -24,6 +25,14 @@ public class PerfilAcessoController : Controller
     {
         var perfis = await _perfilAcesso.ObterPerfis();
         return Ok(perfis);
+    }
+
+    [HttpGet]
+    [Route("ObterIdPorNome")]
+    public async Task<ActionResult<string>> ObterIdPerfilPorNome(string nome)
+    {
+        var perfil = _perfilAcesso.ObterIdPorNomeAsync(nome);
+        return Ok(perfil);
     }
 
     [HttpPost]

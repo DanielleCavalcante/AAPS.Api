@@ -7,4 +7,5 @@ public interface IPerfilAcessoService
 {
     Task<IEnumerable<IdentityRole>> ObterPerfis();
     Task CriarPerfil(string nomePerfil);
+    Task<string> ObterIdPorNomeAsync(string nome);
 }

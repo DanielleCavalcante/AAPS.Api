@@ -1,23 +1,37 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AAPS.Api.Models;
 using AAPS.Api.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace AAPS.Api.Services.Impl;
 
 public class PerfilAcessoService : IPerfilAcessoService
 {
-    private readonly RoleManager<IdentityRole> _perfilAcesso;
+    private readonly RoleManager<IdentityRole> _roleManager;
 
-    public PerfilAcessoService(RoleManager<IdentityRole> perfilAcesso)
+    public PerfilAcessoService(RoleManager<IdentityRole> roleManager)
     {
-        _perfilAcesso = perfilAcesso;
+        _roleManager = roleManager;
     }
 
     public async Task<IEnumerable<IdentityRole>> ObterPerfis()
     {
-        return await _perfilAcesso.Roles.ToListAsync();
+        return await _roleManager.Roles.ToListAsync();
+    }
+
+    public async Task<string> ObterIdPorNomeAsync(string nome)
+    {
+        var perfis = await _roleManager.Roles.ToListAsync();
+
+        var perfilAcesso = perfis.FirstOrDefault(x => x.Name == nome);
+
+        if (perfilAcesso == null)
+        {
+            throw new Exception($"Perfil {nome} não encontrado.");
+        }
+
+        return perfilAcesso.Id;
     }
 
     // talvez excluir depois
@@ -25,10 +39,10 @@ public class PerfilAcessoService : IPerfilAcessoService
     {
         if (!string.IsNullOrEmpty(nomePerfil))
         {
-            var perfilExiste = await _perfilAcesso.RoleExistsAsync(nomePerfil);
+            var perfilExiste = await _roleManager.RoleExistsAsync(nomePerfil);
             if (!perfilExiste)
             {
-                await _perfilAcesso.CreateAsync(new IdentityRole(nomePerfil));
+                await _roleManager.CreateAsync(new IdentityRole(nomePerfil));
             }
         }
     }
