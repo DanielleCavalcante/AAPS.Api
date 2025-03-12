@@ -1,5 +1,7 @@
-﻿using AAPS.Api.Services.Interfaces;
+﻿using AAPS.Api.Dtos.Email;
+using AAPS.Api.Services.Interfaces;
 using AAPS.Api.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -12,6 +14,8 @@ namespace AAPS.Api.Controllers;
 [ApiController]
 public class ContaController : Controller
 {
+    #region ATRIBUTOS E CONSTRUTOR
+
     private readonly IConfiguration _configuration;
     private readonly IAutenticacaoService _autenticacao;
 
@@ -23,6 +27,8 @@ public class ContaController : Controller
         _autenticacao = autenticacao ??
             throw new ArgumentNullException(nameof(autenticacao));
     }
+
+    #endregion
 
     [HttpPost("CriarUsuario")]
     public async Task<ActionResult<UsuarioToken>> CriarUsuario([FromBody] RegistroViewModel modelo)
@@ -60,6 +66,53 @@ public class ContaController : Controller
             ModelState.AddModelError("LoginUsuario", "Login inválido!");
             return BadRequest(ModelState);
         }
+    }
+
+    [Authorize]
+    [HttpPost("Logout")]
+    public async Task<IActionResult> Logout()
+    {
+        await _autenticacao.Logout();
+        return Ok(new { mensagem = "Logout realizado com sucesso." });
+    }
+
+    [HttpPost("ContatarAdministrador")]
+    public async Task<IActionResult> SolicitarRecuperacaoSenha([FromBody] RecuperarSenhaDto recuperarSenhaDto)
+    {
+        if (string.IsNullOrEmpty(recuperarSenhaDto.NomeUsuario) || string.IsNullOrEmpty(recuperarSenhaDto.Telefone))
+        {
+            return BadRequest("Nome de usuário e telefone são obrigatórios.");
+        }
+
+        bool sucesso = await _autenticacao.EnviarSolicitacaoRecuperacaoAsync(recuperarSenhaDto);
+
+        if (sucesso)
+        {
+            return Ok("Solicitação enviada ao administrador.");
+        }
+        else
+        {
+            return NotFound("Usuário não encontrado.");
+        }
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost("resetar-senha")]
+    public async Task<IActionResult> ResetarSenhaAdmin([FromBody] string nomeUsuario)
+    {
+        if (string.IsNullOrWhiteSpace(nomeUsuario))
+        {
+            return BadRequest("O nome de usuário é obrigatório.");
+        }
+
+        var (sucesso, mensagem) = await _autenticacao.ResetarSenhaAsync(nomeUsuario);
+
+        if (!sucesso)
+        {
+            return BadRequest(mensagem);
+        }
+
+        return Ok(new { mensagem });
     }
 
     #region MÉTODOS PRIVADOS

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AAPS.Api.Context;
 
-public class AppDbContext : IdentityDbContext<IdentityUser>
+public class AppDbContext : IdentityDbContext<Voluntario>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {

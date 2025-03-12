@@ -1,4 +1,4 @@
-﻿namespace AAPS.Api.Dtos;
+﻿namespace AAPS.Api.Dtos.Doadores;
 
 public class DoadorDto
 {

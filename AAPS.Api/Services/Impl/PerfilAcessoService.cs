@@ -8,6 +8,8 @@ namespace AAPS.Api.Services.Impl;
 
 public class PerfilAcessoService : IPerfilAcessoService
 {
+    #region ATRIBUTOS E CONSTRUTOR
+
     private readonly RoleManager<IdentityRole> _roleManager;
 
     public PerfilAcessoService(RoleManager<IdentityRole> roleManager)
@@ -15,24 +17,7 @@ public class PerfilAcessoService : IPerfilAcessoService
         _roleManager = roleManager;
     }
 
-    public async Task<IEnumerable<IdentityRole>> ObterPerfis()
-    {
-        return await _roleManager.Roles.ToListAsync();
-    }
-
-    public async Task<string> ObterIdPorNomeAsync(string nome)
-    {
-        var perfis = await _roleManager.Roles.ToListAsync();
-
-        var perfilAcesso = perfis.FirstOrDefault(x => x.Name == nome);
-
-        if (perfilAcesso == null)
-        {
-            throw new Exception($"Perfil {nome} não encontrado.");
-        }
-
-        return perfilAcesso.Id;
-    }
+    #endregion
 
     // talvez excluir depois
     public async Task CriarPerfil(string nomePerfil)
@@ -45,5 +30,24 @@ public class PerfilAcessoService : IPerfilAcessoService
                 await _roleManager.CreateAsync(new IdentityRole(nomePerfil));
             }
         }
+    }
+
+    public async Task<IEnumerable<IdentityRole>> ObterPerfis()
+    {
+        return await _roleManager.Roles.ToListAsync();
+    }
+
+    public async Task<string> ObterIdPorNomeAsync(string nome)
+    {
+        var perfis = await _roleManager.Roles.ToListAsync();
+
+        var perfilAcesso = await _roleManager.Roles.FirstOrDefaultAsync(x => x.Name == nome);
+
+        if(perfilAcesso == null)
+        {
+            return string.Empty;
+        }
+
+        return perfilAcesso.Id.ToString();
     }
 }

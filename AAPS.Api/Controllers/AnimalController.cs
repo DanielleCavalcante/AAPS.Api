@@ -1,4 +1,4 @@
-﻿using AAPS.Api.Dtos;
+﻿using AAPS.Api.Dtos.Animais;
 using AAPS.Api.Models;
 using AAPS.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class AnimalController : ControllerBase
 {
+    #region ATRIBUTOS E CONSTRUTOR
+
     private readonly IAnimalService _animalService;
 
     public AnimalController(IAnimalService animalService)
@@ -17,49 +19,112 @@ public class AnimalController : ControllerBase
         _animalService = animalService;
     }
 
-    [HttpGet]
-    [Route("ObterTodos")]
-    public async Task<ActionResult<IAsyncEnumerable<Animal>>> ObterAnimais()
-    {
-        var animais = await _animalService.ObterAnimais();
-        return Ok(animais);
-    }
+    #endregion
 
-    [HttpGet]
-    [Route("ObterUmAnimal/{id:int}", Name = "ObterAnimaisPorId")]
-    public async Task<ActionResult<Animal>> ObterAnimaisPorId(int id)
+    [HttpPost]
+    public async Task<IActionResult> CriarAnimal([FromBody] AnimalDto animalDto)
     {
-        var animal = await _animalService.ObterAnimalPorId(id);
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        if (string.IsNullOrWhiteSpace(animalDto.Nome)) // TODO: ver campos required
+        {
+            return BadRequest("O campo nome é obrigatório!");
+        }
+
+        var animal = await _animalService.CriarAnimal(animalDto);
+
+        if (animal is null)
+        {
+            return StatusCode(500, "Erro ao criar o animal.");
+        }
+
         return Ok(animal);
     }
 
     [HttpGet]
-    [Route("ObterAnimaisPorNome")]
-    public async Task<ActionResult<IAsyncEnumerable<Animal>>> ObterAnimaisPorNome([FromQuery] string nome)
+    public async Task<ActionResult<IAsyncEnumerable<Animal>>> ObterAnimais()
     {
-        var animais = await _animalService.ObterAnimalPorNome(nome);
+        var animais = await _animalService.ObterAnimais();
+
+        if (animais is null)
+        {
+            return StatusCode(500, "Erro ao obter os animais.");
+        }
+
         return Ok(animais);
     }
 
-    [HttpPost]
-    [Route("Criar")]
-    public async Task CriarAnimal(AnimalDto animalDto)
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult> ObterAnimalPorId(int id)
     {
-        await _animalService.CriarAnimal(animalDto);
+        var animal = await _animalService.ObterAnimalPorId(id);
+
+        if (animal is null)
+        {
+            return NotFound($"Animal de id = {id} não encontrado.");
+        }
+
+        return Ok(animal);
     }
 
-    [HttpPut]
-    [Route("Atualizar/{id:int}")]
-    public async Task AtualizarAnimal(int id, AnimalDto animalDto)
+    [HttpGet]
+    public async Task<ActionResult<IAsyncEnumerable<Animal>>> ObterAnimaisPorNome([FromQuery] string nome)
     {
-        await _animalService.AtualizarAnimal(id, animalDto);
+        var animais = await _animalService.ObterAnimaisPorNome(nome);
+
+        if (animais is null)
+        {
+            return NotFound($"Animal de nome = {nome} não encontrado.");
+        }
+
+        return Ok(animais);
     }
 
-    [HttpDelete]
-    [Route("Delete/{id:int}")]
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> AtualizarAnimal(int id, [FromBody] AnimalDto animalDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var animal = await _animalService.AtualizarAnimal(id, animalDto);
+
+        if (animal is null)
+        {
+            return NotFound($"Animal de id = {id} não encontrado.");
+        }
+
+        var response = new AnimalDto
+        {
+            Id = animal.Id,
+            Nome = animal.Nome,
+            Especie = animal.Especie,
+            Raca = animal.Raca,
+            Pelagem = animal.Pelagem,
+            Sexo = animal.Sexo,
+            DataNascimento = animal.DataNascimento,
+            Status = animal.Status,
+            DoadorId = animal.DoadorId
+        };
+
+        return Ok(response);
+    }
+
+    [HttpDelete("{id:int}")]
     public async Task<ActionResult> ExcluirAnimal(int id)
     {
-        await _animalService.ExcluirAnimal(id);
+        bool deletado = await _animalService.ExcluirAnimal(id);
+
+        if (!deletado)
+        {
+            return NotFound($"Animal de id = {id} não encontrado.");
+
+        }
+
         return Ok($"Animal de id = {id} foi excluído com sucesso!");
     }
 }

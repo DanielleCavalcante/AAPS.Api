@@ -1,9 +1,7 @@
 ﻿using AAPS.Api.Context;
-using AAPS.Api.Dtos;
+using AAPS.Api.Dtos.Voluntarios;
 using AAPS.Api.Models;
 using AAPS.Api.Services.Interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 
 namespace AAPS.Api.Services.Impl;
 
@@ -33,7 +31,7 @@ public class VoluntarioService : IVoluntarioService
             _context.Voluntarios.Add(voluntario);
             await _context.SaveChangesAsync();
         }
-        catch (Exception ex) 
+        catch (Exception ex)
         {
             throw;
         }

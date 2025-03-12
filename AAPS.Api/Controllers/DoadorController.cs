@@ -1,4 +1,4 @@
-﻿using AAPS.Api.Dtos;
+﻿using AAPS.Api.Dtos.Doadores;
 using AAPS.Api.Models;
 using AAPS.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -12,6 +12,8 @@ namespace AAPS.Api.Controllers;
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class DoadorController : Controller
 {
+    #region ATRIBUTOS E CONSTRUTOR
+
     private readonly IDoadorService _doadorService;
 
     public DoadorController(IDoadorService doadorService)
@@ -19,41 +21,114 @@ public class DoadorController : Controller
         _doadorService = doadorService;
     }
 
-    [HttpGet]
-    [Route("ObterTodosDoador")]
-    public async Task<ActionResult<IAsyncEnumerable<Doador>>> ObterDoadores()
+    #endregion
+
+    [HttpPost]
+    public async Task<IActionResult> CriarDoador([FromBody] DoadorDto doadorDto)
     {
-        var doadoresDto = await _doadorService.ObterDoadores();
-        return Ok(doadoresDto);
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        if (string.IsNullOrWhiteSpace(doadorDto.Nome)) // || TODO: ver campos required
+        {
+            return BadRequest("O campo nome é obrigatório!");
+        }
+
+        var doador = await _doadorService.CriarDoador(doadorDto);
+
+        if (doador is null)
+        {
+            return StatusCode(500, "Erro ao criar o doador.");
+        }
+
+        return Ok(doador);
     }
 
     [HttpGet]
-    [Route("ObterDoadoresPorNome")]
-    public async Task<ActionResult<IAsyncEnumerable<Doador>>> ObterDoadorPorNome(string nome)
+    public async Task<ActionResult<IAsyncEnumerable<Doador>>> ObterDoadores()
     {
-        var doadores = await _doadorService.ObterDoadorPorNome(nome);
+        var doadores = await _doadorService.ObterDoadores();
+
+        if (doadores is null)
+        {
+            return StatusCode(500, "Erro ao obter os doadores.");
+        }
+
         return Ok(doadores);
     }
 
-    [HttpPost]
-    [Route("Criar")]
-    public async Task CriarDoador(DoadorDto doadorDto)
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult> ObterDoadorPorId(int id)
     {
-        await _doadorService.CriarDoador(doadorDto);
+        var doador = await _doadorService.ObterDoadorPorId(id);
+
+        if (doador is null)
+        {
+            return NotFound($"Doador de id = {id} não encontrado.");
+        }
+
+        return Ok(doador);
     }
 
-    [HttpPut]
-    [Route("Atualizar/{id:int}")]
-    public async Task AtualizarDoador(int id, DoadorDto doadorDto)
+    [HttpGet]
+    public async Task<ActionResult<IAsyncEnumerable<Doador>>> ObterDoadorPorNome([FromQuery] string nome)
     {
-        await _doadorService.AtualizarDoador(id, doadorDto);
+        var doadores = await _doadorService.ObterDoadorPorNome(nome);
+
+        if (doadores is null)
+        {
+            return NotFound($"Doador de nome = {nome} não encontrado.");
+        }
+
+        return Ok(doadores);
     }
 
-    [HttpDelete]
-    [Route("Delete/{id:int}")]
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> AtualizarDoador(int id, [FromBody] DoadorDto doadorDto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var doador = await _doadorService.AtualizarDoador(id, doadorDto);
+
+        if (doador is null)
+        {
+            return NotFound($"Doador de id = {id} não encontrado.");
+        }
+
+        var response = new DoadorDto
+        {
+            Id = doador.Id,
+            Nome = doadorDto.Nome,
+            Rg = doadorDto.Rg,
+            Cpf = doadorDto.Cpf,
+            Logradouro = doadorDto.Logradouro,
+            Numero = doadorDto.Numero,
+            Complemento = doadorDto.Complemento,
+            Bairro = doadorDto.Bairro,
+            Uf = doadorDto.Uf,
+            Cidade = doadorDto.Cidade,
+            Cep = doadorDto.Cep,
+        };
+
+        return Ok(response);
+    }
+
+    [HttpDelete("{id:int}")]
     public async Task<ActionResult> ExcluirDoador(int id)
     {
-        await _doadorService.ExcluirDoador(id);
+        bool deletado = await _doadorService.ExcluirDoador(id);
+
+        if (!deletado)
+        {
+            return NotFound($"Doador de id = {id} não encontrado.");
+        }
+
         return Ok($"Doador de id = {id} foi excluído com sucesso!");
+        // return NoContent();
     }
 }

@@ -1,4 +1,4 @@
-﻿using AAPS.Api.Dtos;
+﻿using AAPS.Api.Dtos.Voluntarios;
 
 namespace AAPS.Api.Services.Interfaces;
 

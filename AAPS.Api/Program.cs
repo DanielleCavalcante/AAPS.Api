@@ -52,6 +52,7 @@ builder.Services.AddScoped<IDoadorService, DoadorService>();
 builder.Services.AddScoped<IAutenticacaoService, AutenticacaoService>();
 builder.Services.AddScoped<IPerfilAcessoService, PerfilAcessoService>();
 builder.Services.AddScoped<IVoluntarioService, VoluntarioService>();
+builder.Services.AddSingleton<EmailService>();
 
 // configurações para o banco DbAaps
 var businessConnectionString = builder.Configuration.GetConnectionString("DbAaps");
@@ -96,14 +97,12 @@ builder.Services.AddCors(
         options.AddPolicy("Cors", p =>
         {
             p.AllowAnyHeader()
-           .AllowAnyMethod()
-           .AllowAnyOrigin();
+             .AllowAnyMethod()
+             .AllowAnyOrigin();
         });
     });
 
 var app = builder.Build();
-
-//app.MapIdentityApi<Voluntario>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -111,6 +110,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("Cors");
 
 app.UseHttpsRedirection();
 

@@ -5,7 +5,7 @@ namespace AAPS.Api.Services.Interfaces;
 
 public interface IPerfilAcessoService
 {
-    Task<IEnumerable<IdentityRole>> ObterPerfis();
     Task CriarPerfil(string nomePerfil);
+    Task<IEnumerable<IdentityRole>> ObterPerfis();
     Task<string> ObterIdPorNomeAsync(string nome);
 }
