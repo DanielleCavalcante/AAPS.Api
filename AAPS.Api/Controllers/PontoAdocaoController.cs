@@ -1,6 +1,6 @@
-﻿using AAPS.Api.Dtos;
+﻿using AAPS.Api.Dtos.PontoAdocao;
 using AAPS.Api.Models;
-using AAPS.Api.Services.Interfaces;
+using AAPS.Api.Services.PontoAdocao;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
