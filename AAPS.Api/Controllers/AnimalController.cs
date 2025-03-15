@@ -1,6 +1,7 @@
 ﻿using AAPS.Api.Dtos.Animais;
+using AAPS.Api.Dtos.Voluntarios;
 using AAPS.Api.Models;
-using AAPS.Api.Services.Interfaces;
+using AAPS.Api.Services.Animais;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +23,7 @@ public class AnimalController : ControllerBase
     #endregion
 
     [HttpPost]
-    public async Task<IActionResult> CriarAnimal([FromBody] AnimalDto animalDto)
+    public async Task<IActionResult> CriarAnimal([FromBody] CriarAnimalDto animalDto)
     {
         if (!ModelState.IsValid)
         {
@@ -41,7 +42,7 @@ public class AnimalController : ControllerBase
             return StatusCode(500, "Erro ao criar o animal.");
         }
 
-        return Ok(animal);
+        return Ok($"Animal criado com sucesso!");
     }
 
     [HttpGet]
@@ -84,7 +85,7 @@ public class AnimalController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> AtualizarAnimal(int id, [FromBody] AnimalDto animalDto)
+    public async Task<IActionResult> AtualizarAnimal(int id, [FromBody] AtualizarAnimalDto animalDto)
     {
         if (!ModelState.IsValid)
         {
@@ -98,20 +99,7 @@ public class AnimalController : ControllerBase
             return NotFound($"Animal de id = {id} não encontrado.");
         }
 
-        var response = new AnimalDto
-        {
-            Id = animal.Id,
-            Nome = animal.Nome,
-            Especie = animal.Especie,
-            Raca = animal.Raca,
-            Pelagem = animal.Pelagem,
-            Sexo = animal.Sexo,
-            DataNascimento = animal.DataNascimento,
-            Status = animal.Status,
-            DoadorId = animal.DoadorId
-        };
-
-        return Ok(response);
+        return Ok($"Animal atualizado com sucesso!");
     }
 
     [HttpDelete("{id:int}")]

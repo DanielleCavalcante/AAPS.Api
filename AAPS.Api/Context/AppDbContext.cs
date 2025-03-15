@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AAPS.Api.Context;
 
-public class AppDbContext : IdentityDbContext<Voluntario>
+public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -19,7 +19,7 @@ public class AppDbContext : IdentityDbContext<Voluntario>
     public DbSet<Evento> Eventos { get; set; }
     public DbSet<PontoAdocao> PontosAdocao { get; set; }
     public DbSet<Telefone> Telefones { get; set; }
-    public DbSet<Voluntario> Voluntarios { get; set; }
+   public DbSet<Voluntario> Voluntarios { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -256,21 +256,30 @@ public class AppDbContext : IdentityDbContext<Voluntario>
 
             entity.HasKey(x => x.Id);
 
-            entity.Property(x => x.Nome).HasColumnType("nvarchar(60)").IsRequired();
+            entity.Property(x => x.NomeCompleto).HasColumnType("nvarchar(60)").IsRequired();
             entity.Property(x => x.Cpf).HasColumnType("nvarchar(11)").IsRequired();
-            //entity.Property(x => x.Senha).HasColumnType("nvarchar(15)").IsRequired(); -- esse ta identity
-            //entity.Property(x => x.Nivel).HasColumnType("tinyint").IsRequired();
             entity.Property(x => x.Status).HasColumnType("tinyint").IsRequired(); // ativo ou inativo
-
-            // mudanças:
-            entity.Property(x => x.IdentityUserId).HasColumnType("nvarchar(450)").IsRequired(); // id do user identity
-            entity.Property(x => x.IdentityRoleId).HasColumnType("nvarchar(450)").IsRequired(); // id do role identity
-            entity.Property(x => x.RedefinirSenha).HasColumnType("bit").IsRequired(); // talvez depois mudar para o identity
 
             // Relações
             entity.HasMany(x => x.Adocoes)
                 .WithOne(x => x.Voluntario);
         });
+        #endregion
+
+        #region IDENTITY - Colunas desnecessárias
+
+        modelBuilder.Entity<Voluntario>(entity =>
+        {
+            entity.Ignore(u => u.NormalizedEmail);
+            entity.Ignore(u => u.EmailConfirmed);
+            entity.Ignore(u => u.ConcurrencyStamp);
+            entity.Ignore(u => u.PhoneNumberConfirmed);
+            entity.Ignore(u => u.TwoFactorEnabled);
+            entity.Ignore(u => u.LockoutEnabled);
+            entity.Ignore(u => u.LockoutEnd);
+            entity.Ignore(u => u.AccessFailedCount);
+        });
+
         #endregion
     }
 

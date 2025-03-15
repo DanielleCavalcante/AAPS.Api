@@ -1,6 +1,6 @@
 ﻿using AAPS.Api.Dtos.Doadores;
 using AAPS.Api.Models;
-using AAPS.Api.Services.Interfaces;
+using AAPS.Api.Services.Doadores;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +24,7 @@ public class DoadorController : Controller
     #endregion
 
     [HttpPost]
-    public async Task<IActionResult> CriarDoador([FromBody] DoadorDto doadorDto)
+    public async Task<IActionResult> CriarDoador([FromBody] CriarDoadorDto doadorDto)
     {
         if (!ModelState.IsValid)
         {
@@ -43,7 +43,7 @@ public class DoadorController : Controller
             return StatusCode(500, "Erro ao criar o doador.");
         }
 
-        return Ok(doador);
+        return Ok($"Doador criado com sucesso!");
     }
 
     [HttpGet]
@@ -86,7 +86,7 @@ public class DoadorController : Controller
     }
 
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> AtualizarDoador(int id, [FromBody] DoadorDto doadorDto)
+    public async Task<IActionResult> AtualizarDoador(int id, [FromBody] AtualizarDoadorDto doadorDto)
     {
         if (!ModelState.IsValid)
         {
@@ -100,22 +100,7 @@ public class DoadorController : Controller
             return NotFound($"Doador de id = {id} não encontrado.");
         }
 
-        var response = new DoadorDto
-        {
-            Id = doador.Id,
-            Nome = doadorDto.Nome,
-            Rg = doadorDto.Rg,
-            Cpf = doadorDto.Cpf,
-            Logradouro = doadorDto.Logradouro,
-            Numero = doadorDto.Numero,
-            Complemento = doadorDto.Complemento,
-            Bairro = doadorDto.Bairro,
-            Uf = doadorDto.Uf,
-            Cidade = doadorDto.Cidade,
-            Cep = doadorDto.Cep,
-        };
-
-        return Ok(response);
+        return Ok($"Doador atualizado com sucesso!");
     }
 
     [HttpDelete("{id:int}")]

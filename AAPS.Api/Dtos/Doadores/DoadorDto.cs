@@ -3,14 +3,14 @@
 public class DoadorDto
 {
     public int Id { get; set; }
-    public string Nome { get; set; }
-    public string Rg { get; set; }
-    public string Cpf { get; set; }
-    public string Logradouro { get; set; }
-    public int Numero { get; set; }
-    public string Complemento { get; set; }
-    public string Bairro { get; set; }
-    public string Uf { get; set; }
-    public string Cidade { get; set; }
-    public int Cep { get; set; }
+    public required string Nome { get; set; }
+    public required string Rg { get; set; }
+    public required string Cpf { get; set; }
+    public required string Logradouro { get; set; }
+    public required int Numero { get; set; }
+    public required string Complemento { get; set; }
+    public required string Bairro { get; set; }
+    public required string Uf { get; set; }
+    public required string Cidade { get; set; }
+    public required int Cep { get; set; }
 }

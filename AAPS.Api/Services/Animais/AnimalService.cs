@@ -1,7 +1,7 @@
 ﻿using AAPS.Api.Context;
 using AAPS.Api.Dtos.Animais;
 using AAPS.Api.Models;
-using AAPS.Api.Services.Interfaces;
+using AAPS.Api.Services.Animais;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 
@@ -18,7 +18,7 @@ public class AnimalService : IAnimalService
 
     #endregion
 
-    public async Task<AnimalDto> CriarAnimal(AnimalDto animalDto)
+    public async Task<AnimalDto> CriarAnimal(CriarAnimalDto animalDto)
     {
         var animal = new Animal
         {
@@ -82,7 +82,7 @@ public class AnimalService : IAnimalService
         return await BuscarAnimaisPorNome(nome).ToListAsync();
     }
 
-    public async Task<AnimalDto?> AtualizarAnimal(int id, AnimalDto animalDto)
+    public async Task<AnimalDto?> AtualizarAnimal(int id, AtualizarAnimalDto animalDto)
     {
         var animal = await BuscarAnimalPorId(id);
 
@@ -96,9 +96,9 @@ public class AnimalService : IAnimalService
         animal.Raca = string.IsNullOrEmpty(animalDto.Raca) ? animal.Raca : animalDto.Raca;
         animal.Pelagem = string.IsNullOrEmpty(animalDto.Pelagem) ? animal.Pelagem : animalDto.Pelagem;
         animal.Sexo = string.IsNullOrEmpty(animalDto.Sexo) ? animal.Sexo : animalDto.Sexo;
-        animal.DataNascimento = string.IsNullOrEmpty(animalDto.DataNascimento.ToString()) ? animal.DataNascimento : animalDto.DataNascimento;
-        animal.Status = string.IsNullOrEmpty(animalDto.Status.ToString()) ? animal.Status : animalDto.Status;
-        animal.DoadorId = string.IsNullOrEmpty(animalDto.DoadorId.ToString()) ? animal.DoadorId : animalDto.DoadorId;
+        animal.DataNascimento = animalDto.DataNascimento.HasValue ? animalDto.DataNascimento.Value : animal.DataNascimento;
+        animal.Status = animalDto.Status.HasValue ? animalDto.Status.Value : animal.Status;
+        animal.DoadorId = animalDto.DoadorId.HasValue ? animalDto.DoadorId.Value : animal.DoadorId;
 
         await _context.SaveChangesAsync();
 

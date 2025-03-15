@@ -6,11 +6,10 @@ namespace AAPS.Api.Models;
 public class AnimalEvento
 {
     public int Id { get; set; }
-    [Required]
-    public DateTime DataAcompanhamento { get; set; }
-    public string? Observacao { get; set; }
-    public int AnimalId { get; set; }
-    public int EventoId { get; set; }
+    public DateTime DataAcompanhamento { get; set; } = DateTime.MinValue;
+    public string Observacao { get; set; } = string.Empty;
+    public int AnimalId { get; set; } = 0;
+    public int EventoId { get; set; } = 0;
 
     // Relacionamentos
     public Animal Animal { get; set; }

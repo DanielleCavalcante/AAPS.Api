@@ -2,7 +2,7 @@
 using AAPS.Api.Dtos.Animais;
 using AAPS.Api.Dtos.Doadores;
 using AAPS.Api.Models;
-using AAPS.Api.Services.Interfaces;
+using AAPS.Api.Services.Doadores;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -19,7 +19,7 @@ public class DoadorService : IDoadorService
 
     #endregion
 
-    public async Task<DoadorDto> CriarDoador(DoadorDto doadorDto)
+    public async Task<DoadorDto> CriarDoador(CriarDoadorDto doadorDto)
     {
         var doador = new Doador
         {
@@ -89,7 +89,7 @@ public class DoadorService : IDoadorService
         return await BuscarDoadoresPorNome(nome).ToListAsync();
     }
 
-    public async Task<DoadorDto?> AtualizarDoador(int id, DoadorDto doadorDto)
+    public async Task<DoadorDto?> AtualizarDoador(int id, AtualizarDoadorDto doadorDto)
     {
         var doador = await BuscarDoadorPorId(id);
 
@@ -102,12 +102,12 @@ public class DoadorService : IDoadorService
         doador.Rg = string.IsNullOrEmpty(doadorDto.Rg) ? doador.Rg : doadorDto.Rg;
         doador.Cpf = string.IsNullOrEmpty(doadorDto.Cpf) ? doador.Cpf : doadorDto.Cpf;
         doador.Logradouro = string.IsNullOrEmpty(doadorDto.Logradouro) ? doador.Logradouro : doadorDto.Logradouro;
-        doador.Numero = doadorDto.Numero == 0 ? doador.Numero : doadorDto.Numero;
+        doador.Numero = doadorDto.Numero.HasValue ? doadorDto.Numero.Value : doador.Numero;
         doador.Complemento = string.IsNullOrEmpty(doadorDto.Complemento) ? doador.Complemento : doadorDto.Complemento;
         doador.Bairro = string.IsNullOrEmpty(doadorDto.Bairro) ? doador.Bairro : doadorDto.Bairro;
         doador.Uf = string.IsNullOrEmpty(doadorDto.Uf) ? doador.Uf : doadorDto.Uf;
         doador.Cidade = string.IsNullOrEmpty(doadorDto.Cidade) ? doador.Cidade : doadorDto.Cidade;
-        doador.Cep = doadorDto.Cep == 0 ? doador.Cep : doadorDto.Cep;
+        doador.Cep = doadorDto.Cep.HasValue ? doadorDto.Cep.Value : doador.Cep;
 
         await _context.SaveChangesAsync();
 
