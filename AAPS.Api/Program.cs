@@ -1,8 +1,11 @@
 using AAPS.Api.Context;
 using AAPS.Api.Models;
+using AAPS.Api.Services;
+using AAPS.Api.Services.Adotantes;
 using AAPS.Api.Services.Animais;
 using AAPS.Api.Services.Autenticacao;
 using AAPS.Api.Services.Doadores;
+using AAPS.Api.Services.PontosAdocao;
 using AAPS.Api.Services.Voluntarios;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -24,6 +27,9 @@ builder.Services.AddScoped<IAnimalService, AnimalService>();
 builder.Services.AddScoped<IDoadorService, DoadorService>();
 builder.Services.AddScoped<IAutenticacaoService, AutenticacaoService>();
 builder.Services.AddScoped<IVoluntarioService, VoluntarioService>();
+builder.Services.AddScoped<IAdotanteService, AdotanteService>();
+builder.Services.AddScoped<IPontoAdocaoService, PontoAdocaoService>();
+builder.Services.AddScoped<EmailService>();
 
 // configurações para o banco DbAaps
 var businessConnectionString = builder.Configuration.GetConnectionString("DbAaps");

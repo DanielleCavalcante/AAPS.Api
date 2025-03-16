@@ -1,5 +1,4 @@
 ﻿using AAPS.Api.Dtos.Autenticacao;
-using AAPS.Api.Dtos.Email;
 
 namespace AAPS.Api.Services.Autenticacao;
 

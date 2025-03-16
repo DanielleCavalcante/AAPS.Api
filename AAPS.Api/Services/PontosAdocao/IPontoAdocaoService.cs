@@ -1,7 +1,7 @@
 ﻿using AAPS.Api.Dtos.PontoAdocao;
 using AAPS.Api.Models;
 
-namespace AAPS.Api.Services.PontoAdocao;
+namespace AAPS.Api.Services.PontosAdocao;
 public interface IPontoAdocaoService
 {
     Task<IEnumerable<PontoAdocao>> ObterPontosAdocao();

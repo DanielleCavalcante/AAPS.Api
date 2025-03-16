@@ -3,6 +3,7 @@ using AAPS.Api.Dtos.Voluntarios;
 using AAPS.Api.Models;
 using AAPS.Api.Models.Enums;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace AAPS.Api.Services.Voluntarios;
 
@@ -11,14 +12,16 @@ public class VoluntarioService : IVoluntarioService
     #region ATRIBUTOS E CONSTRUTOR
 
     private readonly AppDbContext _context;
+    private readonly EmailService _emailService;
     private readonly UserManager<Voluntario> _userManager;
     private readonly SignInManager<Voluntario> _signInManager;
 
-    public VoluntarioService(AppDbContext context, UserManager<Voluntario> userManager, SignInManager<Voluntario> signInManager)
+    public VoluntarioService(AppDbContext context, UserManager<Voluntario> userManager, SignInManager<Voluntario> signInManager, EmailService emailService)
     {
         _context = context;
         _userManager = userManager;
         _signInManager = signInManager;
+        _emailService = emailService;
     }
 
     #endregion
@@ -38,6 +41,11 @@ public class VoluntarioService : IVoluntarioService
 
         var resultado = await _userManager.CreateAsync(voluntario, voluntarioDto.Senha);
 
+        if (!resultado.Succeeded)
+        {
+            return false;
+        }
+
         if (resultado.Succeeded)
         {
             await _userManager.AddToRoleAsync(voluntario, voluntarioDto.Acesso);
@@ -46,4 +54,51 @@ public class VoluntarioService : IVoluntarioService
 
         return resultado.Succeeded;
     }
+
+    public async Task<bool> RedefinirSenha(int voluntarioId)
+    {
+        var voluntario = await BuscarVoluntarioPorId(voluntarioId);
+        if (voluntario == null)
+            return false;
+
+        string novaSenha = "Aaps@123";
+
+        var removeResult = await _userManager.RemovePasswordAsync(voluntario);
+        if (!removeResult.Succeeded)
+            return false;
+
+        var addResult = await _userManager.AddPasswordAsync(voluntario, novaSenha);
+        return addResult.Succeeded;
+    }
+
+    public async Task<Voluntario> BuscarUsuarioPorUsernameETelefoneAsync(string username, string telefone)
+    {
+        var voluntario = await _context.Voluntarios
+            .FirstOrDefaultAsync(v => v.UserName == username && v.PhoneNumber == telefone);
+
+        if (voluntario == null)
+        {
+            return null;
+        }
+            
+        return voluntario;
+    }
+
+    public async Task<List<Voluntario>> ObterAdministradoresAsync()
+    {
+        var admins = await _userManager.GetUsersInRoleAsync("Admin");
+
+        return await _context.Voluntarios
+            .Where(v => admins.Select(a => a.Id).Contains(v.Id))
+            .ToListAsync();
+    }
+
+    #region MÉTODOS PRIVADOS
+
+    private async Task<Voluntario?> BuscarVoluntarioPorId(int id)
+    {
+        return await _userManager.Users.FirstOrDefaultAsync(v => v.Id == id);
+    }
+
+    #endregion
 }

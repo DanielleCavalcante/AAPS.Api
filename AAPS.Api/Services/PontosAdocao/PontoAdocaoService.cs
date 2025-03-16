@@ -1,10 +1,8 @@
 ﻿using AAPS.Api.Context;
-using AAPS.Api.Models;
-using Microsoft.EntityFrameworkCore;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Runtime.ConstrainedExecution;
-using AAPS.Api.Services.PontoAdocao;
 using AAPS.Api.Dtos.PontoAdocao;
+using AAPS.Api.Models;
+using AAPS.Api.Services.PontosAdocao;
+using Microsoft.EntityFrameworkCore;
 public class PontoAdocaoService : IPontoAdocaoService
 {
     private readonly AppDbContext _context;
@@ -87,7 +85,7 @@ public class PontoAdocaoService : IPontoAdocaoService
     {
         var excluirRegistro = await _context.PontosAdocao.FindAsync(id);
 
-        if(excluirRegistro != null)
+        if (excluirRegistro != null)
         {
             _context.PontosAdocao.Remove(excluirRegistro);
             _context.SaveChanges();

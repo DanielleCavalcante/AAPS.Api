@@ -1,5 +1,4 @@
 ﻿using AAPS.Api.Dtos.Animais;
-using AAPS.Api.Dtos.Voluntarios;
 using AAPS.Api.Models;
 using AAPS.Api.Services.Animais;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -9,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 [ApiController]
 [Route("api/[controller]/[action]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+//[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,Padrao")]
 public class AnimalController : ControllerBase
 {
     #region ATRIBUTOS E CONSTRUTOR

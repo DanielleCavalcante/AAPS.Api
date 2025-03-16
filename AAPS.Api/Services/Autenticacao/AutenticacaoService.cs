@@ -48,7 +48,7 @@ public class AutenticacaoService : IAutenticacaoService
         var resultado = await _signInManager.PasswordSignInAsync(usuario, infoUsuario.Senha, false, lockoutOnFailure: false);
         if (resultado.Succeeded)
         {
-            return GerarToken(usuario); // Chama o método privado para gerar o token
+            return await GerarToken(usuario);
         }
 
         return null;
@@ -61,13 +61,22 @@ public class AutenticacaoService : IAutenticacaoService
 
     #region MÉTODOS PRIVADOS
 
-    private TokenDto GerarToken(Voluntario usuario)
+    private async Task<TokenDto> GerarToken(Voluntario usuario)
     {
-        var claims = new[]
+        var usuarioAplicado = await _userManager.FindByNameAsync(usuario.UserName);
+
+        var roles = await _userManager.GetRolesAsync(usuarioAplicado);
+
+        var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub, usuario.UserName),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
+
+        foreach (var role in roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));  // Adiciona a role ao token
+        }
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

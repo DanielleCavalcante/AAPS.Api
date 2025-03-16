@@ -1,10 +1,8 @@
 ﻿using AAPS.Api.Context;
-using AAPS.Api.Models;
-using Microsoft.EntityFrameworkCore;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Runtime.ConstrainedExecution;
-using AAPS.Api.Services.Adotantes;
 using AAPS.Api.Dtos.Adotante;
+using AAPS.Api.Models;
+using AAPS.Api.Services.Adotantes;
+using Microsoft.EntityFrameworkCore;
 
 public class AdotanteService : IAdotanteService
 {

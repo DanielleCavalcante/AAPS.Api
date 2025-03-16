@@ -1,51 +1,54 @@
-﻿//using AAPS.Api.Dtos.Email;
-//using System.Net;
-//using System.Net.Mail;
+﻿using System.Net;
+using System.Net.Mail;
 
-//namespace AAPS.Api.Services.Emails;
+namespace AAPS.Api.Services
+{
+    public class EmailService
+    {
+        #region ATRIBUTOS E CONSTRUTOR
 
-//public class EmailService
-//{
-//    private readonly IConfiguration _configuracao;
-//    private readonly ILogger<EmailService> _logger;
+        private readonly IConfiguration _configuration;
 
-//    public EmailService(IConfiguration configuracao, ILogger<EmailService> logger)
-//    {
-//        _configuracao = configuracao;
-//        _logger = logger;
-//    }
+        public EmailService(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
 
-//    public async Task<bool> EnviarEmailAsync(EmailDto emailDto)
-//    {
-//        try
-//        {
-//            var smtpConfig = _configuracao.GetSection("SmtpConfiguracao");
+        #endregion
 
-//            using var smtpClient = new SmtpClient(smtpConfig["Servidor"])
-//            {
-//                Port = int.Parse(smtpConfig["Porta"]),
-//                Credentials = new NetworkCredential(smtpConfig["Usuario"], smtpConfig["Senha"]),
-//                EnableSsl = bool.Parse(smtpConfig["UsarSSL"])
-//            };
+        public async Task<bool> EnviarEmailAsync(string destinatario, string assunto, string mensagem)
+        {
+            try
+            {
+                string emailOrigem = _configuration["EmailSettings:Email"];
+                string senha = _configuration["EmailSettings:Senha"];
+                string smtpHost = "smtp.gmail.com";
+                int smtpPort = 587;
 
-//            var mensagemEmail = new MailMessage
-//            {
-//                From = new MailAddress(smtpConfig["EmailRemetente"]),
-//                Subject = emailDto.Assunto,
-//                Body = emailDto.Mensagem,
-//                IsBodyHtml = true
-//            };
+                var smtpClient = new SmtpClient(smtpHost)
+                {
+                    Port = smtpPort,
+                    Credentials = new NetworkCredential(emailOrigem, senha),
+                    EnableSsl = true
+                };
 
-//            mensagemEmail.To.Add(emailDto.Destinatario);
+                var mailMessage = new MailMessage
+                {
+                    From = new MailAddress(emailOrigem),
+                    Subject = assunto,
+                    Body = mensagem,
+                    IsBodyHtml = true
+                };
 
-//            await smtpClient.SendMailAsync(mensagemEmail);
-//            _logger.LogInformation($"E-mail enviado para {emailDto.Destinatario}.");
-//            return true;
-//        }
-//        catch (Exception ex)
-//        {
-//            _logger.LogError($"Erro ao enviar e-mail: {ex.Message}");
-//            return false;
-//        }
-//    }
-//}
+                mailMessage.To.Add(destinatario);
+
+                await smtpClient.SendMailAsync(mailMessage);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+    }
+}
