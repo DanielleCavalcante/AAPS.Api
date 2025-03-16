@@ -28,6 +28,7 @@ namespace AAPS.Api.Controllers
 
         #endregion
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("CriarVoluntario")]
         public async Task<IActionResult> CriarVoluntario([FromBody] CriarVoluntarioDto voluntarioDto)
         {
