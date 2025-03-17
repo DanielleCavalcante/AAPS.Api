@@ -1,7 +1,7 @@
 ﻿using AAPS.Api.Context;
+using AAPS.Api.Dtos.Adotante;
 using AAPS.Api.Dtos.Voluntarios;
 using AAPS.Api.Models;
-using AAPS.Api.Models.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -71,7 +71,34 @@ public class VoluntarioService : IVoluntarioService
         return addResult.Succeeded;
     }
 
-    public async Task<Voluntario> BuscarUsuarioPorUsernameETelefoneAsync(string username, string telefone)
+    public async Task<Voluntario?> ObterVoluntarioPorId(int id) //TODO: usar DTO
+    {
+        var voluntario = await BuscarVoluntarioPorId(id);
+
+        if (voluntario == null)
+        {
+            return null;
+        }
+
+        return new Voluntario
+        {
+            Id = voluntario.Id,
+            NomeCompleto = voluntario.NomeCompleto,
+            UserName = voluntario.UserName,
+            Email = voluntario.Email,
+            PhoneNumber = voluntario.PhoneNumber,
+            Cpf = voluntario.Cpf,
+            Status = voluntario.Status,
+            SecurityStamp = voluntario.SecurityStamp,
+        };
+    }
+
+    public async Task<Voluntario?> ObterVoluntarioPorUserName(string username)
+    {
+        return await _context.Voluntarios.FirstOrDefaultAsync(v => v.UserName == username); //TODO: usar DTO
+    }
+
+    public async Task<Voluntario> BuscarVoluntarioPorUsernameETelefoneAsync(string username, string telefone) //TODO: usar DTO
     {
         var voluntario = await _context.Voluntarios
             .FirstOrDefaultAsync(v => v.UserName == username && v.PhoneNumber == telefone);
@@ -80,11 +107,11 @@ public class VoluntarioService : IVoluntarioService
         {
             return null;
         }
-            
+
         return voluntario;
     }
 
-    public async Task<List<Voluntario>> ObterAdministradoresAsync()
+    public async Task<List<Voluntario>> ObterAdministradoresAsync() //TODO: usar DTO
     {
         var admins = await _userManager.GetUsersInRoleAsync("Admin");
 

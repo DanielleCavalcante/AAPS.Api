@@ -1,4 +1,5 @@
 using AAPS.Api.Context;
+using AAPS.Api.Middlewares;
 using AAPS.Api.Models;
 using AAPS.Api.Services;
 using AAPS.Api.Services.Adotantes;
@@ -121,6 +122,8 @@ app.UseCors("Cors");
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
+
+app.UseMiddleware<MiddlewareException>(); // classe para lidar com erros de autenticacao
 
 app.UseAuthorization();
 

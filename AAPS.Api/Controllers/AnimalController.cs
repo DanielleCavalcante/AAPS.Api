@@ -1,5 +1,6 @@
 ﻿using AAPS.Api.Dtos.Animais;
 using AAPS.Api.Models;
+using AAPS.Api.Responses;
 using AAPS.Api.Services.Animais;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 [ApiController]
 [Route("api/[controller]/[action]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-//[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,Padrao")]
 public class AnimalController : ControllerBase
 {
     #region ATRIBUTOS E CONSTRUTOR
@@ -25,24 +25,38 @@ public class AnimalController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CriarAnimal([FromBody] CriarAnimalDto animalDto)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
+        var erros = new List<string>();
 
-        if (string.IsNullOrWhiteSpace(animalDto.Nome)) // TODO: ver campos required
-        {
+        if (string.IsNullOrWhiteSpace(animalDto.Nome))
             return BadRequest("O campo nome é obrigatório!");
+        if (string.IsNullOrWhiteSpace(animalDto.Especie))
+            return BadRequest("O campo nome é obrigatório!");
+        if (string.IsNullOrWhiteSpace(animalDto.Raca))
+            return BadRequest("O campo nome é obrigatório!");
+        if (string.IsNullOrWhiteSpace(animalDto.Pelagem))
+            return BadRequest("O campo nome é obrigatório!");
+        if (string.IsNullOrWhiteSpace(animalDto.Sexo))
+            return BadRequest("O campo nome é obrigatório!");
+        if (string.IsNullOrWhiteSpace(animalDto.DataNascimento.ToString()))
+            return BadRequest("O campo nome é obrigatório!");
+        if (string.IsNullOrWhiteSpace(animalDto.Status.ToString()))
+            return BadRequest("O campo nome é obrigatório!");
+        if (string.IsNullOrWhiteSpace(animalDto.DoadorId.ToString()))
+            return BadRequest("O campo nome é obrigatório!");
+
+        if (erros.Count > 0)
+        {
+            return BadRequest(ApiResponse<object>.ErroResponse(erros, "Erro ao registrar animal!"));
         }
 
         var animal = await _animalService.CriarAnimal(animalDto);
 
         if (animal is null)
         {
-            return StatusCode(500, "Erro ao criar o animal.");
+            return StatusCode(500, ApiResponse<object>.ErroResponse(new List<string> { "Erro criar o animal." }));
         }
 
-        return Ok($"Animal criado com sucesso!");
+        return Ok(ApiResponse<object>.SucessoResponse(animal, "Animal criado com sucesso!"));
     }
 
     [HttpGet]
@@ -52,10 +66,10 @@ public class AnimalController : ControllerBase
 
         if (animais is null)
         {
-            return StatusCode(500, "Erro ao obter os animais.");
+            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { "Nenhum animal foi encontrado." }));
         }
 
-        return Ok(animais);
+        return Ok(ApiResponse<object>.SucessoResponse(animais));
     }
 
     [HttpGet("{id:int}")]
@@ -65,10 +79,10 @@ public class AnimalController : ControllerBase
 
         if (animal is null)
         {
-            return NotFound($"Animal de id = {id} não encontrado.");
+            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { $"Animal de id = {id} não encontrado." }));
         }
 
-        return Ok(animal);
+        return Ok(ApiResponse<object>.SucessoResponse(animal));
     }
 
     [HttpGet]
@@ -78,41 +92,38 @@ public class AnimalController : ControllerBase
 
         if (animais is null)
         {
-            return NotFound($"Animal de nome = {nome} não encontrado.");
+            return BadRequest(ApiResponse<object>.ErroResponse(new List<string> { "Erro ao obter adotantes." }));
         }
 
-        return Ok(animais);
+        return Ok(ApiResponse<object>.SucessoResponse(animais));
     }
 
     [HttpPut("{id:int}")]
     public async Task<IActionResult> AtualizarAnimal(int id, [FromBody] AtualizarAnimalDto animalDto)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
+        // TODO: validar campos required
 
         var animal = await _animalService.AtualizarAnimal(id, animalDto);
 
         if (animal is null)
         {
-            return NotFound($"Animal de id = {id} não encontrado.");
+            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { $"Animal de id = {id} não encontrado." }));
         }
 
-        return Ok($"Animal atualizado com sucesso!");
+        return Ok(ApiResponse<object>.SucessoResponse($"Animal atualizado com sucesso!"));
     }
 
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> ExcluirAnimal(int id)
     {
-        bool deletado = await _animalService.ExcluirAnimal(id);
+        bool animal = await _animalService.ExcluirAnimal(id);
 
-        if (!deletado)
+        if (!animal)
         {
-            return NotFound($"Animal de id = {id} não encontrado.");
+            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { $"Animal de id = {id} não encontrado." }));
 
         }
 
-        return Ok($"Animal de id = {id} foi excluído com sucesso!");
+        return Ok(ApiResponse<object>.SucessoResponse($"Animal de id = {id} foi excluído com sucesso!"));
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AAPS.Api.Dtos.Doadores;
 using AAPS.Api.Models;
+using AAPS.Api.Responses;
 using AAPS.Api.Services.Doadores;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -26,24 +27,42 @@ public class DoadorController : Controller
     [HttpPost]
     public async Task<IActionResult> CriarDoador([FromBody] CriarDoadorDto doadorDto)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
+        var erros = new List<string>();
 
-        if (string.IsNullOrWhiteSpace(doadorDto.Nome)) // || TODO: ver campos required
-        {
+        if (string.IsNullOrWhiteSpace(doadorDto.Nome))
             return BadRequest("O campo nome é obrigatório!");
+        if (string.IsNullOrWhiteSpace(doadorDto.Rg))
+            return BadRequest("O campo nome é obrigatório!");
+        if (string.IsNullOrWhiteSpace(doadorDto.Cpf))
+            return BadRequest("O campo nome é obrigatório!");
+        if (string.IsNullOrWhiteSpace(doadorDto.Logradouro))
+            return BadRequest("O campo nome é obrigatório!");
+        if (string.IsNullOrWhiteSpace(doadorDto.Numero.ToString()))
+            return BadRequest("O campo nome é obrigatório!");
+        if (string.IsNullOrWhiteSpace(doadorDto.Complemento))
+            return BadRequest("O campo nome é obrigatório!");
+        if (string.IsNullOrWhiteSpace(doadorDto.Bairro))
+            return BadRequest("O campo nome é obrigatório!");
+        if (string.IsNullOrWhiteSpace(doadorDto.Uf))
+            return BadRequest("O campo nome é obrigatório!");
+        if (string.IsNullOrWhiteSpace(doadorDto.Cidade))
+            return BadRequest("O campo nome é obrigatório!");
+        if (string.IsNullOrWhiteSpace(doadorDto.Cep.ToString()))
+            return BadRequest("O campo nome é obrigatório!");
+
+        if (erros.Count > 0)
+        {
+            return BadRequest(ApiResponse<object>.ErroResponse(erros, "Erro ao registrar doador!"));
         }
 
         var doador = await _doadorService.CriarDoador(doadorDto);
 
         if (doador is null)
         {
-            return StatusCode(500, "Erro ao criar o doador.");
+            return StatusCode(500, ApiResponse<object>.ErroResponse(new List<string> { "Erro criar o doador." }));
         }
 
-        return Ok($"Doador criado com sucesso!");
+        return Ok(ApiResponse<object>.SucessoResponse(doador, $"Doador criado com sucesso!"));
     }
 
     [HttpGet]
@@ -53,10 +72,10 @@ public class DoadorController : Controller
 
         if (doadores is null)
         {
-            return StatusCode(500, "Erro ao obter os doadores.");
+            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { "Nenhum doador foi encontrado." }));
         }
 
-        return Ok(doadores);
+        return Ok(ApiResponse<object>.SucessoResponse(doadores));
     }
 
     [HttpGet("{id:int}")]
@@ -66,10 +85,10 @@ public class DoadorController : Controller
 
         if (doador is null)
         {
-            return NotFound($"Doador de id = {id} não encontrado.");
+            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { $"Doador de id = {id} não encontrado." }));
         }
 
-        return Ok(doador);
+        return Ok(ApiResponse<object>.SucessoResponse(doador));
     }
 
     [HttpGet]
@@ -79,41 +98,37 @@ public class DoadorController : Controller
 
         if (doadores is null)
         {
-            return NotFound($"Doador de nome = {nome} não encontrado.");
+            return BadRequest(ApiResponse<object>.ErroResponse(new List<string> { "Erro ao obter doadores." }));
         }
 
-        return Ok(doadores);
+        return Ok(ApiResponse<object>.SucessoResponse(doadores));
     }
 
     [HttpPut("{id:int}")]
     public async Task<IActionResult> AtualizarDoador(int id, [FromBody] AtualizarDoadorDto doadorDto)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
+        // TODO: validar campos required
 
         var doador = await _doadorService.AtualizarDoador(id, doadorDto);
 
         if (doador is null)
         {
-            return NotFound($"Doador de id = {id} não encontrado.");
+            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { $"Doador de id = {id} não encontrado." }));
         }
 
-        return Ok($"Doador atualizado com sucesso!");
+        return Ok(ApiResponse<object>.SucessoResponse($"Doador atualizado com sucesso!"));
     }
 
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> ExcluirDoador(int id)
     {
-        bool deletado = await _doadorService.ExcluirDoador(id);
+        bool doador = await _doadorService.ExcluirDoador(id);
 
-        if (!deletado)
+        if (!doador)
         {
-            return NotFound($"Doador de id = {id} não encontrado.");
+            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { $"Doador de id = {id} não encontrado." }));
         }
 
-        return Ok($"Doador de id = {id} foi excluído com sucesso!");
-        // return NoContent();
+        return Ok(ApiResponse<object>.SucessoResponse($"Doador de id = {id} foi excluído com sucesso!"));
     }
 }

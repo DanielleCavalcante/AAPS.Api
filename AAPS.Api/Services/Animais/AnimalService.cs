@@ -3,7 +3,6 @@ using AAPS.Api.Dtos.Animais;
 using AAPS.Api.Models;
 using AAPS.Api.Services.Animais;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 
 public class AnimalService : IAnimalService
 {
@@ -121,7 +120,7 @@ public class AnimalService : IAnimalService
     {
         var animal = await BuscarAnimalPorId(id);
 
-        if(animal is null)
+        if (animal is null)
         {
             return false;
         }

@@ -1,11 +1,14 @@
 ﻿using AAPS.Api.Context;
 using AAPS.Api.Dtos.Adotante;
+using AAPS.Api.Dtos.Adotantes;
 using AAPS.Api.Models;
 using AAPS.Api.Services.Adotantes;
 using Microsoft.EntityFrameworkCore;
 
 public class AdotanteService : IAdotanteService
 {
+    #region ATRIBUTOS E CONSTRUTOR
+
     private readonly AppDbContext _context;
 
     public AdotanteService(AppDbContext context)
@@ -13,32 +16,9 @@ public class AdotanteService : IAdotanteService
         _context = context;
     }
 
-    public async Task<IEnumerable<Adotante>> ObterAdotantes()
-    {
-        return await _context.Adotantes.ToListAsync();
-    }
+    #endregion
 
-    public async Task<Adotante> ObterAdotantePorId(int id)
-    {
-        return await _context.Adotantes.FindAsync(id);
-    }
-
-    public async Task<IEnumerable<Adotante>> ObterAdotantePorNome(string nome)
-    {
-        IEnumerable<Adotante> adotantes;
-
-        if (!string.IsNullOrEmpty(nome))
-        {
-            adotantes = await _context.Adotantes.Where(n => n.Nome.Contains(nome)).ToListAsync();
-        }
-        else
-        {
-            adotantes = await ObterAdotantes();
-        }
-        return adotantes;
-    }
-
-    public async Task CriarAdotante(AdotanteDto adotanteDto)
+    public async Task<AdotanteDto> CriarAdotante(CriarAdotanteDto adotanteDto)
     {
         var adotante = new Adotante
         {
@@ -61,45 +41,145 @@ public class AdotanteService : IAdotanteService
 
         _context.Adotantes.Add(adotante);
         await _context.SaveChangesAsync();
+
+        return new AdotanteDto
+        {
+            Id = adotante.Id,
+            Nome = adotante.Nome,
+            Rg = adotante.Rg,
+            Cpf = adotante.Cpf,
+            LocalTrabalho = adotante.LocalTrabalho,
+            Status = adotante.Status,
+            Facebook = adotante.Facebook,
+            Instagram = adotante.Instagram,
+            Logradouro = adotante.Logradouro,
+            Numero = adotante.Numero,
+            Complemento = adotante.Complemento,
+            Bairro = adotante.Bairro,
+            Uf = adotante.Uf,
+            Cidade = adotante.Cidade,
+            Cep = adotante.Cep,
+            SituacaoEndereco = adotante.SituacaoEndereco
+        };
     }
 
-    public async Task AtualizarAdotante(int id, AdotanteDto adotanteDto)
+    public async Task<IEnumerable<Adotante>> ObterAdotantes()
     {
-        var buscaRegistro = await _context.Adotantes.FindAsync(id);
+        return await _context.Adotantes.ToListAsync();
+    }
 
-        if (buscaRegistro == null)
+    public async Task<AdotanteDto?> ObterAdotantePorId(int id)
+    {
+        var adotante = await BuscarAdotantePorId(id);
+
+        if (adotante == null)
         {
-            throw new KeyNotFoundException($"Adotante com Id {id} não foi encontrado.");
+            return null;
         }
 
-        buscaRegistro.Nome = adotanteDto.Nome;
-        buscaRegistro.Rg = adotanteDto.Rg;
-        buscaRegistro.Cpf = adotanteDto.Cpf;
-        buscaRegistro.LocalTrabalho = adotanteDto.LocalTrabalho;
-        buscaRegistro.Status = adotanteDto.Status;
-        buscaRegistro.Facebook = adotanteDto.Facebook;
-        buscaRegistro.Instagram = adotanteDto.Instagram;
-        buscaRegistro.Logradouro = adotanteDto.Logradouro;
-        buscaRegistro.Numero = adotanteDto.Numero;
-        buscaRegistro.Complemento = adotanteDto.Complemento;
-        buscaRegistro.Bairro = adotanteDto.Bairro;
-        buscaRegistro.Uf = adotanteDto.Uf;
-        buscaRegistro.Cidade = adotanteDto.Cidade;
-        buscaRegistro.Cep = adotanteDto.Cep;
-        buscaRegistro.SituacaoEndereco = adotanteDto.SituacaoEndereco;
+        return new AdotanteDto
+        {
+            Id = adotante.Id,
+            Nome = adotante.Nome,
+            Rg = adotante.Rg,
+            Cpf = adotante.Cpf,
+            LocalTrabalho = adotante.LocalTrabalho,
+            Status = adotante.Status,
+            Facebook = adotante.Facebook,
+            Instagram = adotante.Instagram,
+            Logradouro = adotante.Logradouro,
+            Numero = adotante.Numero,
+            Complemento = adotante.Complemento,
+            Bairro = adotante.Bairro,
+            Uf = adotante.Uf,
+            Cidade = adotante.Cidade,
+            Cep = adotante.Cep,
+            SituacaoEndereco = adotante.SituacaoEndereco
+        };
+    }
 
-        _context.Entry(buscaRegistro).State = EntityState.Modified;
+    public async Task<IEnumerable<Adotante>> ObterAdotantePorNome(string nome)
+    {
+        return await BuscarAdotantePorNome(nome).ToListAsync();
+    }
+
+    public async Task<AdotanteDto?> AtualizarAdotante(int id, AtualizarAdotanteDto adotanteDto)
+    {
+        var adotante = await BuscarAdotantePorId(id);
+
+        if (adotante == null)
+        {
+            return null;
+        }
+
+        adotante.Nome = string.IsNullOrEmpty(adotanteDto.Nome) ? adotante.Nome : adotanteDto.Nome;
+        adotante.Rg = string.IsNullOrEmpty(adotanteDto.Rg) ? adotante.Rg : adotanteDto.Rg;
+        adotante.Cpf = string.IsNullOrEmpty(adotanteDto.Cpf) ? adotante.Cpf : adotanteDto.Cpf;
+        adotante.LocalTrabalho = string.IsNullOrEmpty(adotanteDto.LocalTrabalho) ? adotante.LocalTrabalho : adotanteDto.LocalTrabalho;
+        adotante.Status = adotanteDto.Status.HasValue ? adotanteDto.Status.Value : adotante.Status;
+        adotante.Facebook = string.IsNullOrEmpty(adotanteDto.Facebook) ? adotante.Facebook : adotanteDto.Facebook;
+        adotante.Instagram = string.IsNullOrEmpty(adotanteDto.Instagram) ? adotante.Instagram : adotanteDto.Instagram;
+        adotante.Logradouro = string.IsNullOrEmpty(adotanteDto.Logradouro) ? adotante.Logradouro : adotanteDto.Logradouro;
+        adotante.Numero = adotanteDto.Numero.HasValue ? adotanteDto.Numero.Value : adotante.Numero;
+        adotante.Complemento = string.IsNullOrEmpty(adotanteDto.Complemento) ? adotante.Complemento : adotanteDto.Complemento;
+        adotante.Bairro = string.IsNullOrEmpty(adotanteDto.Bairro) ? adotante.Bairro : adotanteDto.Bairro;
+        adotante.Uf = string.IsNullOrEmpty(adotanteDto.Uf) ? adotante.Uf : adotanteDto.Uf;
+        adotante.Cidade = string.IsNullOrEmpty(adotanteDto.Cidade) ? adotante.Cidade : adotanteDto.Cidade;
+        adotante.Cep = adotanteDto.Cep.HasValue ? adotanteDto.Cep.Value : adotante.Cep;
+        adotante.SituacaoEndereco = string.IsNullOrEmpty(adotanteDto.SituacaoEndereco) ? adotante.SituacaoEndereco : adotanteDto.SituacaoEndereco;
+
         await _context.SaveChangesAsync();
-    }
 
-    public async Task ExcluirAdotante(int id)
-    {
-        var excluirRegistro = await _context.Adotantes.FindAsync(id);
-
-        if (excluirRegistro != null)
+        var adotanteAtualizado = new AdotanteDto
         {
-            _context.Adotantes.Remove(excluirRegistro);
-            _context.SaveChanges();
-        }
+            Id = adotante.Id,
+            Nome = adotante.Nome,
+            Rg = adotante.Rg,
+            Cpf = adotante.Cpf,
+            LocalTrabalho = adotante.LocalTrabalho,
+            Status = adotante.Status,
+            Facebook = adotante.Facebook,
+            Instagram = adotante.Instagram,
+            Logradouro = adotante.Logradouro,
+            Numero = adotante.Numero,
+            Complemento = adotante.Complemento,
+            Bairro = adotante.Bairro,
+            Uf = adotante.Uf,
+            Cidade = adotante.Cidade,
+            Cep = adotante.Cep,
+            SituacaoEndereco = adotante.SituacaoEndereco
+        };
+
+        return adotanteAtualizado;
     }
+
+    public async Task<bool> ExcluirAdotante(int id)
+    {
+        var adotante = await BuscarAdotantePorId(id);
+
+        if (adotante == null)
+        {
+            return false;
+        }
+
+        _context.Adotantes.Remove(adotante);
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
+
+    #region MÉTODOS PRIVADOS
+
+    private async Task<Adotante?> BuscarAdotantePorId(int id)
+    {
+        var adotante = await _context.Adotantes.FindAsync(id);
+        return adotante;
+    }
+
+    private IQueryable<Adotante> BuscarAdotantePorNome(string nome)
+    {
+        return _context.Adotantes.Where(a => a.Nome.Contains(nome));
+    }
+
+    #endregion
 }

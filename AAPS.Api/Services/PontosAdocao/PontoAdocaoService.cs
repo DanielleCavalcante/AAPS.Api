@@ -1,10 +1,14 @@
 ﻿using AAPS.Api.Context;
+using AAPS.Api.Dtos.Animais;
 using AAPS.Api.Dtos.PontoAdocao;
+using AAPS.Api.Dtos.PontosAdocao;
 using AAPS.Api.Models;
 using AAPS.Api.Services.PontosAdocao;
 using Microsoft.EntityFrameworkCore;
 public class PontoAdocaoService : IPontoAdocaoService
 {
+    #region ATRIBUTOS E CONSTRUTOR
+
     private readonly AppDbContext _context;
 
     public PontoAdocaoService(AppDbContext context)
@@ -12,32 +16,9 @@ public class PontoAdocaoService : IPontoAdocaoService
         _context = context;
     }
 
-    public async Task<IEnumerable<PontoAdocao>> ObterPontosAdocao()
-    {
-        return await _context.PontosAdocao.ToListAsync();
-    }
+    #endregion
 
-    public async Task<PontoAdocao> ObterPontoAdocaoPorId(int id)
-    {
-        return await _context.PontosAdocao.FindAsync(id);
-    }
-
-    public async Task<IEnumerable<PontoAdocao>> ObterPontoAdocaoPorNome(string nome)
-    {
-        IEnumerable<PontoAdocao> pontosAdocao;
-
-        if (!string.IsNullOrEmpty(nome))
-        {
-            pontosAdocao = await _context.PontosAdocao.Where(n => n.NomeFantasia.Contains(nome)).ToListAsync();
-        }
-        else
-        {
-            pontosAdocao = await ObterPontosAdocao();
-        }
-        return pontosAdocao;
-    }
-
-    public async Task CriarPontoAdocao(PontoAdocaoDto pontoAdocaoDto)
+    public async Task<PontoAdocaoDto> CriarPontoAdocao(CriarPontoAdocaoDto pontoAdocaoDto)
     {
         var pontoAdocao = new PontoAdocao
         {
@@ -55,40 +36,124 @@ public class PontoAdocaoService : IPontoAdocaoService
 
         _context.PontosAdocao.Add(pontoAdocao);
         await _context.SaveChangesAsync();
+
+        return new PontoAdocaoDto
+        {
+            NomeFantasia = pontoAdocaoDto.NomeFantasia,
+            Responsavel = pontoAdocaoDto.Responsavel,
+            Cnpj = pontoAdocaoDto.Cnpj,
+            Logradouro = pontoAdocaoDto.Logradouro,
+            Numero = pontoAdocaoDto.Numero,
+            Complemento = pontoAdocaoDto.Complemento,
+            Bairro = pontoAdocaoDto.Bairro,
+            Uf = pontoAdocaoDto.Uf,
+            Cidade = pontoAdocaoDto.Cidade,
+            Cep = pontoAdocaoDto.Cep
+        };
     }
 
-    public async Task AtualizarPontoAdocao(int id, PontoAdocaoDto pontoAdocaoDto)
+    public async Task<IEnumerable<PontoAdocao>> ObterPontosAdocao()
     {
-        var buscaRegistro = await _context.PontosAdocao.FindAsync(id);
+        return await _context.PontosAdocao.ToListAsync();
+    }
 
-        if (buscaRegistro == null)
+    public async Task<PontoAdocaoDto?> ObterPontoAdocaoPorId(int id)
+    {
+        var pontoAdocao = await BuscarPontoAdocaoPorId(id);
+
+        if (pontoAdocao == null)
         {
-            throw new KeyNotFoundException($"Ponto de adoção com Id {id} não foi encontrado.");
+            return null;
         }
 
-        buscaRegistro.NomeFantasia = pontoAdocaoDto.NomeFantasia;
-        buscaRegistro.Responsavel = pontoAdocaoDto.Responsavel;
-        buscaRegistro.Cnpj = pontoAdocaoDto.Cnpj;
-        buscaRegistro.Logradouro = pontoAdocaoDto.Logradouro;
-        buscaRegistro.Numero = pontoAdocaoDto.Numero;
-        buscaRegistro.Complemento = pontoAdocaoDto.Complemento;
-        buscaRegistro.Bairro = pontoAdocaoDto.Bairro;
-        buscaRegistro.Uf = pontoAdocaoDto.Uf;
-        buscaRegistro.Cidade = pontoAdocaoDto.Cidade;
-        buscaRegistro.Cep = pontoAdocaoDto.Cep;
+        return new PontoAdocaoDto 
+        {
+            Id = pontoAdocao.Id,
+            NomeFantasia = pontoAdocao.NomeFantasia,
+            Responsavel = pontoAdocao.Responsavel,
+            Cnpj = pontoAdocao.Cnpj,
+            Logradouro = pontoAdocao.Logradouro,
+            Numero = pontoAdocao.Numero,
+            Complemento = pontoAdocao.Complemento,
+            Bairro = pontoAdocao.Bairro,
+            Uf = pontoAdocao.Uf,
+            Cidade = pontoAdocao.Cidade,
+            Cep = pontoAdocao.Cep
+        };
+    }
 
-        _context.Entry(buscaRegistro).State = EntityState.Modified;
+    public async Task<IEnumerable<PontoAdocao>> ObterPontoAdocaoPorNome(string nome)
+    {
+        return await BuscarPontoAdocaoPorNome(nome).ToListAsync();
+    }
+
+    public async Task<PontoAdocaoDto> AtualizarPontoAdocao(int id, AtualizaPontoAdocaoDto pontoAdocaoDto)
+    {
+        var pontoAdocao = await BuscarPontoAdocaoPorId(id);
+
+        if (pontoAdocao is null)
+        {
+            return null;
+        }
+
+        pontoAdocao.NomeFantasia = string.IsNullOrEmpty(pontoAdocaoDto.NomeFantasia) ? pontoAdocao.NomeFantasia : pontoAdocaoDto.NomeFantasia;
+        pontoAdocao.Responsavel = string.IsNullOrEmpty(pontoAdocaoDto.Responsavel) ? pontoAdocao.Responsavel : pontoAdocaoDto.Responsavel;
+        pontoAdocao.Cnpj = string.IsNullOrEmpty(pontoAdocaoDto.Cnpj) ? pontoAdocao.Cnpj : pontoAdocaoDto.Cnpj;
+        pontoAdocao.Logradouro = string.IsNullOrEmpty(pontoAdocaoDto.Logradouro) ? pontoAdocao.Logradouro : pontoAdocaoDto.Logradouro;
+        pontoAdocao.Numero = pontoAdocaoDto.Numero.HasValue ? pontoAdocaoDto.Numero.Value : pontoAdocao.Numero;
+        pontoAdocao.Complemento = string.IsNullOrEmpty(pontoAdocaoDto.Complemento) ? pontoAdocao.Complemento : pontoAdocaoDto.Complemento;
+        pontoAdocao.Bairro = string.IsNullOrEmpty(pontoAdocaoDto.Bairro) ? pontoAdocao.Bairro : pontoAdocaoDto.Bairro;
+        pontoAdocao.Uf = string.IsNullOrEmpty(pontoAdocaoDto.Uf) ? pontoAdocao.Uf : pontoAdocaoDto.Uf;
+        pontoAdocao.Cidade = string.IsNullOrEmpty(pontoAdocaoDto.Cidade) ? pontoAdocao.Cidade : pontoAdocaoDto.Cidade;
+        pontoAdocao.Cep = pontoAdocaoDto.Cep.HasValue ? pontoAdocaoDto.Cep.Value : pontoAdocao.Cep;
+
         await _context.SaveChangesAsync();
-    }
 
-    public async Task ExcluirPontoAdocao(int id)
-    {
-        var excluirRegistro = await _context.PontosAdocao.FindAsync(id);
-
-        if (excluirRegistro != null)
+        var pontoAdocaoAtualizado = new PontoAdocaoDto
         {
-            _context.PontosAdocao.Remove(excluirRegistro);
-            _context.SaveChanges();
-        }
+            Id = pontoAdocao.Id,
+            NomeFantasia = pontoAdocao.NomeFantasia,
+            Responsavel = pontoAdocao.Responsavel,
+            Cnpj = pontoAdocao.Cnpj,
+            Logradouro = pontoAdocao.Logradouro,
+            Numero = pontoAdocao.Numero,
+            Complemento = pontoAdocao.Complemento,
+            Bairro = pontoAdocao.Bairro,
+            Uf = pontoAdocao.Uf,
+            Cidade = pontoAdocao.Cidade,
+            Cep = pontoAdocao.Cep
+        };
+
+        return pontoAdocaoAtualizado;
     }
+
+    public async Task<bool> ExcluirPontoAdocao(int id)
+    {
+        var pontoAdocao = await BuscarPontoAdocaoPorId(id);
+
+        if(pontoAdocao == null)
+        {
+            return false;
+        }
+
+        _context.PontosAdocao.Remove(pontoAdocao);
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
+
+    #region MÉTODOS PRIVADOS
+
+    private async Task<PontoAdocao?> BuscarPontoAdocaoPorId(int id)
+    {
+        var pontoAdocao = await _context.PontosAdocao.FindAsync(id);
+        return pontoAdocao;
+    }
+
+    private IQueryable<PontoAdocao> BuscarPontoAdocaoPorNome(string nome)
+    {
+        return _context.PontosAdocao.Where(p => p.NomeFantasia.Contains(nome));
+    }
+
+    #endregion
 }

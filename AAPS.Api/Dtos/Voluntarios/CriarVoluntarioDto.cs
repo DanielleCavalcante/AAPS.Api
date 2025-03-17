@@ -5,14 +5,14 @@ namespace AAPS.Api.Dtos.Voluntarios
 {
     public class CriarVoluntarioDto
     {
-        public required string NomeCompleto { get; set; }
-        public required string NomeUsuario { get; set; }
-        public required string Cpf { get; set; }
-        public required string Email { get; set; }
-        public required string Telefone { get; set; }
-        public required StatusEnum Status { get; set; }
-        public required string Acesso { get; set; }
-        public required string Senha { get; set; }
-        public string? ConfirmarSenha { get; set; }
+        public required string NomeCompleto { get; set; } = string.Empty;
+        public required string NomeUsuario { get; set; } = string.Empty;
+        public required string Cpf { get; set; } = string.Empty;
+        public required string Email { get; set; } = string.Empty;
+        public required string Telefone { get; set; } = string.Empty;
+        public required StatusEnum Status { get; set; } = StatusEnum.Ativo;
+        public required string Acesso { get; set; } = string.Empty;
+        public required string Senha { get; set; } = string.Empty;
+        public string? ConfirmarSenha { get; set; } = string.Empty;
     }
 }
