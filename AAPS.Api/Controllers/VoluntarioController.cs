@@ -36,19 +36,21 @@ namespace AAPS.Api.Controllers
         {
             var erros = new List<string>();
 
-            if (string.IsNullOrWhiteSpace(voluntarioDto.NomeCompleto))
+            if (string.IsNullOrEmpty(voluntarioDto.Nome))
                 erros.Add("O campo 'Nome' é obrigatório!");
-            if (string.IsNullOrWhiteSpace(voluntarioDto.NomeUsuario))
+            if (string.IsNullOrEmpty(voluntarioDto.UserName))
                 erros.Add("O campo 'Nome de Usuário' é obrigatório!");
-            if (string.IsNullOrWhiteSpace(voluntarioDto.Cpf))
+            if (string.IsNullOrEmpty(voluntarioDto.Cpf))
                 erros.Add("O campo 'CPF' é obrigatório!");
-            if (string.IsNullOrWhiteSpace(voluntarioDto.Email))
+            if (string.IsNullOrEmpty(voluntarioDto.Email))
                 erros.Add("O campo 'Email' é obrigatório!");
-            if (string.IsNullOrWhiteSpace(voluntarioDto.Telefone))
+            if (string.IsNullOrEmpty(voluntarioDto.Telefone))
                 erros.Add("O campo 'Telefone' é obrigatório!");
-            if (string.IsNullOrWhiteSpace(voluntarioDto.Acesso))
+            if (string.IsNullOrEmpty(voluntarioDto.Status.ToString())) // ver se vai tirar
+                erros.Add("O campo 'Status' é obrigatório!");
+            if (string.IsNullOrEmpty(voluntarioDto.Acesso))
                 erros.Add("O campo 'Acesso' é obrigatório!");
-            if (string.IsNullOrWhiteSpace(voluntarioDto.Senha))
+            if (string.IsNullOrEmpty(voluntarioDto.Senha))
                 erros.Add("O campo 'Senha' é obrigatório!");
 
             if (!Regex.IsMatch(voluntarioDto.Senha, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?"":{}|<>])[A-Za-z\d!@#$%^&*(),.?"":{}|<>]{8,}$"))
@@ -56,7 +58,7 @@ namespace AAPS.Api.Controllers
                 erros.Add("A senha deve ter pelo menos 8 caracteres, incluindo 1 letra maiúscula, 1 letra minúscula e 1 número.");
             }
 
-            var usuarioExistente = await _voluntarioService.ObterVoluntarioPorUserName(voluntarioDto.NomeUsuario);
+            var usuarioExistente = await _voluntarioService.ObterVoluntarioPorUserName(voluntarioDto.UserName);
             if (usuarioExistente != null)
             {
                 erros.Add("O nome de usuário já está em uso.");
@@ -81,7 +83,7 @@ namespace AAPS.Api.Controllers
                 return BadRequest(ApiResponse<object>.ErroResponse(new List<string> { "Erro ao criar voluntário." }));
             }
 
-            return Ok(ApiResponse<object>.SucessoResponse(resultado, $"Usuário {voluntarioDto.NomeUsuario} cadastrado com sucesso!"));
+            return Ok(ApiResponse<object>.SucessoResponse(resultado, $"Usuário {voluntarioDto.UserName} cadastrado com sucesso!"));
         }
 
         [HttpPost("SolicitarResetSenha")]

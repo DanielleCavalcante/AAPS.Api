@@ -4,13 +4,13 @@ using System.Text.Json;
 
 namespace AAPS.Api.Middlewares
 {
-    public class MiddlewareException
+    public class ExcecoesMiddleware
     {
         #region ATRIBUTOS E CONSTRUTOR
 
         private readonly RequestDelegate _next;
 
-        public MiddlewareException(RequestDelegate next)
+        public ExcecoesMiddleware(RequestDelegate next)
         {
             _next = next;
         }

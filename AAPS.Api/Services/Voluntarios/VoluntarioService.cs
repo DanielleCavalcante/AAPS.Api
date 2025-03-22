@@ -30,10 +30,10 @@ public class VoluntarioService : IVoluntarioService
     {
         var voluntario = new Voluntario
         {
-            UserName = voluntarioDto.NomeUsuario,
+            UserName = voluntarioDto.UserName,
             Email = voluntarioDto.Email,
             PhoneNumber = voluntarioDto.Telefone,
-            NomeCompleto = voluntarioDto.NomeCompleto,
+            Nome = voluntarioDto.Nome,
             Cpf = voluntarioDto.Cpf,
             Status = voluntarioDto.Status,
             SecurityStamp = Guid.NewGuid().ToString(),
@@ -83,7 +83,7 @@ public class VoluntarioService : IVoluntarioService
         return new Voluntario
         {
             Id = voluntario.Id,
-            NomeCompleto = voluntario.NomeCompleto,
+            Nome = voluntario.Nome,
             UserName = voluntario.UserName,
             Email = voluntario.Email,
             PhoneNumber = voluntario.PhoneNumber,

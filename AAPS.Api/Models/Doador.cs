@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace AAPS.Api.Models;
+﻿namespace AAPS.Api.Models;
 
 public class Doador
 {
@@ -16,7 +14,6 @@ public class Doador
     public string Cidade { get; set; } = string.Empty;
     public int Cep { get; set; } = 0;
 
-    // Relacionamentos
     public ICollection<Animal> Animais { get; set; } = new List<Animal>();
     public ICollection<Telefone> Telefones { get; set; } = new List<Telefone>();
 }

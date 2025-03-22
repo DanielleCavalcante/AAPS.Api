@@ -8,7 +8,7 @@ public class AnimalDto
     public required string Raca { get; set; }
     public required string Pelagem { get; set; }
     public required string Sexo { get; set; }
-    public required DateTime DataNascimento { get; set; }
+    public DateTime? DataNascimento { get; set; }
     public required bool Status { get; set; }
     public required int DoadorId { get; set; }
 }

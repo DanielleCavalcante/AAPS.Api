@@ -87,7 +87,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-            RoleClaimType = ClaimTypes.Role
+            RoleClaimType = ClaimTypes.Role,
+            //ClockSkew = TimeSpan.Zero
         };
     });
 
@@ -117,16 +118,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+app.UseMiddleware<ExcecoesMiddleware>(); // classe para lidar com erros de autenticacao
+app.UseMiddleware<AutenticacaoMiddleware>(); // classe para lidar com autenticacao
+
 app.UseCors("Cors");
-
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
-
-app.UseMiddleware<MiddlewareException>(); // classe para lidar com erros de autenticacao
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

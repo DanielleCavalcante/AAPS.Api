@@ -27,22 +27,22 @@ public class AnimalController : ControllerBase
     {
         var erros = new List<string>();
 
-        if (string.IsNullOrWhiteSpace(animalDto.Nome))
-            return BadRequest("O campo nome é obrigatório!");
-        if (string.IsNullOrWhiteSpace(animalDto.Especie))
-            return BadRequest("O campo nome é obrigatório!");
-        if (string.IsNullOrWhiteSpace(animalDto.Raca))
-            return BadRequest("O campo nome é obrigatório!");
-        if (string.IsNullOrWhiteSpace(animalDto.Pelagem))
-            return BadRequest("O campo nome é obrigatório!");
-        if (string.IsNullOrWhiteSpace(animalDto.Sexo))
-            return BadRequest("O campo nome é obrigatório!");
-        if (string.IsNullOrWhiteSpace(animalDto.DataNascimento.ToString()))
-            return BadRequest("O campo nome é obrigatório!");
-        if (string.IsNullOrWhiteSpace(animalDto.Status.ToString()))
-            return BadRequest("O campo nome é obrigatório!");
-        if (string.IsNullOrWhiteSpace(animalDto.DoadorId.ToString()))
-            return BadRequest("O campo nome é obrigatório!");
+        if (string.IsNullOrEmpty(animalDto.Nome))
+            erros.Add("O campo 'Nome' é obrigatório!");
+        if (string.IsNullOrEmpty(animalDto.Especie))
+            erros.Add("O campo 'Especie' é obrigatório!");
+        if (string.IsNullOrEmpty(animalDto.Raca))
+            erros.Add("O campo 'Raca' é obrigatório!");
+        if (string.IsNullOrEmpty(animalDto.Pelagem))
+            erros.Add("O campo 'Pelagem' é obrigatório!");
+        if (string.IsNullOrEmpty(animalDto.Sexo))
+            erros.Add("O campo 'Sexo' é obrigatório!");
+        if (string.IsNullOrEmpty(animalDto.DataNascimento.ToString()))
+            erros.Add("O campo 'DataNascimento' é obrigatório!");
+        if (string.IsNullOrEmpty(animalDto.Status.ToString()))
+            erros.Add("O campo 'Status' é obrigatório!");
+        if (string.IsNullOrEmpty(animalDto.DoadorId.ToString()) || animalDto.DoadorId <= 0)
+            erros.Add("O campo 'Doador' é obrigatório!");
 
         if (erros.Count > 0)
         {

@@ -1,11 +1,9 @@
-﻿using AAPS.Api.Models.Enums;
-
-namespace AAPS.Api.Models;
+﻿namespace AAPS.Api.Models;
 
 public class Evento
 {
     public int Id { get; set; }
-    public EventoEnum Code { get; set; } = EventoEnum.Vacina;
+    public string Descricao { get; set; } = string.Empty;
 
-    public ICollection<AnimalEvento> AnimalEventos { get; set; } = new List<AnimalEvento>();
+    public ICollection<AnimalEvento> AnimalEvento { get; set; } = new List<AnimalEvento>();
 }

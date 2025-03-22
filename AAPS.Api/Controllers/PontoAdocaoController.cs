@@ -29,26 +29,26 @@ namespace AAPS.Api.Controllers
         {
             var erros = new List<string>();
 
-            if (string.IsNullOrWhiteSpace(pontoAdocaoDto.NomeFantasia))
-                erros.Add("O campo 'nome fantasia' é obrigatório!");
-            if (string.IsNullOrWhiteSpace(pontoAdocaoDto.Responsavel))
-                erros.Add("O campo 'nome fantasia' é obrigatório!");
-            if (string.IsNullOrWhiteSpace(pontoAdocaoDto.Cnpj))
-                erros.Add("O campo 'nome fantasia' é obrigatório!");
-            if (string.IsNullOrWhiteSpace(pontoAdocaoDto.Logradouro))
-                erros.Add("O campo 'nome fantasia' é obrigatório!");
-            if (string.IsNullOrWhiteSpace(pontoAdocaoDto.Numero.ToString()))
-                erros.Add("O campo 'nome fantasia' é obrigatório!");
-            if (string.IsNullOrWhiteSpace(pontoAdocaoDto.Complemento))
-                erros.Add("O campo 'nome fantasia' é obrigatório!");
-            if (string.IsNullOrWhiteSpace(pontoAdocaoDto.Bairro))
-                erros.Add("O campo 'nome fantasia' é obrigatório!");
-            if (string.IsNullOrWhiteSpace(pontoAdocaoDto.Uf))
-                erros.Add("O campo 'nome fantasia' é obrigatório!");
-            if (string.IsNullOrWhiteSpace(pontoAdocaoDto.Cidade))
-                erros.Add("O campo 'nome fantasia' é obrigatório!");
-            if (string.IsNullOrWhiteSpace(pontoAdocaoDto.Cep.ToString()))
-                erros.Add("O campo 'nome fantasia' é obrigatório!");
+            if (string.IsNullOrEmpty(pontoAdocaoDto.NomeFantasia))
+                erros.Add("O campo 'Nome Fantasia' é obrigatório!");
+            if (string.IsNullOrEmpty(pontoAdocaoDto.Responsavel))
+                erros.Add("O campo 'Responsavel' é obrigatório!");
+            if (string.IsNullOrEmpty(pontoAdocaoDto.Cnpj))
+                erros.Add("O campo 'CNPJ' é obrigatório!");
+            if (string.IsNullOrEmpty(pontoAdocaoDto.Logradouro))
+                erros.Add("O campo 'Logradouro' é obrigatório!");
+            if (string.IsNullOrEmpty(pontoAdocaoDto.Numero.ToString()) || pontoAdocaoDto.Numero <= 0)
+                erros.Add("O campo 'Número' é obrigatório e deve ser maior que zero!");
+            if (string.IsNullOrEmpty(pontoAdocaoDto.Complemento))
+                erros.Add("O campo 'Complemento' é obrigatório!");
+            if (string.IsNullOrEmpty(pontoAdocaoDto.Bairro))
+                erros.Add("O campo 'Bairro' é obrigatório!");
+            if (string.IsNullOrEmpty(pontoAdocaoDto.Uf) || pontoAdocaoDto.Uf.Length != 2)
+                erros.Add("O campo 'UF' é obrigatório!");
+            if (string.IsNullOrEmpty(pontoAdocaoDto.Cidade))
+                erros.Add("O campo 'Cidade' é obrigatório!");
+            if (pontoAdocaoDto.Cep <= 0 || pontoAdocaoDto.Cep.ToString().Length != 8)
+                erros.Add("O campo 'CEP' é obrigatório e deve ter exatamente 8 dígitos!");
 
             if (erros.Count > 0)
             {

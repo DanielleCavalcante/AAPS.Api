@@ -19,20 +19,21 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
     public DbSet<Evento> Eventos { get; set; }
     public DbSet<PontoAdocao> PontosAdocao { get; set; }
     public DbSet<Telefone> Telefones { get; set; }
-   public DbSet<Voluntario> Voluntarios { get; set; }
+    public DbSet<Voluntario> Voluntarios { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
         #region ADOÇÃO - Mapeamento
+
         modelBuilder.Entity<Adocao>(entity =>
         {
-            entity.ToTable("Adocao", "dbo");
+            entity.ToTable("Adocoes", "dbo");
 
             entity.HasKey(x => x.Id);
 
-            entity.Property(x => x.DataAdocao).HasColumnType("date").IsRequired();
+            entity.Property(x => x.Data).HasColumnType("date").IsRequired();
             entity.Property(x => x.AdotanteId).HasColumnType("int").IsRequired();
             entity.Property(x => x.AnimalId).HasColumnType("int").IsRequired();
             entity.Property(x => x.VoluntarioId).HasColumnType("int").IsRequired();
@@ -40,31 +41,33 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
 
             // Relações
             entity.HasOne(x => x.Animal)
-                .WithMany(x => x.Adocoes)
-                .HasForeignKey(x => x.AnimalId)
-                .OnDelete(DeleteBehavior.NoAction);
+                  .WithMany(x => x.Adocoes)
+                  .HasForeignKey(x => x.AnimalId)
+                  .OnDelete(DeleteBehavior.NoAction);
 
             entity.HasOne(x => x.Voluntario)
-                .WithMany(x => x.Adocoes)
-                .HasForeignKey(x => x.VoluntarioId)
-                .OnDelete(DeleteBehavior.NoAction);
+                  .WithMany(x => x.Adocoes)
+                  .HasForeignKey(x => x.VoluntarioId)
+                  .OnDelete(DeleteBehavior.NoAction);
 
             entity.HasOne(x => x.Adotante)
-                .WithMany(x => x.Adocoes)
-                .HasForeignKey(x => x.AdotanteId)
-                .OnDelete(DeleteBehavior.NoAction);
+                  .WithMany(x => x.Adocoes)
+                  .HasForeignKey(x => x.AdotanteId)
+                  .OnDelete(DeleteBehavior.NoAction);
 
             entity.HasOne(x => x.PontoAdocao)
-                .WithMany(x => x.Adocoes)
-                .HasForeignKey(x => x.PontoAdocaoId)
-                .OnDelete(DeleteBehavior.NoAction);
+                  .WithMany(x => x.Adocoes)
+                  .HasForeignKey(x => x.PontoAdocaoId)
+                  .OnDelete(DeleteBehavior.NoAction);
         });
+
         #endregion
 
         #region ADOTANTE - Mapeamento
+
         modelBuilder.Entity<Adotante>(entity =>
         {
-            entity.ToTable("Adotante", "dbo");
+            entity.ToTable("Adotantes", "dbo");
 
             entity.HasKey(x => x.Id);
 
@@ -72,7 +75,7 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
             entity.Property(x => x.Rg).HasColumnType("nvarchar(9)").IsRequired();
             entity.Property(x => x.Cpf).HasColumnType("nvarchar(11)").IsRequired();
             entity.Property(x => x.LocalTrabalho).HasColumnType("nvarchar(80)");
-            entity.Property(x => x.Status).HasColumnType("bit").IsRequired();
+            entity.Property(x => x.Status).HasColumnType("int").IsRequired();
             entity.Property(x => x.Facebook).HasColumnType("nvarchar(150)").IsRequired();
             entity.Property(x => x.Instagram).HasColumnType("nvarchar(150)").IsRequired();
 
@@ -83,20 +86,23 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
             entity.Property(x => x.Uf).HasColumnType("nvarchar(2)").IsRequired();
             entity.Property(x => x.Cidade).HasColumnType("nvarchar(50)").IsRequired();
             entity.Property(x => x.Cep).HasColumnType("int").IsRequired();
+            entity.Property(x => x.SituacaoEndereco).HasColumnType("nvarchar(50)").IsRequired();
 
             // Relações
             entity.HasMany(x => x.Telefones)
-                .WithOne(x => x.Adotante);
+                  .WithOne(x => x.Adotante);
 
             entity.HasMany(x => x.Adocoes)
-                .WithOne(x => x.Adotante);
+                  .WithOne(x => x.Adotante);
         });
+
         #endregion
 
         #region ANIMAL - Mapeamento
+
         modelBuilder.Entity<Animal>(entity =>
         {
-            entity.ToTable("Animal", "dbo");
+            entity.ToTable("Animais", "dbo");
 
             entity.HasKey(x => x.Id);
 
@@ -106,52 +112,56 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
             entity.Property(x => x.Pelagem).HasColumnType("nvarchar(25)").IsRequired();
             entity.Property(x => x.Sexo).HasColumnType("nvarchar(10)").IsRequired();
             entity.Property(x => x.DataNascimento).HasColumnType("date");
-            entity.Property(x => x.Status).HasColumnType("bit").IsRequired();
+            entity.Property(x => x.Status).HasColumnType("int").IsRequired();
             entity.Property(x => x.DoadorId).HasColumnType("int").IsRequired();
 
             // Relações
             entity.HasOne(x => x.Doador)
-                .WithMany(x => x.Animais)
-                .HasForeignKey(x => x.DoadorId)
-                .OnDelete(DeleteBehavior.NoAction);
+                  .WithMany(x => x.Animais)
+                  .HasForeignKey(x => x.DoadorId)
+                  .OnDelete(DeleteBehavior.NoAction);
 
-            entity.HasMany(x => x.AnimalEventos)
-                .WithOne(x => x.Animal);
+            entity.HasMany(x => x.AnimalEvento)
+                  .WithOne(x => x.Animal);
 
             entity.HasMany(x => x.Adocoes)
-                .WithOne(x => x.Animal);
+                  .WithOne(x => x.Animal);
         });
+
         #endregion
 
         #region ANIMAL EVENTO - Mapeamento
+
         modelBuilder.Entity<AnimalEvento>(entity =>
         {
             entity.ToTable("AnimalEvento", "dbo");
 
             entity.HasKey(x => x.Id);
 
-            entity.Property(x => x.DataAcompanhamento).HasColumnType("date").IsRequired();
-            entity.Property(x => x.Observacao).HasColumnType("nvarchar(500)");
+            entity.Property(x => x.Data).HasColumnType("date").IsRequired();
+            entity.Property(x => x.Observacao).HasColumnType("nvarchar(600)");
             entity.Property(x => x.AnimalId).HasColumnType("int").IsRequired();
             entity.Property(x => x.EventoId).HasColumnType("int").IsRequired();
 
             // Relações
             entity.HasOne(x => x.Evento)
-                .WithMany(x => x.AnimalEventos)
-                .HasForeignKey(x => x.EventoId)
-                .OnDelete(DeleteBehavior.NoAction);
+                  .WithMany(x => x.AnimalEvento)
+                  .HasForeignKey(x => x.EventoId)
+                  .OnDelete(DeleteBehavior.NoAction);
 
             entity.HasOne(x => x.Animal)
-               .WithMany(x => x.AnimalEventos)
-               .HasForeignKey(x => x.AnimalId)
-               .OnDelete(DeleteBehavior.NoAction);
+                  .WithMany(x => x.AnimalEvento)
+                  .HasForeignKey(x => x.AnimalId)
+                  .OnDelete(DeleteBehavior.NoAction);
         });
+
         #endregion
 
         #region DOADOR - Mapeamento
+
         modelBuilder.Entity<Doador>(entity =>
         {
-            entity.ToTable("Doador", "dbo");
+            entity.ToTable("Doadores", "dbo");
 
             entity.HasKey(x => x.Id);
 
@@ -169,36 +179,41 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
 
             // Relações
             entity.HasMany(x => x.Animais)
-                .WithOne(x => x.Doador);
+                  .WithOne(x => x.Doador);
 
             entity.HasMany(x => x.Telefones)
-                .WithOne(x => x.Doador);
+                  .WithOne(x => x.Doador);
         });
+
         #endregion
 
         #region EVENTO - Mapeamento
+
         modelBuilder.Entity<Evento>(entity =>
         {
-            entity.ToTable("Evento", "dbo");
+            entity.ToTable("Eventos", "dbo");
 
             entity.HasKey(x => x.Id);
 
-            entity.Property(x => x.Code).HasColumnType("tinyint").IsRequired();
+            entity.Property(x => x.Descricao).HasColumnType("nvarchar(50)").IsRequired();
 
-            entity.HasMany(x => x.AnimalEventos)
-                .WithOne(x => x.Evento);
+            // Relações
+            entity.HasMany(x => x.AnimalEvento)
+                  .WithOne(x => x.Evento);
         });
+
         #endregion
 
         #region PONTO ADOÇÃO - Mapeamento
+
         modelBuilder.Entity<PontoAdocao>(entity =>
         {
-            entity.ToTable("PontoAdocao", "dbo");
+            entity.ToTable("PontosAdocao", "dbo");
 
             entity.HasKey(x => x.Id);
 
             entity.Property(x => x.NomeFantasia).HasColumnType("nvarchar(60)").IsRequired();
-            entity.Property(x => x.Responsavel).HasColumnType("nvarchar(60)").IsRequired();
+            entity.Property(x => x.Responsavel).HasColumnType("nvarchar(60)").IsRequired();  // ver se precisa deixar
             entity.Property(x => x.Cnpj).HasColumnType("nvarchar(14)").IsRequired();
 
             entity.Property(x => x.Logradouro).HasColumnType("nvarchar(150)").IsRequired();
@@ -211,17 +226,19 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
 
             // Relações
             entity.HasMany(x => x.Adocoes)
-                .WithOne(x => x.PontoAdocao);
+                  .WithOne(x => x.PontoAdocao);
 
             entity.HasMany(x => x.Telefones)
-                .WithOne(x => x.PontoAdocao);
+                  .WithOne(x => x.PontoAdocao);
         });
+
         #endregion
 
         #region TELEFONE - Mapeamento
+
         modelBuilder.Entity<Telefone>(entity =>
         {
-            entity.ToTable("Telefone", "dbo");
+            entity.ToTable("Telefones", "dbo");
 
             entity.HasKey(x => x.Id);
 
@@ -233,37 +250,40 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
 
             // Relações
             entity.HasOne(x => x.Adotante)
-                .WithMany(x => x.Telefones)
-                .HasForeignKey(x => x.AdotanteId)
-                .OnDelete(DeleteBehavior.NoAction);
+                  .WithMany(x => x.Telefones)
+                  .HasForeignKey(x => x.AdotanteId)
+                  .OnDelete(DeleteBehavior.NoAction);
 
             entity.HasOne(x => x.PontoAdocao)
-                .WithMany(x => x.Telefones)
-                .HasForeignKey(x => x.PontoAdocaoId)
-                .OnDelete(DeleteBehavior.NoAction);
+                  .WithMany(x => x.Telefones)
+                  .HasForeignKey(x => x.PontoAdocaoId)
+                  .OnDelete(DeleteBehavior.NoAction);
 
             entity.HasOne(x => x.Doador)
-                .WithMany(x => x.Telefones)
-                .HasForeignKey(x => x.DoadorId)
-                .OnDelete(DeleteBehavior.NoAction);
+                  .WithMany(x => x.Telefones)
+                  .HasForeignKey(x => x.DoadorId)
+                  .OnDelete(DeleteBehavior.NoAction);
         });
+
         #endregion
 
         #region VOLUNTARIO - Mapeamento
+
         modelBuilder.Entity<Voluntario>(entity =>
         {
-            entity.ToTable("Voluntario", "dbo");
+            entity.ToTable("Voluntarios", "dbo");
 
             entity.HasKey(x => x.Id);
 
-            entity.Property(x => x.NomeCompleto).HasColumnType("nvarchar(60)").IsRequired();
+            entity.Property(x => x.Nome).HasColumnType("nvarchar(60)").IsRequired();
             entity.Property(x => x.Cpf).HasColumnType("nvarchar(11)").IsRequired();
-            entity.Property(x => x.Status).HasColumnType("tinyint").IsRequired(); // ativo ou inativo
+            entity.Property(x => x.Status).HasColumnType("int").IsRequired(); // ativo ou inativo
 
             // Relações
             entity.HasMany(x => x.Adocoes)
-                .WithOne(x => x.Voluntario);
+                  .WithOne(x => x.Voluntario);
         });
+
         #endregion
 
         #region IDENTITY - Colunas desnecessárias
@@ -281,6 +301,6 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
         });
 
         #endregion
-    }
 
+    }
 }

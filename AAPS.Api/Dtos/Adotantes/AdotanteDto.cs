@@ -1,4 +1,6 @@
-﻿namespace AAPS.Api.Dtos.Adotante;
+﻿using AAPS.Api.Models.Enums;
+
+namespace AAPS.Api.Dtos.Adotante;
 
 public class AdotanteDto
 {
@@ -7,12 +9,12 @@ public class AdotanteDto
     public required string Rg { get; set; }
     public required string Cpf { get; set; }
     public required string LocalTrabalho { get; set; }
-    public required bool Status { get; set; }
+    public required StatusEnum Status { get; set; }
     public required string Facebook { get; set; }
     public required string Instagram { get; set; }
     public required string Logradouro { get; set; }
     public required int Numero { get; set; }
-    public required string Complemento { get; set; }
+    public string? Complemento { get; set; }
     public required string Bairro { get; set; }
     public required string Uf { get; set; }
     public required string Cidade { get; set; }

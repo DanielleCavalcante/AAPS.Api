@@ -29,36 +29,36 @@ public class AdotanteController : Controller
     {
         var erros = new List<string>();
 
-        if (string.IsNullOrWhiteSpace(adotanteDto.Nome))
+        if (string.IsNullOrEmpty(adotanteDto.Nome))
             erros.Add("O campo 'Nome' é obrigatório!");
-        if (string.IsNullOrWhiteSpace(adotanteDto.Rg))
-            erros.Add("O campo 'Nome' é obrigatório!");
-        if (string.IsNullOrWhiteSpace(adotanteDto.Cpf))
-            erros.Add("O campo 'Nome' é obrigatório!");
-        if (string.IsNullOrWhiteSpace(adotanteDto.LocalTrabalho))
-            erros.Add("O campo 'Nome' é obrigatório!");
-        if (string.IsNullOrWhiteSpace(adotanteDto.Status.ToString()))
-            erros.Add("O campo 'Nome' é obrigatório!");
-        if (string.IsNullOrWhiteSpace(adotanteDto.Facebook))
-            erros.Add("O campo 'Nome' é obrigatório!");
-        if (string.IsNullOrWhiteSpace(adotanteDto.Instagram))
-            erros.Add("O campo 'Nome' é obrigatório!");
-        if (string.IsNullOrWhiteSpace(adotanteDto.Logradouro))
-            erros.Add("O campo 'Nome' é obrigatório!");
-        if (string.IsNullOrWhiteSpace(adotanteDto.Numero.ToString()))
-            erros.Add("O campo 'Nome' é obrigatório!");
-        if (string.IsNullOrWhiteSpace(adotanteDto.Complemento))
-            erros.Add("O campo 'Nome' é obrigatório!");
-        if (string.IsNullOrWhiteSpace(adotanteDto.Bairro))
-            erros.Add("O campo 'Nome' é obrigatório!");
-        if (string.IsNullOrWhiteSpace(adotanteDto.Uf))
-            erros.Add("O campo 'Nome' é obrigatório!");
-        if (string.IsNullOrWhiteSpace(adotanteDto.Cidade))
-            erros.Add("O campo 'Nome' é obrigatório!");
-        if (string.IsNullOrWhiteSpace(adotanteDto.Cep.ToString()))
-            erros.Add("O campo 'Nome' é obrigatório!");
-        if (string.IsNullOrWhiteSpace(adotanteDto.SituacaoEndereco))
-            erros.Add("O campo 'Nome' é obrigatório!");
+        if (string.IsNullOrEmpty(adotanteDto.Rg))
+            erros.Add("O campo 'RG' é obrigatório!");
+        if (string.IsNullOrEmpty(adotanteDto.Cpf))
+            erros.Add("O campo 'CPF' é obrigatório!");
+        if (string.IsNullOrEmpty(adotanteDto.LocalTrabalho))
+            erros.Add("O campo 'Local de Trabalho' é obrigatório!");
+        if (string.IsNullOrEmpty(adotanteDto.Status.ToString()))
+            erros.Add("O campo 'Status' é obrigatório!");
+        if (string.IsNullOrEmpty(adotanteDto.Facebook))
+            erros.Add("O campo 'Facebook' é obrigatório!");
+        if (string.IsNullOrEmpty(adotanteDto.Instagram))
+            erros.Add("O campo 'Instagram' é obrigatório!");
+        if (string.IsNullOrEmpty(adotanteDto.Logradouro))
+            erros.Add("O campo 'Logradouro' é obrigatório!");
+        if (string.IsNullOrEmpty(adotanteDto.Numero.ToString()) || adotanteDto.Numero <= 0)
+            erros.Add("O campo 'Número' é obrigatório e deve ser maior que zero!");
+        if (string.IsNullOrEmpty(adotanteDto.Complemento))
+            erros.Add("O campo 'Complemento' é obrigatório!");
+        if (string.IsNullOrEmpty(adotanteDto.Bairro))
+            erros.Add("O campo 'Bairro' é obrigatório!");
+        if (string.IsNullOrEmpty(adotanteDto.Uf) || adotanteDto.Uf.Length != 2)
+            erros.Add("O campo 'UF' é obrigatório!");
+        if (string.IsNullOrEmpty(adotanteDto.Cidade))
+            erros.Add("O campo 'Cidade' é obrigatório!");
+        if (adotanteDto.Cep <= 0 || adotanteDto.Cep.ToString().Length != 8)
+            erros.Add("O campo 'CEP' é obrigatório e deve ter exatamente 8 dígitos!");
+        if (string.IsNullOrEmpty(adotanteDto.SituacaoEndereco))
+            erros.Add("O campo 'Situacao de Endereco' é obrigatório!");
 
         if (erros.Count > 0)
         {

@@ -1,4 +1,6 @@
-﻿namespace AAPS.Api.Dtos.Adotantes
+﻿using AAPS.Api.Models.Enums;
+
+namespace AAPS.Api.Dtos.Adotantes
 {
     public class AtualizarAdotanteDto
     {
@@ -6,7 +8,7 @@
         public string? Rg { get; set; }
         public string? Cpf { get; set; }
         public string? LocalTrabalho { get; set; }
-        public bool? Status { get; set; }
+        public StatusEnum? Status { get; set; }
         public string? Facebook { get; set; }
         public string? Instagram { get; set; }
         public string? Logradouro { get; set; }

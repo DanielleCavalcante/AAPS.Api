@@ -25,7 +25,7 @@ public class AutenticacaoController : Controller
 
     #endregion
 
-    [HttpPost("LoginUsuario")]
+    [HttpPost("Login")]
     public async Task<ActionResult<TokenDto>> Login([FromBody] LoginDto infoUsuario)
     {
         var tokenDto = await _autenticacaoService.LoginComToken(infoUsuario);

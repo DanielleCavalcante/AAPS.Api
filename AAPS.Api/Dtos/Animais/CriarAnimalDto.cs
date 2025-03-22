@@ -2,13 +2,13 @@
 {
     public class CriarAnimalDto
     {
-        public required string Nome { get; set; } = string.Empty;
-        public required string Especie { get; set; } = string.Empty;
-        public required string Raca { get; set; } = string.Empty;
-        public required string Pelagem { get; set; } = string.Empty;
-        public required string Sexo { get; set; } = string.Empty;
-        public required DateTime DataNascimento { get; set; } = DateTime.Now;
-        public required bool Status { get; set; } = true;
-        public required int DoadorId { get; set; } = 0;
+        public string Nome { get; set; } = string.Empty;
+        public string Especie { get; set; } = string.Empty;
+        public string Raca { get; set; } = string.Empty;
+        public string Pelagem { get; set; } = string.Empty;
+        public string Sexo { get; set; } = string.Empty;
+        public DateTime DataNascimento { get; set; } = DateTime.Now;
+        public bool Status { get; set; } = true;
+        public int DoadorId { get; set; } = 0;
     }
 }

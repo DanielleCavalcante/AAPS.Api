@@ -29,26 +29,26 @@ public class DoadorController : Controller
     {
         var erros = new List<string>();
 
-        if (string.IsNullOrWhiteSpace(doadorDto.Nome))
-            return BadRequest("O campo nome é obrigatório!");
-        if (string.IsNullOrWhiteSpace(doadorDto.Rg))
-            return BadRequest("O campo nome é obrigatório!");
-        if (string.IsNullOrWhiteSpace(doadorDto.Cpf))
-            return BadRequest("O campo nome é obrigatório!");
-        if (string.IsNullOrWhiteSpace(doadorDto.Logradouro))
-            return BadRequest("O campo nome é obrigatório!");
-        if (string.IsNullOrWhiteSpace(doadorDto.Numero.ToString()))
-            return BadRequest("O campo nome é obrigatório!");
-        if (string.IsNullOrWhiteSpace(doadorDto.Complemento))
-            return BadRequest("O campo nome é obrigatório!");
-        if (string.IsNullOrWhiteSpace(doadorDto.Bairro))
-            return BadRequest("O campo nome é obrigatório!");
-        if (string.IsNullOrWhiteSpace(doadorDto.Uf))
-            return BadRequest("O campo nome é obrigatório!");
-        if (string.IsNullOrWhiteSpace(doadorDto.Cidade))
-            return BadRequest("O campo nome é obrigatório!");
-        if (string.IsNullOrWhiteSpace(doadorDto.Cep.ToString()))
-            return BadRequest("O campo nome é obrigatório!");
+        if (string.IsNullOrEmpty(doadorDto.Nome))
+            erros.Add("O campo 'Nome' é obrigatório!");
+        if (string.IsNullOrEmpty(doadorDto.Rg))
+            erros.Add("O campo 'RG' é obrigatório!");
+        if (string.IsNullOrEmpty(doadorDto.Cpf))
+            erros.Add("O campo 'CPF' é obrigatório!");
+        if (string.IsNullOrEmpty(doadorDto.Logradouro))
+            erros.Add("O campo 'Logradouro' é obrigatório!");
+        if (string.IsNullOrEmpty(doadorDto.Numero.ToString()) || doadorDto.Numero <= 0 || string.IsNullOrWhiteSpace(doadorDto.Numero.ToString()))
+            erros.Add("O campo 'Número' é obrigatório e deve ser maior que zero!");
+        if (string.IsNullOrEmpty(doadorDto.Complemento))
+            erros.Add("O campo 'Complemento' é obrigatório!");
+        if (string.IsNullOrEmpty(doadorDto.Bairro))
+            erros.Add("O campo 'Bairro' é obrigatório!");
+        if (string.IsNullOrEmpty(doadorDto.Uf) || doadorDto.Uf.Length != 2)
+            erros.Add("O campo 'UF' é obrigatório e deve ter 2 caracteres!");
+        if (string.IsNullOrEmpty(doadorDto.Cidade))
+            erros.Add("O campo 'Cidade' é obrigatório!");
+        if (doadorDto.Cep <= 0 || doadorDto.Cep.ToString().Length != 8)
+            erros.Add("O campo 'CEP' é obrigatório e deve ter exatamente 8 dígitos!");
 
         if (erros.Count > 0)
         {

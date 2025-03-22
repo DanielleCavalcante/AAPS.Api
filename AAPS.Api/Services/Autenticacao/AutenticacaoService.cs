@@ -1,5 +1,6 @@
 ﻿using AAPS.Api.Context;
 using AAPS.Api.Dtos.Autenticacao;
+using AAPS.Api.Dtos.Voluntarios;
 using AAPS.Api.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -31,7 +32,7 @@ public class AutenticacaoService : IAutenticacaoService
     public async Task<bool> Autenticacao(LoginDto loginDto)
     {
         var resultado = await _signInManager
-            .PasswordSignInAsync(loginDto.NomeUsuario, loginDto.Senha, false, lockoutOnFailure: false);
+            .PasswordSignInAsync(loginDto.UserName, loginDto.Senha, false, lockoutOnFailure: false);
         // cookie de entrada false(não fica salvo o login depois de sair), não bloquear conta se falhar o login.
 
         return resultado.Succeeded;
@@ -39,7 +40,7 @@ public class AutenticacaoService : IAutenticacaoService
 
     public async Task<TokenDto> LoginComToken(LoginDto infoUsuario)
     {
-        var usuario = await _userManager.FindByNameAsync(infoUsuario.NomeUsuario);
+        var usuario = await _userManager.FindByNameAsync(infoUsuario.UserName);
         if (usuario == null)
         {
             return null;
@@ -48,7 +49,18 @@ public class AutenticacaoService : IAutenticacaoService
         var resultado = await _signInManager.PasswordSignInAsync(usuario, infoUsuario.Senha, false, lockoutOnFailure: false);
         if (resultado.Succeeded)
         {
-            return await GerarToken(usuario);
+            var roles = await _userManager.GetRolesAsync(usuario);
+
+            var token = await GerarToken(usuario);
+
+            token.Voluntario = new VoluntarioResponseDto
+            {
+                Id = usuario.Id,
+                Acesso = roles.FirstOrDefault(),
+                Status = usuario.Status
+            };
+
+            return token;
         }
 
         return null;
@@ -85,13 +97,14 @@ public class AutenticacaoService : IAutenticacaoService
             issuer: _configuration["Jwt:Issuer"],
             audience: _configuration["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.Now.AddHours(1),
+            expires: DateTime.Now.AddMinutes(2),
             signingCredentials: creds
         );
 
         return new TokenDto
         {
-            Token = new JwtSecurityTokenHandler().WriteToken(token)
+            Token = new JwtSecurityTokenHandler().WriteToken(token),
+            Expiracao = token.ValidTo
         };
     }
 
