@@ -39,8 +39,6 @@ public class DoadorController : Controller
             erros.Add("O campo 'Logradouro' é obrigatório!");
         if (string.IsNullOrEmpty(doadorDto.Numero.ToString()) || doadorDto.Numero <= 0 || string.IsNullOrWhiteSpace(doadorDto.Numero.ToString()))
             erros.Add("O campo 'Número' é obrigatório e deve ser maior que zero!");
-        if (string.IsNullOrEmpty(doadorDto.Complemento))
-            erros.Add("O campo 'Complemento' é obrigatório!");
         if (string.IsNullOrEmpty(doadorDto.Bairro))
             erros.Add("O campo 'Bairro' é obrigatório!");
         if (string.IsNullOrEmpty(doadorDto.Uf) || doadorDto.Uf.Length != 2)

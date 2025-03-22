@@ -46,7 +46,7 @@ namespace AAPS.Api.Controllers
                 erros.Add("O campo 'Email' é obrigatório!");
             if (string.IsNullOrEmpty(voluntarioDto.Telefone))
                 erros.Add("O campo 'Telefone' é obrigatório!");
-            if (string.IsNullOrEmpty(voluntarioDto.Status.ToString())) // ver se vai tirar
+            if (string.IsNullOrEmpty(voluntarioDto.Status.ToString()))
                 erros.Add("O campo 'Status' é obrigatório!");
             if (string.IsNullOrEmpty(voluntarioDto.Acesso))
                 erros.Add("O campo 'Acesso' é obrigatório!");

@@ -47,8 +47,6 @@ public class AdotanteController : Controller
             erros.Add("O campo 'Logradouro' é obrigatório!");
         if (string.IsNullOrEmpty(adotanteDto.Numero.ToString()) || adotanteDto.Numero <= 0)
             erros.Add("O campo 'Número' é obrigatório e deve ser maior que zero!");
-        if (string.IsNullOrEmpty(adotanteDto.Complemento))
-            erros.Add("O campo 'Complemento' é obrigatório!");
         if (string.IsNullOrEmpty(adotanteDto.Bairro))
             erros.Add("O campo 'Bairro' é obrigatório!");
         if (string.IsNullOrEmpty(adotanteDto.Uf) || adotanteDto.Uf.Length != 2)

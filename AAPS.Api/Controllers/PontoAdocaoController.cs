@@ -39,8 +39,6 @@ namespace AAPS.Api.Controllers
                 erros.Add("O campo 'Logradouro' é obrigatório!");
             if (string.IsNullOrEmpty(pontoAdocaoDto.Numero.ToString()) || pontoAdocaoDto.Numero <= 0)
                 erros.Add("O campo 'Número' é obrigatório e deve ser maior que zero!");
-            if (string.IsNullOrEmpty(pontoAdocaoDto.Complemento))
-                erros.Add("O campo 'Complemento' é obrigatório!");
             if (string.IsNullOrEmpty(pontoAdocaoDto.Bairro))
                 erros.Add("O campo 'Bairro' é obrigatório!");
             if (string.IsNullOrEmpty(pontoAdocaoDto.Uf) || pontoAdocaoDto.Uf.Length != 2)
