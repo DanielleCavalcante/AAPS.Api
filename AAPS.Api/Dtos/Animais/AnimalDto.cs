@@ -1,4 +1,6 @@
-﻿namespace AAPS.Api.Dtos.Animais;
+﻿using AAPS.Api.Models.Enums;
+
+namespace AAPS.Api.Dtos.Animais;
 
 public class AnimalDto
 {
@@ -9,6 +11,7 @@ public class AnimalDto
     public required string Pelagem { get; set; }
     public required string Sexo { get; set; }
     public DateTime? DataNascimento { get; set; }
-    public required bool Status { get; set; }
+    public required StatusEnum Status { get; set; }
     public required int DoadorId { get; set; }
+    public required DisponibilidadeEnum Disponibilidade { get; set; }
 }

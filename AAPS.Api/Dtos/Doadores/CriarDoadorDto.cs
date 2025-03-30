@@ -1,4 +1,6 @@
-﻿namespace AAPS.Api.Dtos.Doadores
+﻿using AAPS.Api.Models.Enums;
+
+namespace AAPS.Api.Dtos.Doadores
 {
     public class CriarDoadorDto
     {
@@ -12,5 +14,6 @@
         public string Uf { get; set; } = string.Empty;
         public string Cidade { get; set; } = string.Empty;
         public int Cep { get; set; } = 0;
+        public StatusEnum Status { get; set; } = StatusEnum.Ativo;
     }
 }

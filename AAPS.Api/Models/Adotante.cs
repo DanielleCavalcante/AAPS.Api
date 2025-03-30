@@ -20,6 +20,7 @@ public class Adotante
     public string Cidade { get; set; } = string.Empty;
     public int Cep { get; set; } = 0;
     public string SituacaoEndereco { get; set; } = string.Empty; // alugado ou propria
+    public BloqueioEnum Bloqueio { get; set; } = BloqueioEnum.Desbloquado;
 
     public ICollection<Telefone> Telefones { get; set; } = new List<Telefone>();
     public ICollection<Adocao> Adocoes { get; set; } = new List<Adocao>();

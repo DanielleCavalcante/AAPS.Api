@@ -6,5 +6,6 @@ namespace AAPS.Api.Dtos.Adotantes
     {
         public string? Busca { get; set; }
         public StatusEnum? Status { get; set; }
+        public BloqueioEnum? Bloqueio { get; set; }
     }
 }

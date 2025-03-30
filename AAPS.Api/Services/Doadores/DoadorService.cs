@@ -1,6 +1,8 @@
 ﻿using AAPS.Api.Context;
+using AAPS.Api.Dtos.Animais;
 using AAPS.Api.Dtos.Doadores;
 using AAPS.Api.Models;
+using AAPS.Api.Models.Enums;
 using AAPS.Api.Services.Doadores;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,6 +33,7 @@ public class DoadorService : IDoadorService
             Uf = doadorDto.Uf,
             Cidade = doadorDto.Cidade,
             Cep = doadorDto.Cep,
+            Status = doadorDto.Status,
         };
 
         _context.Doadores.Add(doador);
@@ -49,6 +52,7 @@ public class DoadorService : IDoadorService
             Uf = doadorDto.Uf,
             Cidade = doadorDto.Cidade,
             Cep = doadorDto.Cep,
+            Status = doadorDto.Status,
         };
     }
 
@@ -65,6 +69,11 @@ public class DoadorService : IDoadorService
             );
         }
 
+        if (filtro.Status.HasValue)
+        {
+            query = query.Where(a => a.Status == filtro.Status.Value);
+        }
+
         var doadoresDto = await query
             .Select(d => new DoadorDto
             {
@@ -79,6 +88,7 @@ public class DoadorService : IDoadorService
                 Uf = d.Uf,
                 Cidade = d.Cidade,
                 Cep = d.Cep,
+                Status = d.Status,
             })
             .ToListAsync();
 
@@ -107,6 +117,7 @@ public class DoadorService : IDoadorService
             Uf = doador.Uf,
             Cidade = doador.Cidade,
             Cep = doador.Cep,
+            Status = doador.Status,
         };
     }
 
@@ -134,6 +145,7 @@ public class DoadorService : IDoadorService
         doador.Uf = string.IsNullOrEmpty(doadorDto.Uf) ? doador.Uf : doadorDto.Uf;
         doador.Cidade = string.IsNullOrEmpty(doadorDto.Cidade) ? doador.Cidade : doadorDto.Cidade;
         doador.Cep = doadorDto.Cep.HasValue ? doadorDto.Cep.Value : doador.Cep;
+        doador.Status = doadorDto.Status.HasValue ? doadorDto.Status.Value : doador.Status;
 
         await _context.SaveChangesAsync();
 
@@ -150,6 +162,7 @@ public class DoadorService : IDoadorService
             Uf = doador.Uf,
             Cidade = doador.Cidade,
             Cep = doador.Cep,
+            Status = doador.Status,
         };
 
         return doadorAtualizado;
@@ -164,7 +177,9 @@ public class DoadorService : IDoadorService
             return false;
         }
 
-        _context.Doadores.Remove(doador);
+        doador.Status = StatusEnum.Inativo;
+
+        //_context.Doadores.Remove(doador);
         await _context.SaveChangesAsync();
 
         return true;

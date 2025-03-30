@@ -20,4 +20,5 @@ public class AdotanteDto
     public required string Cidade { get; set; }
     public required int Cep { get; set; }
     public required string SituacaoEndereco { get; set; }
+    public required BloqueioEnum Bloqueio { get; set; }
 }

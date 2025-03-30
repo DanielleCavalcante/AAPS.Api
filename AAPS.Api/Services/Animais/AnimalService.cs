@@ -1,6 +1,7 @@
 ﻿using AAPS.Api.Context;
 using AAPS.Api.Dtos.Animais;
 using AAPS.Api.Models;
+using AAPS.Api.Models.Enums;
 using AAPS.Api.Services.Animais;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,7 +29,8 @@ public class AnimalService : IAnimalService
             Sexo = animalDto.Sexo,
             DataNascimento = animalDto.DataNascimento,
             Status = animalDto.Status,
-            DoadorId = animalDto.DoadorId
+            DoadorId = animalDto.DoadorId,
+            Disponibilidade = animalDto.Disponibilidade
         };
 
         _context.Animais.Add(animal);
@@ -44,7 +46,8 @@ public class AnimalService : IAnimalService
             Sexo = animal.Sexo,
             DataNascimento = animal.DataNascimento,
             Status = animal.Status,
-            DoadorId = animal.DoadorId
+            DoadorId = animal.DoadorId,
+            Disponibilidade = animal.Disponibilidade
         };
     }
 
@@ -72,6 +75,11 @@ public class AnimalService : IAnimalService
             query = query.Where(a => a.Status == filtro.Status.Value);
         }
 
+        if (filtro.Disponibilidade.HasValue)
+        {
+            query = query.Where(a => a.Disponibilidade == filtro.Disponibilidade.Value);
+        }
+
         var animaisDto = await query
             .Select(a => new AnimalDto
             {
@@ -83,7 +91,8 @@ public class AnimalService : IAnimalService
                 Sexo = a.Sexo,
                 DataNascimento = a.DataNascimento,
                 Status = a.Status,
-                DoadorId = a.DoadorId
+                DoadorId = a.DoadorId,
+                Disponibilidade = a.Disponibilidade
             })
             .ToListAsync();
 
@@ -109,7 +118,8 @@ public class AnimalService : IAnimalService
             Sexo = animal.Sexo,
             DataNascimento = animal.DataNascimento,
             Status = animal.Status,
-            DoadorId = animal.DoadorId
+            DoadorId = animal.DoadorId,
+            Disponibilidade = animal.Disponibilidade
         };
     }
 
@@ -135,6 +145,7 @@ public class AnimalService : IAnimalService
         animal.DataNascimento = animalDto.DataNascimento.HasValue ? animalDto.DataNascimento.Value : animal.DataNascimento;
         animal.Status = animalDto.Status.HasValue ? animalDto.Status.Value : animal.Status;
         animal.DoadorId = animalDto.DoadorId.HasValue ? animalDto.DoadorId.Value : animal.DoadorId;
+        animal.Disponibilidade = animalDto.Disponibilidade.HasValue ? animalDto.Disponibilidade.Value : animal.Disponibilidade;
 
         await _context.SaveChangesAsync();
 
@@ -148,11 +159,13 @@ public class AnimalService : IAnimalService
             Sexo = animal.Sexo,
             DataNascimento = animal.DataNascimento,
             Status = animal.Status,
-            DoadorId = animal.DoadorId
+            DoadorId = animal.DoadorId,
+            Disponibilidade = animal.Disponibilidade
         };
 
         return animalAtualizado;
     }
+
     public async Task<bool> ExcluirAnimal(int id)
     {
         var animal = await BuscarAnimalPorId(id);
@@ -162,7 +175,9 @@ public class AnimalService : IAnimalService
             return false;
         }
 
-        _context.Animais.Remove(animal);
+        animal.Status = StatusEnum.Inativo;
+
+        //_context.Animais.Remove(animal);
         await _context.SaveChangesAsync();
 
         return true;

@@ -1,4 +1,6 @@
-﻿namespace AAPS.Api.Models;
+﻿using AAPS.Api.Models.Enums;
+
+namespace AAPS.Api.Models;
 
 public class Animal
 {
@@ -9,8 +11,9 @@ public class Animal
     public string Pelagem { get; set; } = string.Empty;
     public string Sexo { get; set; } = string.Empty;
     public DateTime DataNascimento { get; set; } = DateTime.MinValue;
-    public bool Status { get; set; } = false; // ver se deixa booleano ou enum
+    public StatusEnum Status { get; set; } = StatusEnum.Ativo;
     public int DoadorId { get; set; }
+    public DisponibilidadeEnum Disponibilidade { get; set; } = DisponibilidadeEnum.Disponivel;
 
     // Relacionamentos
     public Doador Doador { get; set; } = new Doador();

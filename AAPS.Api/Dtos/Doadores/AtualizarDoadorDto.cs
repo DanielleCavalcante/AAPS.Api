@@ -1,4 +1,6 @@
-﻿namespace AAPS.Api.Dtos.Doadores
+﻿using AAPS.Api.Models.Enums;
+
+namespace AAPS.Api.Dtos.Doadores
 {
     public class AtualizarDoadorDto
     {
@@ -12,5 +14,6 @@
         public string? Uf { get; set; }
         public string? Cidade { get; set; }
         public int? Cep { get; set; }
+        public StatusEnum? Status { get; set; }
     }
 }

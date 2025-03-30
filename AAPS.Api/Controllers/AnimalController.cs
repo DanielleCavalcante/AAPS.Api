@@ -113,7 +113,8 @@ public class AnimalController : ControllerBase
         return Ok(ApiResponse<object>.SucessoResponse($"Animal atualizado com sucesso!"));
     }
 
-    [HttpDelete("{id:int}")]
+    //[HttpDelete("{id:int}")]
+    [HttpPut("{id:int}")]
     public async Task<ActionResult> ExcluirAnimal(int id)
     {
         bool animal = await _animalService.ExcluirAnimal(id);
@@ -124,6 +125,6 @@ public class AnimalController : ControllerBase
 
         }
 
-        return Ok(ApiResponse<object>.SucessoResponse($"Animal de id = {id} foi excluído com sucesso!"));
+        return Ok(ApiResponse<object>.SucessoResponse($"Animal de id = {id} foi inativado com sucesso!"));
     }
 }

@@ -78,6 +78,7 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
             entity.Property(x => x.Status).HasColumnType("int").IsRequired();
             entity.Property(x => x.Facebook).HasColumnType("nvarchar(150)").IsRequired();
             entity.Property(x => x.Instagram).HasColumnType("nvarchar(150)").IsRequired();
+            entity.Property(x => x.Bloqueio).HasColumnType("int").IsRequired();
 
             entity.Property(x => x.Logradouro).HasColumnType("nvarchar(150)").IsRequired();
             entity.Property(x => x.Numero).HasColumnType("int").IsRequired();
@@ -114,6 +115,7 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
             entity.Property(x => x.DataNascimento).HasColumnType("date");
             entity.Property(x => x.Status).HasColumnType("int").IsRequired();
             entity.Property(x => x.DoadorId).HasColumnType("int").IsRequired();
+            entity.Property(x => x.Disponibilidade).HasColumnType("int").IsRequired();
 
             // Relações
             entity.HasOne(x => x.Doador)
@@ -168,6 +170,7 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
             entity.Property(x => x.Nome).HasColumnType("nvarchar(100)").IsRequired();
             entity.Property(x => x.Rg).HasColumnType("nvarchar(100)").IsRequired();
             entity.Property(x => x.Cpf).HasColumnType("nvarchar(20)").IsRequired();
+            entity.Property(x => x.Status).HasColumnType("int").IsRequired();
 
             entity.Property(x => x.Logradouro).HasColumnType("nvarchar(150)").IsRequired();
             entity.Property(x => x.Numero).HasColumnType("int").IsRequired();

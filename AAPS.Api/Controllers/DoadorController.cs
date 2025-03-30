@@ -117,7 +117,8 @@ public class DoadorController : Controller
         return Ok(ApiResponse<object>.SucessoResponse($"Doador atualizado com sucesso!"));
     }
 
-    [HttpDelete("{id:int}")]
+    //[HttpDelete("{id:int}")]
+    [HttpPut("{id:int}")]
     public async Task<ActionResult> ExcluirDoador(int id)
     {
         bool doador = await _doadorService.ExcluirDoador(id);
@@ -127,6 +128,6 @@ public class DoadorController : Controller
             return NotFound(ApiResponse<object>.ErroResponse(new List<string> { $"Doador de id = {id} não encontrado." }));
         }
 
-        return Ok(ApiResponse<object>.SucessoResponse($"Doador de id = {id} foi excluído com sucesso!"));
+        return Ok(ApiResponse<object>.SucessoResponse($"Doador de id = {id} foi inativado com sucesso!"));
     }
 }

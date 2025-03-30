@@ -1,4 +1,6 @@
-﻿namespace AAPS.Api.Models;
+﻿using AAPS.Api.Models.Enums;
+
+namespace AAPS.Api.Models;
 
 public class Doador
 {
@@ -13,6 +15,7 @@ public class Doador
     public string Uf { get; set; } = string.Empty;
     public string Cidade { get; set; } = string.Empty;
     public int Cep { get; set; } = 0;
+    public StatusEnum Status { get; set; } = StatusEnum.Ativo;
 
     public ICollection<Animal> Animais { get; set; } = new List<Animal>();
     public ICollection<Telefone> Telefones { get; set; } = new List<Telefone>();

@@ -114,7 +114,8 @@ public class AdotanteController : Controller
         return Ok(ApiResponse<object>.SucessoResponse($"Adotante de id = {id} atualizado com sucesso!"));
     }
 
-    [HttpDelete("{id:int}")]
+    //[HttpDelete("{id:int}")]
+    [HttpPut("{id:int}")]
     public async Task<ActionResult> ExcluirAdotante(int id)
     {
         bool adotante = await _adotanteService.ExcluirAdotante(id);
@@ -124,6 +125,6 @@ public class AdotanteController : Controller
             return NotFound(ApiResponse<object>.ErroResponse(new List<string> { $"Adotante de id = {id} não encontrado." }));
         }
 
-        return Ok(ApiResponse<object>.SucessoResponse($"Adotante de id = {id} foi excluído com sucesso!"));
+        return Ok(ApiResponse<object>.SucessoResponse($"Adotante de id = {id} foi inativado com sucesso!"));
     }
 }

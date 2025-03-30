@@ -2,6 +2,7 @@
 using AAPS.Api.Dtos.Adotante;
 using AAPS.Api.Dtos.Adotantes;
 using AAPS.Api.Models;
+using AAPS.Api.Models.Enums;
 using AAPS.Api.Services.Adotantes;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,7 +37,8 @@ public class AdotanteService : IAdotanteService
             Uf = adotanteDto.Uf,
             Cidade = adotanteDto.Cidade,
             Cep = adotanteDto.Cep,
-            SituacaoEndereco = adotanteDto.SituacaoEndereco
+            SituacaoEndereco = adotanteDto.SituacaoEndereco,
+            Bloqueio = adotanteDto.Bloqueio
         };
 
         _context.Adotantes.Add(adotante);
@@ -59,7 +61,8 @@ public class AdotanteService : IAdotanteService
             Uf = adotante.Uf,
             Cidade = adotante.Cidade,
             Cep = adotante.Cep,
-            SituacaoEndereco = adotante.SituacaoEndereco
+            SituacaoEndereco = adotante.SituacaoEndereco,
+            Bloqueio = adotante.Bloqueio,
         };
     }
 
@@ -81,6 +84,11 @@ public class AdotanteService : IAdotanteService
             query = query.Where(a => a.Status == filtro.Status.Value);
         }
 
+        if (filtro.Bloqueio.HasValue)
+        {
+            query = query.Where(a => a.Bloqueio == filtro.Bloqueio.Value);
+        }
+
         var adotantesDto = await query
             .Select(a => new AdotanteDto
             {
@@ -99,12 +107,12 @@ public class AdotanteService : IAdotanteService
                 Uf = a.Uf,
                 Cidade = a.Cidade,
                 Cep = a.Cep,
-                SituacaoEndereco = a.SituacaoEndereco
+                SituacaoEndereco = a.SituacaoEndereco,
+                Bloqueio = a.Bloqueio
             })
             .ToListAsync();
 
         return adotantesDto;
-
     }
 
     public async Task<AdotanteDto?> ObterAdotantePorId(int id)
@@ -133,7 +141,8 @@ public class AdotanteService : IAdotanteService
             Uf = adotante.Uf,
             Cidade = adotante.Cidade,
             Cep = adotante.Cep,
-            SituacaoEndereco = adotante.SituacaoEndereco
+            SituacaoEndereco = adotante.SituacaoEndereco,
+            Bloqueio = adotante.Bloqueio
         };
     }
 
@@ -166,6 +175,7 @@ public class AdotanteService : IAdotanteService
         adotante.Cidade = string.IsNullOrEmpty(adotanteDto.Cidade) ? adotante.Cidade : adotanteDto.Cidade;
         adotante.Cep = adotanteDto.Cep.HasValue ? adotanteDto.Cep.Value : adotante.Cep;
         adotante.SituacaoEndereco = string.IsNullOrEmpty(adotanteDto.SituacaoEndereco) ? adotante.SituacaoEndereco : adotanteDto.SituacaoEndereco;
+        adotante.Bloqueio = adotanteDto.Bloqueio.HasValue ? adotanteDto.Bloqueio.Value : adotante.Bloqueio;
 
         await _context.SaveChangesAsync();
 
@@ -186,7 +196,8 @@ public class AdotanteService : IAdotanteService
             Uf = adotante.Uf,
             Cidade = adotante.Cidade,
             Cep = adotante.Cep,
-            SituacaoEndereco = adotante.SituacaoEndereco
+            SituacaoEndereco = adotante.SituacaoEndereco,
+            Bloqueio = adotante.Bloqueio
         };
 
         return adotanteAtualizado;
@@ -201,7 +212,9 @@ public class AdotanteService : IAdotanteService
             return false;
         }
 
-        _context.Adotantes.Remove(adotante);
+        adotante.Status = StatusEnum.Inativo; //
+
+        //_context.Adotantes.Remove(adotante);
         await _context.SaveChangesAsync();
 
         return true;

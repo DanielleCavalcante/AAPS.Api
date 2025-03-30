@@ -10,7 +10,8 @@ namespace AAPS.Api.Dtos.Animais
         public string? Pelagem { get; set; }
         public string? Sexo { get; set; }
         public DateTime? DataNascimento { get; set; }
-        public bool? Status { get; set; }
+        public StatusEnum? Status { get; set; }
         public int? DoadorId { get; set; }
+        public DisponibilidadeEnum? Disponibilidade { get; set; }
     }
 }
