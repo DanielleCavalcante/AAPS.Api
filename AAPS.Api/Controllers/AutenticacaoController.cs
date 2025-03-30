@@ -48,4 +48,11 @@ public class AutenticacaoController : Controller
         await _autenticacaoService.Logout();
         return Ok(new { mensagem = "Logout realizado com sucesso." });
     }
+
+    [HttpGet()]
+    [Authorize]
+    public IActionResult ValidarToken()
+    {
+        return Ok();
+    }
 }

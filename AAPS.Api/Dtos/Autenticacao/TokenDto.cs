@@ -5,7 +5,7 @@ namespace AAPS.Api.Dtos.Autenticacao
     public class TokenDto
     {
         public required string Token { get; set; }
-        public DateTime Expiracao { get; set; }
-        public VoluntarioResponseDto Voluntario { get; set; } = new VoluntarioResponseDto();
+        public DateTime Expiration { get; set; }
+        public required string Role { get; set; }
     }
 }

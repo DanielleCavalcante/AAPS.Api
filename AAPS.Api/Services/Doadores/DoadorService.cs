@@ -1,10 +1,8 @@
 ﻿using AAPS.Api.Context;
-using AAPS.Api.Dtos.Animais;
 using AAPS.Api.Dtos.Doadores;
 using AAPS.Api.Models;
 using AAPS.Api.Services.Doadores;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 public class DoadorService : IDoadorService
 {
@@ -54,9 +52,37 @@ public class DoadorService : IDoadorService
         };
     }
 
-    public async Task<IEnumerable<Doador>> ObterDoadores()
+    public async Task<IEnumerable<DoadorDto>> ObterDoadores(FiltroDoadorDto filtro)
     {
-        return await _context.Doadores.ToListAsync();
+        var query = _context.Doadores.AsQueryable();
+
+        if (!string.IsNullOrEmpty(filtro.Busca))
+        {
+            query = query.Where(p =>
+                p.Nome.Contains(filtro.Busca.ToLower()) ||
+                p.Cpf.Contains(filtro.Busca.ToLower()) ||
+                p.Rg.Contains(filtro.Busca)
+            );
+        }
+
+        var doadoresDto = await query
+            .Select(d => new DoadorDto
+            {
+                Id = d.Id,
+                Nome = d.Nome,
+                Rg = d.Rg,
+                Cpf = d.Cpf,
+                Logradouro = d.Logradouro,
+                Numero = d.Numero,
+                Complemento = d.Complemento,
+                Bairro = d.Bairro,
+                Uf = d.Uf,
+                Cidade = d.Cidade,
+                Cep = d.Cep,
+            })
+            .ToListAsync();
+
+        return doadoresDto;
     }
 
     public async Task<DoadorDto?> ObterDoadorPorId(int id)
@@ -133,7 +159,7 @@ public class DoadorService : IDoadorService
     {
         var doador = await BuscarDoadorPorId(id);
 
-        if(doador is null)
+        if (doador is null)
         {
             return false;
         }

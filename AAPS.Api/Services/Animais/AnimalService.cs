@@ -48,9 +48,46 @@ public class AnimalService : IAnimalService
         };
     }
 
-    public async Task<IEnumerable<Animal>> ObterAnimais()
+    public async Task<IEnumerable<AnimalDto>> ObterAnimais(FiltroAnimalDto filtro)
     {
-        return await _context.Animais.ToListAsync();
+        var query = _context.Animais.AsQueryable();
+
+        if (!string.IsNullOrEmpty(filtro.Busca)) // busca por nome
+        {
+            query = query.Where(a => a.Nome.Contains(filtro.Busca.ToLower()));
+        }
+
+        if (!string.IsNullOrEmpty(filtro.Especie))
+        {
+            query = query.Where(a => a.Especie.ToLower() == filtro.Especie.ToLower());
+        }
+
+        if (!string.IsNullOrEmpty(filtro.Sexo))
+        {
+            query = query.Where(a => a.Sexo.ToLower() == filtro.Sexo.ToLower());
+        }
+
+        if (filtro.Status.HasValue)
+        {
+            query = query.Where(a => a.Status == filtro.Status.Value);
+        }
+
+        var animaisDto = await query
+            .Select(a => new AnimalDto
+            {
+                Id = a.Id,
+                Nome = a.Nome,
+                Especie = a.Especie,
+                Raca = a.Raca,
+                Pelagem = a.Pelagem,
+                Sexo = a.Sexo,
+                DataNascimento = a.DataNascimento,
+                Status = a.Status,
+                DoadorId = a.DoadorId
+            })
+            .ToListAsync();
+
+        return animaisDto;
     }
 
     public async Task<AnimalDto?> ObterAnimalPorId(int id)

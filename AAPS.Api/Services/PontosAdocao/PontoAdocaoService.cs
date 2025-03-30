@@ -1,5 +1,4 @@
 ﻿using AAPS.Api.Context;
-using AAPS.Api.Dtos.Animais;
 using AAPS.Api.Dtos.PontoAdocao;
 using AAPS.Api.Dtos.PontosAdocao;
 using AAPS.Api.Models;
@@ -52,9 +51,38 @@ public class PontoAdocaoService : IPontoAdocaoService
         };
     }
 
-    public async Task<IEnumerable<PontoAdocao>> ObterPontosAdocao()
+    public async Task<IEnumerable<PontoAdocaoDto>> ObterPontosAdocao(FiltroPontoAdocaoDto filtro)
     {
-        return await _context.PontosAdocao.ToListAsync();
+        var query = _context.PontosAdocao.AsQueryable();
+
+        if (!string.IsNullOrEmpty(filtro.Busca))
+        {
+            // busca por NomeFantasia, Responsavel e Cnpj
+            query = query.Where(p =>
+                p.NomeFantasia.Contains(filtro.Busca.ToLower()) ||
+                p.Responsavel.Contains(filtro.Busca.ToLower()) ||
+                p.Cnpj.Contains(filtro.Busca)
+            );
+        }
+
+        var pontoAdocaoDto = await query
+            .Select(p => new PontoAdocaoDto
+            {
+                Id = p.Id,
+                NomeFantasia = p.NomeFantasia,
+                Responsavel = p.Responsavel,
+                Cnpj = p.Cnpj,
+                Logradouro = p.Logradouro,
+                Numero = p.Numero,
+                Complemento = p.Complemento,
+                Bairro = p.Bairro,
+                Uf = p.Uf,
+                Cidade = p.Cidade,
+                Cep = p.Cep
+            })
+            .ToListAsync();
+
+        return pontoAdocaoDto;
     }
 
     public async Task<PontoAdocaoDto?> ObterPontoAdocaoPorId(int id)
@@ -66,7 +94,7 @@ public class PontoAdocaoService : IPontoAdocaoService
             return null;
         }
 
-        return new PontoAdocaoDto 
+        return new PontoAdocaoDto
         {
             Id = pontoAdocao.Id,
             NomeFantasia = pontoAdocao.NomeFantasia,
@@ -131,7 +159,7 @@ public class PontoAdocaoService : IPontoAdocaoService
     {
         var pontoAdocao = await BuscarPontoAdocaoPorId(id);
 
-        if(pontoAdocao == null)
+        if (pontoAdocao == null)
         {
             return false;
         }

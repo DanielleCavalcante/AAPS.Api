@@ -63,9 +63,48 @@ public class AdotanteService : IAdotanteService
         };
     }
 
-    public async Task<IEnumerable<Adotante>> ObterAdotantes()
+    public async Task<IEnumerable<AdotanteDto>> ObterAdotantes(FiltroAdotanteDto filtro)
     {
-        return await _context.Adotantes.ToListAsync();
+        var query = _context.Adotantes.AsQueryable();
+
+        if (!string.IsNullOrEmpty(filtro.Busca))
+        {
+            query = query.Where(p =>
+                p.Nome.Contains(filtro.Busca.ToLower()) ||
+                p.Cpf.Contains(filtro.Busca.ToLower()) ||
+                p.Rg.Contains(filtro.Busca)
+            );
+        }
+
+        if (filtro.Status.HasValue)
+        {
+            query = query.Where(a => a.Status == filtro.Status.Value);
+        }
+
+        var adotantesDto = await query
+            .Select(a => new AdotanteDto
+            {
+                Id = a.Id,
+                Nome = a.Nome,
+                Rg = a.Rg,
+                Cpf = a.Cpf,
+                LocalTrabalho = a.LocalTrabalho,
+                Status = a.Status,
+                Facebook = a.Facebook,
+                Instagram = a.Instagram,
+                Logradouro = a.Logradouro,
+                Numero = a.Numero,
+                Complemento = a.Complemento,
+                Bairro = a.Bairro,
+                Uf = a.Uf,
+                Cidade = a.Cidade,
+                Cep = a.Cep,
+                SituacaoEndereco = a.SituacaoEndereco
+            })
+            .ToListAsync();
+
+        return adotantesDto;
+
     }
 
     public async Task<AdotanteDto?> ObterAdotantePorId(int id)

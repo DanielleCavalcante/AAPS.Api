@@ -6,7 +6,7 @@ namespace AAPS.Api.Services.PontosAdocao;
 public interface IPontoAdocaoService
 {
     Task<PontoAdocaoDto> CriarPontoAdocao(CriarPontoAdocaoDto pontoAdocaoDto);
-    Task<IEnumerable<PontoAdocao>> ObterPontosAdocao();
+    Task<IEnumerable<PontoAdocaoDto>> ObterPontosAdocao(FiltroPontoAdocaoDto filtro);
     Task<PontoAdocaoDto?> ObterPontoAdocaoPorId(int id);
     Task<IEnumerable<PontoAdocao>> ObterPontoAdocaoPorNome(string nome);
     Task<PontoAdocaoDto> AtualizarPontoAdocao(int id, AtualizaPontoAdocaoDto pontoAdocaoDto);

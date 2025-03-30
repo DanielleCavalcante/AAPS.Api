@@ -74,16 +74,16 @@ public class AdotanteController : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<IAsyncEnumerable<Adotante>>> ObterAdotantes()
+    public async Task<ActionResult<IAsyncEnumerable<Adotante>>> ObterAdotantes([FromQuery] FiltroAdotanteDto filtro)
     {
-        var adotantesDto = await _adotanteService.ObterAdotantes();
+        var adotantes = await _adotanteService.ObterAdotantes(filtro);
 
-        if (adotantesDto is null)
+        if (adotantes is null || !adotantes.Any())
         {
             return NotFound(ApiResponse<object>.ErroResponse(new List<string> { "Nenhum adotante foi encontrado." }));
         }
 
-        return Ok(ApiResponse<object>.SucessoResponse(adotantesDto));
+        return Ok(ApiResponse<object>.SucessoResponse(adotantes));
     }
 
     [HttpGet]

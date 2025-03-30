@@ -12,7 +12,7 @@ namespace AAPS.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class VoluntarioController : Controller
     {
         #region ATRIBUTOS E CONSTRUTOR
@@ -57,6 +57,8 @@ namespace AAPS.Api.Controllers
             {
                 erros.Add("A senha deve ter pelo menos 8 caracteres, incluindo 1 letra maiúscula, 1 letra minúscula e 1 número.");
             }
+
+            // todo: implementar validação de outros todos os campos
 
             var usuarioExistente = await _voluntarioService.ObterVoluntarioPorUserName(voluntarioDto.UserName);
             if (usuarioExistente != null)

@@ -60,11 +60,11 @@ public class AnimalController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IAsyncEnumerable<Animal>>> ObterAnimais()
+    public async Task<ActionResult<IAsyncEnumerable<Animal>>> ObterAnimais([FromQuery] FiltroAnimalDto filtro)
     {
-        var animais = await _animalService.ObterAnimais();
+        var animais = await _animalService.ObterAnimais(filtro);
 
-        if (animais is null)
+        if (animais is null || !animais.Any())
         {
             return NotFound(ApiResponse<object>.ErroResponse(new List<string> { "Nenhum animal foi encontrado." }));
         }

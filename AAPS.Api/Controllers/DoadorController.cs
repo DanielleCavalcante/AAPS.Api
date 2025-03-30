@@ -64,11 +64,11 @@ public class DoadorController : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<IAsyncEnumerable<Doador>>> ObterDoadores()
+    public async Task<ActionResult<IAsyncEnumerable<Doador>>> ObterDoadores([FromQuery] FiltroDoadorDto filtro)
     {
-        var doadores = await _doadorService.ObterDoadores();
+        var doadores = await _doadorService.ObterDoadores(filtro);
 
-        if (doadores is null)
+        if (doadores is null || !doadores.Any())
         {
             return NotFound(ApiResponse<object>.ErroResponse(new List<string> { "Nenhum doador foi encontrado." }));
         }

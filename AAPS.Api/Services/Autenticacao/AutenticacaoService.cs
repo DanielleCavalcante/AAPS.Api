@@ -4,6 +4,7 @@ using AAPS.Api.Dtos.Voluntarios;
 using AAPS.Api.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -46,19 +47,14 @@ public class AutenticacaoService : IAutenticacaoService
             return null;
         }
 
-        var resultado = await _signInManager.PasswordSignInAsync(usuario, infoUsuario.Senha, false, lockoutOnFailure: false);
+        var resultado = await _signInManager
+            .PasswordSignInAsync(usuario, infoUsuario.Senha, false, lockoutOnFailure: false);
+
         if (resultado.Succeeded)
         {
             var roles = await _userManager.GetRolesAsync(usuario);
 
             var token = await GerarToken(usuario);
-
-            token.Voluntario = new VoluntarioResponseDto
-            {
-                Id = usuario.Id,
-                Acesso = roles.FirstOrDefault(),
-                Status = usuario.Status
-            };
 
             return token;
         }
@@ -83,12 +79,13 @@ public class AutenticacaoService : IAutenticacaoService
         {
             new Claim(JwtRegisteredClaimNames.Sub, usuario.UserName),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim("role", roles.FirstOrDefault()),
         };
 
-        foreach (var role in roles)
-        {
-            claims.Add(new Claim(ClaimTypes.Role, role));  // Adiciona a role ao token
-        }
+        //foreach (var role in roles)
+        //{
+        //    claims.Add(new Claim(ClaimTypes.Role, role));  // Adiciona a role ao token
+        //}
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -97,14 +94,15 @@ public class AutenticacaoService : IAutenticacaoService
             issuer: _configuration["Jwt:Issuer"],
             audience: _configuration["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.Now.AddMinutes(2),
+            expires: DateTime.Now.AddDays(1),
             signingCredentials: creds
         );
 
         return new TokenDto
         {
             Token = new JwtSecurityTokenHandler().WriteToken(token),
-            Expiracao = token.ValidTo
+            Expiration = token.ValidTo,
+            Role = roles.FirstOrDefault()
         };
     }
 

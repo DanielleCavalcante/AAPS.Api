@@ -64,16 +64,16 @@ namespace AAPS.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IAsyncEnumerable<PontoAdocao>>> ObterPontosAdocao()
+        public async Task<ActionResult<IAsyncEnumerable<PontoAdocao>>> ObterPontosAdocao([FromQuery] FiltroPontoAdocaoDto filtro)
         {
-            var pontosAdocaoDto = await _pontoAdocaoService.ObterPontosAdocao();
+            var pontosAdocao = await _pontoAdocaoService.ObterPontosAdocao(filtro);
 
-            if (pontosAdocaoDto is null)
+            if (pontosAdocao is null || !pontosAdocao.Any())
             {
                 return NotFound(ApiResponse<object>.ErroResponse(new List<string> { "Nenhum ponto de adoção foi encontrado." }));
             }
 
-            return Ok(ApiResponse<object>.SucessoResponse(pontosAdocaoDto));
+            return Ok(ApiResponse<object>.SucessoResponse(pontosAdocao));
         }
 
         [HttpGet]
