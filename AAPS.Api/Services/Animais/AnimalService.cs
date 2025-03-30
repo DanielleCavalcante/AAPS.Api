@@ -183,6 +183,75 @@ public class AnimalService : IAnimalService
         return true;
     }
 
+    public async Task<List<string>> ValidarCriacaoAnimal(CriarAnimalDto animalDto)
+    {
+        var erros = new List<string>();
+
+        if (string.IsNullOrEmpty(animalDto.Nome))
+            erros.Add("O campo 'Nome' é obrigatório!");
+        if (string.IsNullOrEmpty(animalDto.Especie))
+            erros.Add("O campo 'Especie' é obrigatório!");
+        if (string.IsNullOrEmpty(animalDto.Raca))
+            erros.Add("O campo 'Raca' é obrigatório!");
+        if (string.IsNullOrEmpty(animalDto.Pelagem))
+            erros.Add("O campo 'Pelagem' é obrigatório!");
+        if (string.IsNullOrEmpty(animalDto.Sexo))
+            erros.Add("O campo 'Sexo' é obrigatório!");
+        //if (string.IsNullOrEmpty(animalDto.DataNascimento.ToString()))
+        //    erros.Add("O campo 'DataNascimento' é obrigatório!");
+        if (string.IsNullOrEmpty(animalDto.Status.ToString()))
+            erros.Add("O campo 'Status' é obrigatório!");
+        if (string.IsNullOrEmpty(animalDto.DoadorId.ToString()) || animalDto.DoadorId <= 0)
+            erros.Add("O campo 'Doador' é obrigatório!");
+        if (string.IsNullOrEmpty(animalDto.Disponibilidade.ToString()))
+            erros.Add("O campo 'Disponibilidade' é obrigatório!");
+
+        var animalExistente = await _context.Animais
+            .Where(a =>
+                a.Nome == animalDto.Nome ||
+                a.Especie == animalDto.Especie ||
+                a.Raca == animalDto.Raca ||
+                a.Pelagem == animalDto.Pelagem ||
+                a.Sexo == animalDto.Sexo ||
+                a.DataNascimento == animalDto.DataNascimento ||
+                a.Status == animalDto.Status ||
+                a.DoadorId == animalDto.DoadorId ||
+                a.Disponibilidade == animalDto.Disponibilidade
+            )
+            .FirstOrDefaultAsync();
+
+        if (animalExistente != null)
+        {
+            erros.Add($"Animal já cadastrado. Código {animalExistente.Id}");
+        }
+
+        return erros;
+    }
+
+    public List<string> ValidarAtualizacaoAnimal(AtualizarAnimalDto animalDto)
+    {
+        var erros = new List<string>();
+
+        if (animalDto.Nome != null && string.IsNullOrEmpty(animalDto.Nome))
+            erros.Add("O campo 'Nome' não pode ter ser vazio!");
+        if (animalDto.Especie != null && string.IsNullOrEmpty(animalDto.Especie))
+            erros.Add("O campo 'Especie' não pode ter ser vazio!");
+        if (animalDto.Raca != null && string.IsNullOrEmpty(animalDto.Raca))
+            erros.Add("O campo 'Raca' não pode ter ser vazio!");
+        if (animalDto.Pelagem != null && string.IsNullOrEmpty(animalDto.Pelagem))
+            erros.Add("O campo 'Pelagem' não pode ter ser vazio!");
+        if (animalDto.Sexo != null && string.IsNullOrEmpty(animalDto.Sexo))
+            erros.Add("O campo 'Sexo' não pode ter ser vazio!");
+        if (animalDto.Status != null && string.IsNullOrWhiteSpace(animalDto.Status.ToString()))
+            erros.Add("O campo 'Status' não pode ter ser vazio!");
+        if (animalDto.DoadorId != null && string.IsNullOrWhiteSpace(animalDto.DoadorId.ToString()))
+            erros.Add("O campo 'Doador' não pode ter ser vazio!");
+        if (animalDto.Disponibilidade != null && string.IsNullOrWhiteSpace(animalDto.Disponibilidade.ToString()))
+            erros.Add("O campo 'Disponibilidade' não pode ter ser vazio!");
+
+        return erros;
+    }
+
     #region MÉTODOS PRIVADOS
 
     private async Task<Animal?> BuscarAnimalPorId(int id)

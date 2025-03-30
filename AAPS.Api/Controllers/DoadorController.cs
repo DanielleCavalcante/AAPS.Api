@@ -1,6 +1,8 @@
-﻿using AAPS.Api.Dtos.Doadores;
+﻿using AAPS.Api.Dtos.Animais;
+using AAPS.Api.Dtos.Doadores;
 using AAPS.Api.Models;
 using AAPS.Api.Responses;
+using AAPS.Api.Services.Animais;
 using AAPS.Api.Services.Doadores;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -27,26 +29,7 @@ public class DoadorController : Controller
     [HttpPost]
     public async Task<IActionResult> CriarDoador([FromBody] CriarDoadorDto doadorDto)
     {
-        var erros = new List<string>();
-
-        if (string.IsNullOrEmpty(doadorDto.Nome))
-            erros.Add("O campo 'Nome' é obrigatório!");
-        if (string.IsNullOrEmpty(doadorDto.Rg))
-            erros.Add("O campo 'RG' é obrigatório!");
-        if (string.IsNullOrEmpty(doadorDto.Cpf))
-            erros.Add("O campo 'CPF' é obrigatório!");
-        if (string.IsNullOrEmpty(doadorDto.Logradouro))
-            erros.Add("O campo 'Logradouro' é obrigatório!");
-        if (string.IsNullOrEmpty(doadorDto.Numero.ToString()) || doadorDto.Numero <= 0 || string.IsNullOrWhiteSpace(doadorDto.Numero.ToString()))
-            erros.Add("O campo 'Número' é obrigatório e deve ser maior que zero!");
-        if (string.IsNullOrEmpty(doadorDto.Bairro))
-            erros.Add("O campo 'Bairro' é obrigatório!");
-        if (string.IsNullOrEmpty(doadorDto.Uf) || doadorDto.Uf.Length != 2)
-            erros.Add("O campo 'UF' é obrigatório e deve ter 2 caracteres!");
-        if (string.IsNullOrEmpty(doadorDto.Cidade))
-            erros.Add("O campo 'Cidade' é obrigatório!");
-        if (doadorDto.Cep <= 0 || doadorDto.Cep.ToString().Length != 8)
-            erros.Add("O campo 'CEP' é obrigatório e deve ter exatamente 8 dígitos!");
+        var erros = await _doadorService.ValidarCriacaoDoador(doadorDto);
 
         if (erros.Count > 0)
         {
@@ -105,7 +88,12 @@ public class DoadorController : Controller
     [HttpPut("{id:int}")]
     public async Task<IActionResult> AtualizarDoador(int id, [FromBody] AtualizarDoadorDto doadorDto)
     {
-        // TODO: validar campos required
+        var erros = _doadorService.ValidarAtualizacaoDoador(doadorDto);
+
+        if (erros.Count > 0)
+        {
+            return BadRequest(ApiResponse<object>.ErroResponse(erros, "Erro ao atualizar doadors!"));
+        }
 
         var doador = await _doadorService.AtualizarDoador(id, doadorDto);
 

@@ -4,6 +4,7 @@ using AAPS.Api.Dtos.Voluntarios;
 using AAPS.Api.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 
 namespace AAPS.Api.Services.Voluntarios;
 
@@ -118,6 +119,57 @@ public class VoluntarioService : IVoluntarioService
         return await _context.Voluntarios
             .Where(v => admins.Select(a => a.Id).Contains(v.Id))
             .ToListAsync();
+    }
+
+    public async Task<List<string>> ValidarCriacaoVoluntario(CriarVoluntarioDto voluntarioDto)
+    {
+        var erros = new List<string>();
+
+        if (string.IsNullOrEmpty(voluntarioDto.Nome))
+            erros.Add("O campo 'Nome' é obrigatório!");
+        if (string.IsNullOrEmpty(voluntarioDto.UserName))
+            erros.Add("O campo 'Nome de Usuário' é obrigatório!");
+        if (string.IsNullOrEmpty(voluntarioDto.Cpf))
+            erros.Add("O campo 'CPF' é obrigatório!");
+        if (string.IsNullOrEmpty(voluntarioDto.Email))
+            erros.Add("O campo 'Email' é obrigatório!");
+        if (string.IsNullOrEmpty(voluntarioDto.Telefone))
+            erros.Add("O campo 'Telefone' é obrigatório!");
+        if (string.IsNullOrEmpty(voluntarioDto.Status.ToString()))
+            erros.Add("O campo 'Status' é obrigatório!");
+        if (string.IsNullOrEmpty(voluntarioDto.Acesso))
+            erros.Add("O campo 'Acesso' é obrigatório!");
+        if (string.IsNullOrEmpty(voluntarioDto.Senha))
+            erros.Add("O campo 'Senha' é obrigatório!");
+        if (voluntarioDto.Senha != voluntarioDto.ConfirmarSenha)
+            erros.Add("As senhas não conferem!");
+
+        if (!Regex.IsMatch(voluntarioDto.Senha, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?"":{}|<>])[A-Za-z\d!@#$%^&*(),.?"":{}|<>]{8,}$"))
+        {
+            erros.Add("A senha deve ter pelo menos 8 caracteres, incluindo 1 letra maiúscula, 1 letra minúscula, 1 número e 1 caractere especial.");
+        }
+
+        var usuarioExistente = await ObterVoluntarioPorUserName(voluntarioDto.UserName);
+        if (usuarioExistente != null)
+        {
+            erros.Add("O nome de usuário já está em uso.");
+        }
+
+        var voluntarioExistente = await _userManager.Users
+            .Where(v =>
+                v.Nome == voluntarioDto.Nome ||
+                v.Cpf == voluntarioDto.Cpf ||
+                v.Email == voluntarioDto.Email ||
+                v.PhoneNumber == voluntarioDto.Telefone
+            )
+            .FirstOrDefaultAsync();
+
+        if (voluntarioExistente != null)
+        {
+            erros.Add($"Voluntário já cadastrado. Código {voluntarioExistente.Id}");
+        }
+
+        return erros;
     }
 
     #region MÉTODOS PRIVADOS

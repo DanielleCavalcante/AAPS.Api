@@ -3,10 +3,8 @@ using AAPS.Api.Responses;
 using AAPS.Api.Services;
 using AAPS.Api.Services.Autenticacao;
 using AAPS.Api.Services.Voluntarios;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.RegularExpressions;
 
 namespace AAPS.Api.Controllers
 {
@@ -34,37 +32,7 @@ namespace AAPS.Api.Controllers
         [HttpPost("CriarVoluntario")]
         public async Task<IActionResult> CriarVoluntario([FromBody] CriarVoluntarioDto voluntarioDto)
         {
-            var erros = new List<string>();
-
-            if (string.IsNullOrEmpty(voluntarioDto.Nome))
-                erros.Add("O campo 'Nome' é obrigatório!");
-            if (string.IsNullOrEmpty(voluntarioDto.UserName))
-                erros.Add("O campo 'Nome de Usuário' é obrigatório!");
-            if (string.IsNullOrEmpty(voluntarioDto.Cpf))
-                erros.Add("O campo 'CPF' é obrigatório!");
-            if (string.IsNullOrEmpty(voluntarioDto.Email))
-                erros.Add("O campo 'Email' é obrigatório!");
-            if (string.IsNullOrEmpty(voluntarioDto.Telefone))
-                erros.Add("O campo 'Telefone' é obrigatório!");
-            if (string.IsNullOrEmpty(voluntarioDto.Status.ToString()))
-                erros.Add("O campo 'Status' é obrigatório!");
-            if (string.IsNullOrEmpty(voluntarioDto.Acesso))
-                erros.Add("O campo 'Acesso' é obrigatório!");
-            if (string.IsNullOrEmpty(voluntarioDto.Senha))
-                erros.Add("O campo 'Senha' é obrigatório!");
-
-            if (!Regex.IsMatch(voluntarioDto.Senha, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?"":{}|<>])[A-Za-z\d!@#$%^&*(),.?"":{}|<>]{8,}$"))
-            {
-                erros.Add("A senha deve ter pelo menos 8 caracteres, incluindo 1 letra maiúscula, 1 letra minúscula e 1 número.");
-            }
-
-            // todo: implementar validação de outros todos os campos
-
-            var usuarioExistente = await _voluntarioService.ObterVoluntarioPorUserName(voluntarioDto.UserName);
-            if (usuarioExistente != null)
-            {
-                erros.Add("O nome de usuário já está em uso.");
-            }
+            var erros = await _voluntarioService.ValidarCriacaoVoluntario(voluntarioDto);
 
             if (erros.Count > 0)
             {

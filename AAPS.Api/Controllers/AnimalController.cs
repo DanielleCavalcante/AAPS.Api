@@ -25,24 +25,7 @@ public class AnimalController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CriarAnimal([FromBody] CriarAnimalDto animalDto)
     {
-        var erros = new List<string>();
-
-        if (string.IsNullOrEmpty(animalDto.Nome))
-            erros.Add("O campo 'Nome' é obrigatório!");
-        if (string.IsNullOrEmpty(animalDto.Especie))
-            erros.Add("O campo 'Especie' é obrigatório!");
-        if (string.IsNullOrEmpty(animalDto.Raca))
-            erros.Add("O campo 'Raca' é obrigatório!");
-        if (string.IsNullOrEmpty(animalDto.Pelagem))
-            erros.Add("O campo 'Pelagem' é obrigatório!");
-        if (string.IsNullOrEmpty(animalDto.Sexo))
-            erros.Add("O campo 'Sexo' é obrigatório!");
-        if (string.IsNullOrEmpty(animalDto.DataNascimento.ToString()))
-            erros.Add("O campo 'DataNascimento' é obrigatório!");
-        if (string.IsNullOrEmpty(animalDto.Status.ToString()))
-            erros.Add("O campo 'Status' é obrigatório!");
-        if (string.IsNullOrEmpty(animalDto.DoadorId.ToString()) || animalDto.DoadorId <= 0)
-            erros.Add("O campo 'Doador' é obrigatório!");
+        var erros = await _animalService.ValidarCriacaoAnimal(animalDto);
 
         if (erros.Count > 0)
         {
@@ -101,7 +84,12 @@ public class AnimalController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> AtualizarAnimal(int id, [FromBody] AtualizarAnimalDto animalDto)
     {
-        // TODO: validar campos required
+        var erros = _animalService.ValidarAtualizacaoAnimal(animalDto);
+
+        if (erros.Count > 0)
+        {
+            return BadRequest(ApiResponse<object>.ErroResponse(erros, "Erro ao atualizar animal!"));
+        }
 
         var animal = await _animalService.AtualizarAnimal(id, animalDto);
 

@@ -11,4 +11,6 @@ public interface IPontoAdocaoService
     Task<IEnumerable<PontoAdocao>> ObterPontoAdocaoPorNome(string nome);
     Task<PontoAdocaoDto> AtualizarPontoAdocao(int id, AtualizaPontoAdocaoDto pontoAdocaoDto);
     Task<bool> ExcluirPontoAdocao(int id);
+    Task<List<string>> ValidarCriacaoPontoAdocao(CriarPontoAdocaoDto pontoAdocaoDto);
+    List<string> ValidarAtualizacaoPontoAdocao(AtualizaPontoAdocaoDto pontoAdocaoDto);
 }

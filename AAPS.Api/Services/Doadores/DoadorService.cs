@@ -185,6 +185,83 @@ public class DoadorService : IDoadorService
         return true;
     }
 
+    public async Task<List<string>> ValidarCriacaoDoador(CriarDoadorDto doadorDto)
+    {
+        var erros = new List<string>();
+
+        if (string.IsNullOrEmpty(doadorDto.Nome))
+            erros.Add("O campo 'Nome' é obrigatório!");
+        if (string.IsNullOrEmpty(doadorDto.Rg))
+            erros.Add("O campo 'RG' é obrigatório!");
+        if (string.IsNullOrEmpty(doadorDto.Cpf))
+            erros.Add("O campo 'CPF' é obrigatório!");
+        if (string.IsNullOrEmpty(doadorDto.Logradouro))
+            erros.Add("O campo 'Logradouro' é obrigatório!");
+        if (string.IsNullOrEmpty(doadorDto.Numero.ToString()) || doadorDto.Numero <= 0 || string.IsNullOrWhiteSpace(doadorDto.Numero.ToString()))
+            erros.Add("O campo 'Número' é obrigatório e deve ser maior que zero!");
+        if (string.IsNullOrEmpty(doadorDto.Bairro))
+            erros.Add("O campo 'Bairro' é obrigatório!");
+        if (string.IsNullOrEmpty(doadorDto.Uf) || doadorDto.Uf.Length != 2)
+            erros.Add("O campo 'UF' é obrigatório e deve ter 2 caracteres!");
+        if (string.IsNullOrEmpty(doadorDto.Cidade))
+            erros.Add("O campo 'Cidade' é obrigatório!");
+        if (doadorDto.Cep <= 0 || doadorDto.Cep.ToString().Length != 8)
+            erros.Add("O campo 'CEP' é obrigatório e deve ter exatamente 8 dígitos!");
+        if (string.IsNullOrEmpty(doadorDto.Status.ToString()))
+            erros.Add("O campo 'Status' é obrigatório!");
+
+        var doadorExistente = await _context.Doadores
+            .Where(d =>
+                d.Nome == doadorDto.Nome ||
+                d.Rg == doadorDto.Rg ||
+                d.Cpf == doadorDto.Cpf ||
+                d.Logradouro == doadorDto.Logradouro ||
+                d.Numero == doadorDto.Numero ||
+                d.Complemento == doadorDto.Complemento ||
+                d.Bairro == doadorDto.Bairro ||
+                d.Uf == doadorDto.Uf ||
+                d.Cidade == doadorDto.Cidade ||
+                d.Cep == doadorDto.Cep ||
+                d.Status == doadorDto.Status
+            )
+            .FirstOrDefaultAsync();
+
+        if (doadorExistente != null)
+        {
+            erros.Add($"Doador já cadastrado. Código {doadorExistente.Id}");
+        }
+
+        return erros;
+    }
+
+    public List<string> ValidarAtualizacaoDoador(AtualizarDoadorDto doadorDto)
+    {
+        var erros = new List<string>();
+
+        if (doadorDto.Nome != null && string.IsNullOrEmpty(doadorDto.Nome))
+            erros.Add("O campo 'Nome' não pode ser vazio!");
+        if (doadorDto.Rg != null && string.IsNullOrEmpty(doadorDto.Rg))
+            erros.Add("O campo 'RG' não pode ser vazio!");
+        if (doadorDto.Cpf != null && string.IsNullOrEmpty(doadorDto.Cpf))
+            erros.Add("O campo 'CPF' não pode ser vazio!");
+        if (doadorDto.Logradouro != null && string.IsNullOrEmpty(doadorDto.Logradouro))
+            erros.Add("O campo 'Logradouro' não pode ser vazio!");
+        if (doadorDto.Numero != null && (doadorDto.Numero <= 0 || string.IsNullOrWhiteSpace(doadorDto.Numero.ToString())))
+            erros.Add("O campo 'Número' é obrigatório e deve ser maior que zero!");
+        if (doadorDto.Bairro != null && string.IsNullOrEmpty(doadorDto.Bairro))
+            erros.Add("O campo 'Bairro' não pode ser vazio!");
+        if (doadorDto.Uf != null && (string.IsNullOrEmpty(doadorDto.Uf) || doadorDto.Uf.Length != 2))
+            erros.Add("O campo 'UF' é obrigatório e deve ter 2 caracteres!");
+        if (doadorDto.Cidade != null && string.IsNullOrEmpty(doadorDto.Cidade))
+            erros.Add("O campo 'Cidade' não pode ser vazio!");
+        if (doadorDto.Cep != null && (doadorDto.Cep <= 0 || doadorDto.Cep.ToString().Length != 8))
+            erros.Add("O campo 'CEP' é obrigatório e deve ter exatamente 8 dígitos!");
+        if (doadorDto.Status != null && string.IsNullOrWhiteSpace(doadorDto.Status.ToString()))
+            erros.Add("O campo 'Status' não pode ser vazio!");
+
+        return erros;
+    }
+
     #region MÉTODOS PRIVADAS
 
     private async Task<Doador?> BuscarDoadorPorId(int id)

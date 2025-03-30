@@ -11,4 +11,6 @@ public interface IAnimalService
     Task<IEnumerable<Animal>> ObterAnimaisPorNome(string nome);
     Task<AnimalDto?> AtualizarAnimal(int id, AtualizarAnimalDto animalDto);
     Task<bool> ExcluirAnimal(int id);
+    Task<List<string>> ValidarCriacaoAnimal(CriarAnimalDto animalDto);
+    List<string> ValidarAtualizacaoAnimal(AtualizarAnimalDto animalDto);
 }

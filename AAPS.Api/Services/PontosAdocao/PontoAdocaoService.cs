@@ -1,4 +1,6 @@
 ﻿using AAPS.Api.Context;
+using AAPS.Api.Dtos.Animais;
+using AAPS.Api.Dtos.Doadores;
 using AAPS.Api.Dtos.PontoAdocao;
 using AAPS.Api.Dtos.PontosAdocao;
 using AAPS.Api.Models;
@@ -168,6 +170,78 @@ public class PontoAdocaoService : IPontoAdocaoService
         await _context.SaveChangesAsync();
 
         return true;
+    }
+
+    public async Task<List<string>> ValidarCriacaoPontoAdocao(CriarPontoAdocaoDto pontoAdocaoDto)
+    {
+        var erros = new List<string>();
+
+        if (string.IsNullOrEmpty(pontoAdocaoDto.NomeFantasia))
+            erros.Add("O campo 'Nome Fantasia' é obrigatório!");
+        if (string.IsNullOrEmpty(pontoAdocaoDto.Responsavel))
+            erros.Add("O campo 'Responsavel' é obrigatório!");
+        if (string.IsNullOrEmpty(pontoAdocaoDto.Cnpj))
+            erros.Add("O campo 'CNPJ' é obrigatório!");
+        if (string.IsNullOrEmpty(pontoAdocaoDto.Logradouro))
+            erros.Add("O campo 'Logradouro' é obrigatório!");
+        if (string.IsNullOrEmpty(pontoAdocaoDto.Numero.ToString()) || pontoAdocaoDto.Numero <= 0)
+            erros.Add("O campo 'Número' é obrigatório e deve ser maior que zero!");
+        if (string.IsNullOrEmpty(pontoAdocaoDto.Bairro))
+            erros.Add("O campo 'Bairro' é obrigatório!");
+        if (string.IsNullOrEmpty(pontoAdocaoDto.Uf) || pontoAdocaoDto.Uf.Length != 2)
+            erros.Add("O campo 'UF' é obrigatório!");
+        if (string.IsNullOrEmpty(pontoAdocaoDto.Cidade))
+            erros.Add("O campo 'Cidade' é obrigatório!");
+        if (pontoAdocaoDto.Cep <= 0 || pontoAdocaoDto.Cep.ToString().Length != 8)
+            erros.Add("O campo 'CEP' é obrigatório e deve ter exatamente 8 dígitos!");
+
+        var pontoAdocaoExistente = await _context.PontosAdocao
+            .Where(p =>
+                p.NomeFantasia == pontoAdocaoDto.NomeFantasia ||
+                p.Responsavel == pontoAdocaoDto.Responsavel ||
+                p.Cnpj == pontoAdocaoDto.Cnpj ||
+                p.Logradouro == pontoAdocaoDto.Logradouro ||
+                p.Numero == pontoAdocaoDto.Numero ||
+                p.Complemento == pontoAdocaoDto.Complemento ||
+                p.Bairro == pontoAdocaoDto.Bairro ||
+                p.Uf == pontoAdocaoDto.Uf ||
+                p.Cidade == pontoAdocaoDto.Cidade ||
+                p.Cep == pontoAdocaoDto.Cep
+            )
+            .FirstOrDefaultAsync();
+
+        if (pontoAdocaoExistente != null)
+        {
+            erros.Add($"Ponto de adoção já cadastrado. Código {pontoAdocaoExistente.Id}");
+        }
+
+        return erros;
+    }
+
+    public List<string> ValidarAtualizacaoPontoAdocao(AtualizaPontoAdocaoDto pontoAdocaoDto)
+    {
+        var erros = new List<string>();
+
+        if (pontoAdocaoDto.NomeFantasia != null && string.IsNullOrEmpty(pontoAdocaoDto.NomeFantasia))
+            erros.Add("O campo 'Nome Fantasia' não pode ser vazio!");
+        if (pontoAdocaoDto.Responsavel != null && string.IsNullOrEmpty(pontoAdocaoDto.Responsavel))
+            erros.Add("O campo 'Responsavel' não pode ser vazio!");
+        if (pontoAdocaoDto.Cnpj != null && string.IsNullOrEmpty(pontoAdocaoDto.Cnpj))
+            erros.Add("O campo 'CNPJ' não pode ser vazio!");
+        if (pontoAdocaoDto.Logradouro != null && string.IsNullOrEmpty(pontoAdocaoDto.Logradouro))
+            erros.Add("O campo 'Logradouro' não pode ser vazio!");
+        if (pontoAdocaoDto.Numero != null && pontoAdocaoDto.Numero <= 0)
+            erros.Add("O campo 'Número' é obrigatório e deve ser maior que zero!");
+        if (pontoAdocaoDto.Bairro != null && string.IsNullOrEmpty(pontoAdocaoDto.Bairro))
+            erros.Add("O campo 'Bairro' não pode ser vazio!");
+        if (pontoAdocaoDto.Uf != null && (string.IsNullOrEmpty(pontoAdocaoDto.Uf) || pontoAdocaoDto.Uf.Length != 2))
+            erros.Add("O campo 'UF' não pode ser vazio!");
+        if (pontoAdocaoDto.Cidade != null && string.IsNullOrEmpty(pontoAdocaoDto.Cidade))
+            erros.Add("O campo 'Cidade' não pode ser vazio!");
+        if (pontoAdocaoDto.Cep != null && (pontoAdocaoDto.Cep <= 0 || pontoAdocaoDto.Cep.ToString().Length != 8))
+            erros.Add("O campo 'CEP' é obrigatório e deve ter exatamente 8 dígitos!");
+
+        return erros;
     }
 
     #region MÉTODOS PRIVADOS

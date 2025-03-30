@@ -11,4 +11,5 @@ public interface IVoluntarioService
     Task<Voluntario?> ObterVoluntarioPorUserName(string username);
     Task<Voluntario> BuscarVoluntarioPorUsernameETelefoneAsync(string username, string telefone);
     Task<List<Voluntario>> ObterAdministradoresAsync();
+    Task<List<string>> ValidarCriacaoVoluntario(CriarVoluntarioDto voluntarioDto);
 }
