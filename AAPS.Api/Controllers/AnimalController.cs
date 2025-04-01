@@ -36,7 +36,7 @@ public class AnimalController : ControllerBase
 
         if (animal is null)
         {
-            return StatusCode(500, ApiResponse<object>.ErroResponse(new List<string> { "Erro criar o animal." }));
+            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { $"Doador com Id: {animalDto.DoadorId} não encontrado ou não está ativo" }));
         }
 
         return Ok(ApiResponse<object>.SucessoResponse(animal, "Animal criado com sucesso!"));
@@ -105,14 +105,14 @@ public class AnimalController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<ActionResult> ExcluirAnimal(int id)
     {
-        bool animal = await _animalService.ExcluirAnimal(id);
+        var animal = await _animalService.ExcluirAnimal(id);
 
-        if (!animal)
+        if (animal is null)
         {
             return NotFound(ApiResponse<object>.ErroResponse(new List<string> { $"Animal de id = {id} não encontrado." }));
 
         }
 
-        return Ok(ApiResponse<object>.SucessoResponse($"Animal de id = {id} foi inativado com sucesso!"));
+        return Ok(ApiResponse<object>.SucessoResponse(animal, $"Animal de id = {id} foi inativado com sucesso!"));
     }
 }

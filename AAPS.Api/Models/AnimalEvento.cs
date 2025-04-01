@@ -8,6 +8,6 @@ public class AnimalEvento
     public int AnimalId { get; set; }
     public int EventoId { get; set; }
 
-    public Animal Animal { get; set; } = new Animal();
-    public Evento Evento { get; set; } = new Evento();
+    public Animal Animal { get; set; }
+    public Evento Evento { get; set; }
 }

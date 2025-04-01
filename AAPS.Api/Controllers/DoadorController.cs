@@ -59,6 +59,19 @@ public class DoadorController : Controller
         return Ok(ApiResponse<object>.SucessoResponse(doadores));
     }
 
+    [HttpGet]
+    public async Task<ActionResult<IAsyncEnumerable<Doador>>> ObterDoadoresAtivos()
+    {
+        var doadores = await _doadorService.ObterDoadoresAtivos();
+
+        if (doadores is null)
+        {
+            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { "Nenhum doador foi encontrado." }));
+        }
+
+        return Ok(ApiResponse<object>.SucessoResponse(doadores));
+    }
+
     [HttpGet("{id:int}")]
     public async Task<ActionResult> ObterDoadorPorId(int id)
     {

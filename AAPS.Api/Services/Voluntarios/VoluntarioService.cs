@@ -157,9 +157,9 @@ public class VoluntarioService : IVoluntarioService
 
         var voluntarioExistente = await _userManager.Users
             .Where(v =>
-                v.Nome == voluntarioDto.Nome ||
-                v.Cpf == voluntarioDto.Cpf ||
-                v.Email == voluntarioDto.Email ||
+                v.Nome == voluntarioDto.Nome &&
+                v.Cpf == voluntarioDto.Cpf &&
+                v.Email == voluntarioDto.Email &&
                 v.PhoneNumber == voluntarioDto.Telefone
             )
             .FirstOrDefaultAsync();
@@ -171,6 +171,27 @@ public class VoluntarioService : IVoluntarioService
 
         return erros;
     }
+
+    //public async Task<bool> AlterarSenhaAsync(int voluntarioId, string novaSenha)
+    //{
+    //    var voluntario = await ObterVoluntarioPorId(voluntarioId);
+    //    if (voluntario == null)
+    //        return false;
+
+    //    // Validação de senha (ex: complexidade mínima, etc.)
+    //    if (string.IsNullOrWhiteSpace(novaSenha) || novaSenha.Length < 6)
+    //    {
+    //        // Senha deve ter pelo menos 6 caracteres
+    //        return false;
+    //    }
+
+    //    // Atualizando a senha (assumindo que a senha é salva de forma segura)
+    //    voluntario.PasswordHash = novaSenha;  // A senha deve ser armazenada de forma segura, como um hash
+
+    //    await _context.SaveChangesAsync();
+
+    //    return true;
+    //}
 
     #region MÉTODOS PRIVADOS
 

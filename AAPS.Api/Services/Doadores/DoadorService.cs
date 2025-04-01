@@ -1,5 +1,4 @@
 ﻿using AAPS.Api.Context;
-using AAPS.Api.Dtos.Animais;
 using AAPS.Api.Dtos.Doadores;
 using AAPS.Api.Models;
 using AAPS.Api.Models.Enums;
@@ -121,6 +120,29 @@ public class DoadorService : IDoadorService
         };
     }
 
+    public async Task<IEnumerable<DoadorDto>> ObterDoadoresAtivos()
+    {
+        var doadores = _context.Doadores
+            .Where(d => d.Status == StatusEnum.Ativo)
+            .Select(d => new DoadorDto
+            {
+                Id = d.Id,
+                Nome = d.Nome,
+                Rg = d.Rg,
+                Cpf = d.Cpf,
+                Logradouro = d.Logradouro,
+                Numero = d.Numero,
+                Complemento = d.Complemento,
+                Bairro = d.Bairro,
+                Uf = d.Uf,
+                Cidade = d.Cidade,
+                Cep = d.Cep,
+                Status = d.Status,
+            });
+
+        return await doadores.ToListAsync();
+    }
+
     public async Task<IEnumerable<Doador>> ObterDoadorPorNome(string nome)
     {
         return await BuscarDoadoresPorNome(nome).ToListAsync();
@@ -212,16 +234,16 @@ public class DoadorService : IDoadorService
 
         var doadorExistente = await _context.Doadores
             .Where(d =>
-                d.Nome == doadorDto.Nome ||
-                d.Rg == doadorDto.Rg ||
-                d.Cpf == doadorDto.Cpf ||
-                d.Logradouro == doadorDto.Logradouro ||
-                d.Numero == doadorDto.Numero ||
-                d.Complemento == doadorDto.Complemento ||
-                d.Bairro == doadorDto.Bairro ||
-                d.Uf == doadorDto.Uf ||
-                d.Cidade == doadorDto.Cidade ||
-                d.Cep == doadorDto.Cep ||
+                d.Nome == doadorDto.Nome &&
+                d.Rg == doadorDto.Rg &&
+                d.Cpf == doadorDto.Cpf &&
+                d.Logradouro == doadorDto.Logradouro &&
+                d.Numero == doadorDto.Numero &&
+                d.Complemento == doadorDto.Complemento &&
+                d.Bairro == doadorDto.Bairro &&
+                d.Uf == doadorDto.Uf &&
+                d.Cidade == doadorDto.Cidade &&
+                d.Cep == doadorDto.Cep &&
                 d.Status == doadorDto.Status
             )
             .FirstOrDefaultAsync();

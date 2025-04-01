@@ -197,15 +197,15 @@ public class PontoAdocaoService : IPontoAdocaoService
 
         var pontoAdocaoExistente = await _context.PontosAdocao
             .Where(p =>
-                p.NomeFantasia == pontoAdocaoDto.NomeFantasia ||
-                p.Responsavel == pontoAdocaoDto.Responsavel ||
-                p.Cnpj == pontoAdocaoDto.Cnpj ||
-                p.Logradouro == pontoAdocaoDto.Logradouro ||
-                p.Numero == pontoAdocaoDto.Numero ||
-                p.Complemento == pontoAdocaoDto.Complemento ||
-                p.Bairro == pontoAdocaoDto.Bairro ||
-                p.Uf == pontoAdocaoDto.Uf ||
-                p.Cidade == pontoAdocaoDto.Cidade ||
+                p.NomeFantasia == pontoAdocaoDto.NomeFantasia &&
+                p.Responsavel == pontoAdocaoDto.Responsavel &&
+                p.Cnpj == pontoAdocaoDto.Cnpj &&
+                p.Logradouro == pontoAdocaoDto.Logradouro &&
+                p.Numero == pontoAdocaoDto.Numero &&
+                p.Complemento == pontoAdocaoDto.Complemento &&
+                p.Bairro == pontoAdocaoDto.Bairro &&
+                p.Uf == pontoAdocaoDto.Uf &&
+                p.Cidade == pontoAdocaoDto.Cidade &&
                 p.Cep == pontoAdocaoDto.Cep
             )
             .FirstOrDefaultAsync();

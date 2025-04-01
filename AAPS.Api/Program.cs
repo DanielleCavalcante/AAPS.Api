@@ -6,6 +6,7 @@ using AAPS.Api.Services.Adotantes;
 using AAPS.Api.Services.Animais;
 using AAPS.Api.Services.Autenticacao;
 using AAPS.Api.Services.Doadores;
+using AAPS.Api.Services.Eventos;
 using AAPS.Api.Services.PontosAdocao;
 using AAPS.Api.Services.Voluntarios;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -32,6 +33,9 @@ builder.Services.AddScoped<IVoluntarioService, VoluntarioService>();
 builder.Services.AddScoped<IAdotanteService, AdotanteService>();
 builder.Services.AddScoped<IPontoAdocaoService, PontoAdocaoService>();
 builder.Services.AddScoped<EmailService>();
+builder.Services.AddScoped<IEventoService, EventoService>();
+
+//builder.Services.AddHttpClient<WhatsAppService>();
 
 // configurações para o banco DbAaps
 var businessConnectionString = builder.Configuration.GetConnectionString("DbAaps");

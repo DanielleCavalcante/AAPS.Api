@@ -3,6 +3,7 @@ using AAPS.Api.Dtos.Autenticacao;
 using AAPS.Api.Dtos.Voluntarios;
 using AAPS.Api.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
@@ -66,6 +67,53 @@ public class AutenticacaoService : IAutenticacaoService
     {
         await _signInManager.SignOutAsync();
     }
+
+
+
+
+    //// senha com whatsapp
+    //public async Task<string> GerarCodigoRecuperacao(int voluntarioId)
+    //{
+    //    // Gera um código aleatório de 6 dígitos
+    //    var codigo = new Random().Next(100000, 999999).ToString();
+
+    //    // Salva o código no banco
+    //    await SalvarCodigoRecuperacaoAsync(voluntarioId, codigo);
+
+    //    return codigo;
+    //}
+
+    //public async Task SalvarCodigoRecuperacaoAsync(int voluntarioId, string codigo)
+    //{
+    //    var expiracao = DateTime.UtcNow.AddMinutes(10); // Código expira em 10 minutos
+
+    //    var codigoRecuperacao = new CodigoRecuperacao
+    //    {
+    //        VoluntarioId = voluntarioId,
+    //        Codigo = codigo,
+    //        ExpiraEm = expiracao,
+    //        Usado = false
+    //    };
+
+    //    _context.CodigosRecuperacao.Add(codigoRecuperacao);
+    //    await _context.SaveChangesAsync();
+    //}
+
+    //public async Task<bool> ValidarCodigoRecuperacao(int voluntarioId, string codigo)
+    //{
+    //    var codigoValido = await _context.CodigosRecuperacao
+    //        .Where(c => c.VoluntarioId == voluntarioId && c.Codigo == codigo && c.ExpiraEm > DateTime.UtcNow && !c.Usado)
+    //        .FirstOrDefaultAsync();
+
+    //    if (codigoValido == null)
+    //        return false;
+
+    //    // Marcar o código como usado
+    //    codigoValido.Usado = true;
+    //    await _context.SaveChangesAsync();
+
+    //    return true;
+    //}
 
     #region MÉTODOS PRIVADOS
 

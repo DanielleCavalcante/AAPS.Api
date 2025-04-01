@@ -9,7 +9,7 @@ public class Telefone
     public int DoadorId { get; set; }
     public int PontoAdocaoId { get; set; }
 
-    public Adotante Adotante { get; set; } = new Adotante();
-    public PontoAdocao PontoAdocao { get; set; } = new PontoAdocao();
-    public Doador Doador { get; set; } = new Doador();
+    public Adotante Adotante { get; set; }
+    public PontoAdocao PontoAdocao { get; set; }
+    public Doador Doador { get; set; }
 }

@@ -3,6 +3,7 @@ using AAPS.Api.Dtos.Animais;
 using AAPS.Api.Models;
 using AAPS.Api.Models.Enums;
 using AAPS.Api.Services.Animais;
+using AAPS.Api.Services.Doadores;
 using Microsoft.EntityFrameworkCore;
 
 public class AnimalService : IAnimalService
@@ -10,16 +11,25 @@ public class AnimalService : IAnimalService
 
     #region ATRIBUTOS E CONSTRUTOR
     private readonly AppDbContext _context;
+    private readonly IDoadorService _doadorService;
 
-    public AnimalService(AppDbContext context)
+    public AnimalService(AppDbContext context, IDoadorService doadorService)
     {
         _context = context;
+        _doadorService = doadorService;
     }
 
     #endregion
 
     public async Task<AnimalDto> CriarAnimal(CriarAnimalDto animalDto)
     {
+        var doador = await _doadorService.ObterDoadorPorId(animalDto.DoadorId);
+
+        if (doador == null || doador.Status == StatusEnum.Inativo)
+        {
+            return null;
+        }
+
         var animal = new Animal
         {
             Nome = animalDto.Nome,
@@ -29,7 +39,7 @@ public class AnimalService : IAnimalService
             Sexo = animalDto.Sexo,
             DataNascimento = animalDto.DataNascimento,
             Status = animalDto.Status,
-            DoadorId = animalDto.DoadorId,
+            DoadorId = doador.Id,
             Disponibilidade = animalDto.Disponibilidade
         };
 
@@ -47,7 +57,7 @@ public class AnimalService : IAnimalService
             DataNascimento = animal.DataNascimento,
             Status = animal.Status,
             DoadorId = animal.DoadorId,
-            Disponibilidade = animal.Disponibilidade
+            Disponibilidade = animal.Disponibilidade,
         };
     }
 
@@ -92,7 +102,7 @@ public class AnimalService : IAnimalService
                 DataNascimento = a.DataNascimento,
                 Status = a.Status,
                 DoadorId = a.DoadorId,
-                Disponibilidade = a.Disponibilidade
+                Disponibilidade = a.Disponibilidade,
             })
             .ToListAsync();
 
@@ -102,6 +112,8 @@ public class AnimalService : IAnimalService
     public async Task<AnimalDto?> ObterAnimalPorId(int id)
     {
         var animal = await BuscarAnimalPorId(id);
+
+        var doador = await _doadorService.ObterDoadorPorId(animal.DoadorId);
 
         if (animal == null)
         {
@@ -119,7 +131,7 @@ public class AnimalService : IAnimalService
             DataNascimento = animal.DataNascimento,
             Status = animal.Status,
             DoadorId = animal.DoadorId,
-            Disponibilidade = animal.Disponibilidade
+            Disponibilidade = animal.Disponibilidade,
         };
     }
 
@@ -160,19 +172,19 @@ public class AnimalService : IAnimalService
             DataNascimento = animal.DataNascimento,
             Status = animal.Status,
             DoadorId = animal.DoadorId,
-            Disponibilidade = animal.Disponibilidade
+            Disponibilidade = animal.Disponibilidade,
         };
 
         return animalAtualizado;
     }
 
-    public async Task<bool> ExcluirAnimal(int id)
+    public async Task<AnimalDto> ExcluirAnimal(int id)
     {
         var animal = await BuscarAnimalPorId(id);
 
         if (animal is null)
         {
-            return false;
+            return null;
         }
 
         animal.Status = StatusEnum.Inativo;
@@ -180,7 +192,19 @@ public class AnimalService : IAnimalService
         //_context.Animais.Remove(animal);
         await _context.SaveChangesAsync();
 
-        return true;
+        return new AnimalDto
+        {
+            Id = animal.Id,
+            Nome = animal.Nome,
+            Especie = animal.Especie,
+            Raca = animal.Raca,
+            Pelagem = animal.Pelagem,
+            Sexo = animal.Sexo,
+            DataNascimento = animal.DataNascimento,
+            Status = animal.Status,
+            DoadorId = animal.DoadorId,
+            Disponibilidade = animal.Disponibilidade,
+        };
     }
 
     public async Task<List<string>> ValidarCriacaoAnimal(CriarAnimalDto animalDto)
@@ -208,15 +232,15 @@ public class AnimalService : IAnimalService
 
         var animalExistente = await _context.Animais
             .Where(a =>
-                a.Nome == animalDto.Nome ||
-                a.Especie == animalDto.Especie ||
-                a.Raca == animalDto.Raca ||
-                a.Pelagem == animalDto.Pelagem ||
-                a.Sexo == animalDto.Sexo ||
-                a.DataNascimento == animalDto.DataNascimento ||
-                a.Status == animalDto.Status ||
-                a.DoadorId == animalDto.DoadorId ||
-                a.Disponibilidade == animalDto.Disponibilidade
+                a.Nome == animalDto.Nome &&
+                a.Especie == animalDto.Especie &&
+                a.Raca == animalDto.Raca &&
+                a.Pelagem == animalDto.Pelagem &&
+                a.Sexo == animalDto.Sexo &&
+                a.DataNascimento == animalDto.DataNascimento
+                //a.Status == animalDto.Status &&
+                //a.DoadorId == animalDto.DoadorId &&
+                //a.Disponibilidade == animalDto.Disponibilidade
             )
             .FirstOrDefaultAsync();
 

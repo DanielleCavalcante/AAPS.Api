@@ -22,6 +22,6 @@ public class Adotante
     public string SituacaoEndereco { get; set; } = string.Empty; // alugado ou propria
     public BloqueioEnum Bloqueio { get; set; } = BloqueioEnum.Desbloquado;
 
-    public ICollection<Telefone> Telefones { get; set; } = new List<Telefone>();
-    public ICollection<Adocao> Adocoes { get; set; } = new List<Adocao>();
+    public ICollection<Telefone> Telefones { get; set; }
+    public ICollection<Adocao> Adocoes { get; set; }
 }

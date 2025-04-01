@@ -16,7 +16,7 @@ public class Animal
     public DisponibilidadeEnum Disponibilidade { get; set; } = DisponibilidadeEnum.Disponivel;
 
     // Relacionamentos
-    public Doador Doador { get; set; } = new Doador();
+    public Doador Doador { get; set; }
     public ICollection<AnimalEvento> AnimalEvento { get; set; } = new List<AnimalEvento>(); // acompanhamento
     public ICollection<Adocao> Adocoes { get; set; } = new List<Adocao>();
 }

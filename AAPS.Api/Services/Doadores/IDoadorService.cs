@@ -8,6 +8,7 @@ public interface IDoadorService
     Task<DoadorDto> CriarDoador(CriarDoadorDto doadorDto);
     Task<IEnumerable<DoadorDto>> ObterDoadores(FiltroDoadorDto filtro);
     Task<DoadorDto?> ObterDoadorPorId(int id);
+    Task<IEnumerable<DoadorDto>> ObterDoadoresAtivos();
     Task<IEnumerable<Doador>> ObterDoadorPorNome(string nome);
     Task<DoadorDto?> AtualizarDoador(int id, AtualizarDoadorDto doadorDto);
     Task<bool> ExcluirDoador(int id);

@@ -17,6 +17,6 @@ public class Doador
     public int Cep { get; set; } = 0;
     public StatusEnum Status { get; set; } = StatusEnum.Ativo;
 
-    public ICollection<Animal> Animais { get; set; } = new List<Animal>();
-    public ICollection<Telefone> Telefones { get; set; } = new List<Telefone>();
+    public ICollection<Animal> Animais { get; set; }
+    public ICollection<Telefone> Telefones { get; set; }
 }

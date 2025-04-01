@@ -9,8 +9,8 @@ public class Adocao
     public int VoluntarioId { get; set; }
     public int PontoAdocaoId { get; set; }
 
-    public Animal Animal { get; set; } = new Animal();
-    public Voluntario Voluntario { get; set; } = new Voluntario();
-    public Adotante Adotante { get; set; } = new Adotante();
-    public PontoAdocao PontoAdocao { get; set; } = new PontoAdocao();
+    public Animal Animal { get; set; }
+    public Voluntario Voluntario { get; set; }
+    public Adotante Adotante { get; set; }
+    public PontoAdocao PontoAdocao { get; set; }
 }

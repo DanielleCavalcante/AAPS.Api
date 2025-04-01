@@ -20,6 +20,8 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
     public DbSet<PontoAdocao> PontosAdocao { get; set; }
     public DbSet<Telefone> Telefones { get; set; }
     public DbSet<Voluntario> Voluntarios { get; set; }
+    //public DbSet<CodigoRecuperacao> CodigosRecuperacao { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

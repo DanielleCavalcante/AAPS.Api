@@ -9,5 +9,5 @@ public class Voluntario : IdentityUser<int>
     public string Cpf { get; set; } = string.Empty;
     public StatusEnum Status { get; set; } = StatusEnum.Ativo;
 
-    public ICollection<Adocao> Adocoes { get; set; } = new List<Adocao>();
+    public ICollection<Adocao> Adocoes { get; set; }
 }

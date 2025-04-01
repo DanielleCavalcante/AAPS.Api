@@ -14,6 +14,6 @@ public class PontoAdocao
     public string Cidade { get; set; } = string.Empty;
     public int Cep { get; set; } = 0;
 
-    public ICollection<Adocao> Adocoes { get; set; } = new List<Adocao>();
-    public ICollection<Telefone> Telefones { get; set; } = new List<Telefone>();
+    public ICollection<Adocao> Adocoes { get; set; }
+    public ICollection<Telefone> Telefones { get; set; }
 }
