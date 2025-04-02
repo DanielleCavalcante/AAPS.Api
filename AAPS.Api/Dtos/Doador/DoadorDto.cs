@@ -1,6 +1,6 @@
 ﻿using AAPS.Api.Models.Enums;
 
-namespace AAPS.Api.Dtos.Doadores;
+namespace AAPS.Api.Dtos.Doador;
 
 public class DoadorDto
 {

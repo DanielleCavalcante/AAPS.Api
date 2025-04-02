@@ -1,8 +1,5 @@
-﻿using AAPS.Api.Dtos.Animais;
-using AAPS.Api.Dtos.Doadores;
-using AAPS.Api.Models;
+﻿using AAPS.Api.Dtos.Doadores;
 using AAPS.Api.Responses;
-using AAPS.Api.Services.Animais;
 using AAPS.Api.Services.Doadores;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -47,24 +44,11 @@ public class DoadorController : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<IAsyncEnumerable<Doador>>> ObterDoadores([FromQuery] FiltroDoadorDto filtro)
+    public async Task<ActionResult<IAsyncEnumerable<DoadorDto>>> ObterDoadores([FromQuery] FiltroDoadorDto filtro)
     {
         var doadores = await _doadorService.ObterDoadores(filtro);
 
         if (doadores is null || !doadores.Any())
-        {
-            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { "Nenhum doador foi encontrado." }));
-        }
-
-        return Ok(ApiResponse<object>.SucessoResponse(doadores));
-    }
-
-    [HttpGet]
-    public async Task<ActionResult<IAsyncEnumerable<Doador>>> ObterDoadoresAtivos()
-    {
-        var doadores = await _doadorService.ObterDoadoresAtivos();
-
-        if (doadores is null)
         {
             return NotFound(ApiResponse<object>.ErroResponse(new List<string> { "Nenhum doador foi encontrado." }));
         }
@@ -86,13 +70,13 @@ public class DoadorController : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<IAsyncEnumerable<Doador>>> ObterDoadorPorNome([FromQuery] string nome)
+    public async Task<ActionResult<IAsyncEnumerable<DoadorDto>>> ObterDoadoresAtivos()
     {
-        var doadores = await _doadorService.ObterDoadorPorNome(nome);
+        var doadores = await _doadorService.ObterDoadoresAtivos();
 
         if (doadores is null)
         {
-            return BadRequest(ApiResponse<object>.ErroResponse(new List<string> { "Erro ao obter doadores." }));
+            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { "Nenhum doador foi encontrado." }));
         }
 
         return Ok(ApiResponse<object>.SucessoResponse(doadores));
@@ -118,7 +102,6 @@ public class DoadorController : Controller
         return Ok(ApiResponse<object>.SucessoResponse($"Doador atualizado com sucesso!"));
     }
 
-    //[HttpDelete("{id:int}")]
     [HttpPut("{id:int}")]
     public async Task<ActionResult> ExcluirDoador(int id)
     {

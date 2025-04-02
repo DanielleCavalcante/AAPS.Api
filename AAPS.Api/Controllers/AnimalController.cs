@@ -43,7 +43,7 @@ public class AnimalController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IAsyncEnumerable<Animal>>> ObterAnimais([FromQuery] FiltroAnimalDto filtro)
+    public async Task<ActionResult<IAsyncEnumerable<AnimalDto>>> ObterAnimais([FromQuery] FiltroAnimalDto filtro)
     {
         var animais = await _animalService.ObterAnimais(filtro);
 
@@ -69,13 +69,13 @@ public class AnimalController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IAsyncEnumerable<Animal>>> ObterAnimaisPorNome([FromQuery] string nome)
+    public async Task<ActionResult<IAsyncEnumerable<AnimalDto>>> ObterAnimaisAtivos()
     {
-        var animais = await _animalService.ObterAnimaisPorNome(nome);
+        var animais = await _animalService.ObterAnimaisAtivos();
 
         if (animais is null)
         {
-            return BadRequest(ApiResponse<object>.ErroResponse(new List<string> { "Erro ao obter animais." }));
+            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { "Nenhum animal foi encontrado." }));
         }
 
         return Ok(ApiResponse<object>.SucessoResponse(animais));
@@ -101,7 +101,6 @@ public class AnimalController : ControllerBase
         return Ok(ApiResponse<object>.SucessoResponse($"Animal atualizado com sucesso!"));
     }
 
-    //[HttpDelete("{id:int}")]
     [HttpPut("{id:int}")]
     public async Task<ActionResult> ExcluirAnimal(int id)
     {

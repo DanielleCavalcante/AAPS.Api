@@ -1,5 +1,4 @@
 ﻿using AAPS.Api.Context;
-using AAPS.Api.Dtos.Adotante;
 using AAPS.Api.Dtos.Voluntarios;
 using AAPS.Api.Models;
 using Microsoft.AspNetCore.Identity;

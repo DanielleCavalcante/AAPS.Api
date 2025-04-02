@@ -81,6 +81,20 @@ namespace AAPS.Api.Services.Eventos
             };
         }
 
+        public async Task<IEnumerable<EventoDto>> ObterEventosAtivos()
+        {
+            var eventos = _context.Eventos
+                .Where(e => e.Status == StatusEnum.Ativo)
+                .Select(e => new EventoDto
+                {
+                    Id = e.Id,
+                    Descricao = e.Descricao,
+                    Status = e.Status,
+                });
+
+            return await eventos.ToListAsync();
+        }
+
         public async Task<EventoDto?> AtualizarEvento(int id, AtualizarEventoDto eventoDto)
         {
             var evento = await BuscarEventoPorId(id);

@@ -1,12 +1,9 @@
 ﻿using AAPS.Api.Context;
 using AAPS.Api.Dtos.Acompanhamento;
-using AAPS.Api.Dtos.Animais;
 using AAPS.Api.Models;
 using AAPS.Api.Services.Animais;
 using AAPS.Api.Services.Eventos;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AAPS.Api.Services.Acompanhamentos
 {
@@ -89,7 +86,7 @@ namespace AAPS.Api.Services.Acompanhamentos
         {
             var acompanhamento = await BuscarAcompanhamentoPorId(id);
 
-            if(acompanhamento == null)
+            if (acompanhamento == null)
             {
                 return false;
             }
@@ -117,7 +114,7 @@ namespace AAPS.Api.Services.Acompanhamentos
             .Where(a =>
                 a.Data == acompanhamentoDto.Data &&
                 a.AnimalId == acompanhamentoDto.AnimalId &&
-                a.EventoId == acompanhamentoDto.EventoId 
+                a.EventoId == acompanhamentoDto.EventoId
             )
             .FirstOrDefaultAsync();
 

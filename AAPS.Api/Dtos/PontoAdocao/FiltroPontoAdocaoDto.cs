@@ -1,6 +1,6 @@
 ﻿using AAPS.Api.Models.Enums;
 
-namespace AAPS.Api.Dtos.PontosAdocao
+namespace AAPS.Api.Dtos.PontoAdocao
 {
     public class FiltroPontoAdocaoDto
     {

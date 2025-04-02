@@ -1,9 +1,5 @@
-﻿using AAPS.Api.Dtos.Acompanhamento;
-using AAPS.Api.Dtos.Adotante;
-using AAPS.Api.Dtos.Evento;
-using AAPS.Api.Models;
+﻿using AAPS.Api.Dtos.Evento;
 using AAPS.Api.Responses;
-using AAPS.Api.Services.Adotantes;
 using AAPS.Api.Services.Eventos;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -48,7 +44,7 @@ public class EventoController : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<IAsyncEnumerable<Evento>>> ObterEventos([FromQuery] FiltroEventoDto filtro)
+    public async Task<ActionResult<IAsyncEnumerable<EventoDto>>> ObterEventos([FromQuery] FiltroEventoDto filtro)
     {
         var eventos = await _eventoService.ObterEventos(filtro);
 
@@ -71,6 +67,19 @@ public class EventoController : Controller
         }
 
         return Ok(ApiResponse<object>.SucessoResponse(evento));
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IAsyncEnumerable<EventoDto>>> ObterEventosAtivos()
+    {
+        var eventos = await _eventoService.ObterEventosAtivos();
+
+        if (eventos is null) //|| !eventos.Any()
+        {
+            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { "Nenhum evento foi encontrado." }));
+        }
+
+        return Ok(ApiResponse<object>.SucessoResponse(eventos));
     }
 
     [HttpPut("{id:int}")]

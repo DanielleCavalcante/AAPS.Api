@@ -1,11 +1,8 @@
 ﻿using AAPS.Api.Context;
 using AAPS.Api.Dtos.Autenticacao;
-using AAPS.Api.Dtos.Voluntarios;
 using AAPS.Api.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -31,14 +28,14 @@ public class AutenticacaoService : IAutenticacaoService
 
     #endregion
 
-    public async Task<bool> Autenticacao(LoginDto loginDto)
-    {
-        var resultado = await _signInManager
-            .PasswordSignInAsync(loginDto.UserName, loginDto.Senha, false, lockoutOnFailure: false);
-        // cookie de entrada false(não fica salvo o login depois de sair), não bloquear conta se falhar o login.
+    //public async Task<bool> Autenticacao(LoginDto loginDto)
+    //{
+    //    var resultado = await _signInManager
+    //        .PasswordSignInAsync(loginDto.UserName, loginDto.Senha, false, lockoutOnFailure: false);
+    //    // cookie de entrada false(não fica salvo o login depois de sair), não bloquear conta se falhar o login.
 
-        return resultado.Succeeded;
-    }
+    //    return resultado.Succeeded;
+    //}
 
     public async Task<TokenDto> LoginComToken(LoginDto infoUsuario)
     {
@@ -129,11 +126,6 @@ public class AutenticacaoService : IAutenticacaoService
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim("role", roles.FirstOrDefault()),
         };
-
-        //foreach (var role in roles)
-        //{
-        //    claims.Add(new Claim(ClaimTypes.Role, role));  // Adiciona a role ao token
-        //}
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

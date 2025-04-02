@@ -1,6 +1,6 @@
 ﻿using AAPS.Api.Models.Enums;
 
-namespace AAPS.Api.Dtos.Adotantes
+namespace AAPS.Api.Dtos.Adotante
 {
     public class AtualizarAdotanteDto
     {

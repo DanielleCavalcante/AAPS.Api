@@ -1,6 +1,6 @@
 ﻿using AAPS.Api.Models.Enums;
 
-namespace AAPS.Api.Dtos.Voluntarios
+namespace AAPS.Api.Dtos.Voluntario
 {
     public class CriarVoluntarioDto
     {
