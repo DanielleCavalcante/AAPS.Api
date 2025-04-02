@@ -1,4 +1,6 @@
-﻿namespace AAPS.Api.Dtos.PontosAdocao
+﻿using AAPS.Api.Models.Enums;
+
+namespace AAPS.Api.Dtos.PontosAdocao
 {
     public class AtualizaPontoAdocaoDto
     {
@@ -12,5 +14,6 @@
         public string? Uf { get; set; }
         public string? Cidade { get; set; }
         public int? Cep { get; set; }
+        public StatusEnum? Status { get; set; }
     }
 }

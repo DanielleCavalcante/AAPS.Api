@@ -2,6 +2,7 @@ using AAPS.Api.Context;
 using AAPS.Api.Middlewares;
 using AAPS.Api.Models;
 using AAPS.Api.Services;
+using AAPS.Api.Services.Acompanhamentos;
 using AAPS.Api.Services.Adotantes;
 using AAPS.Api.Services.Animais;
 using AAPS.Api.Services.Autenticacao;
@@ -32,8 +33,10 @@ builder.Services.AddScoped<IAutenticacaoService, AutenticacaoService>();
 builder.Services.AddScoped<IVoluntarioService, VoluntarioService>();
 builder.Services.AddScoped<IAdotanteService, AdotanteService>();
 builder.Services.AddScoped<IPontoAdocaoService, PontoAdocaoService>();
-builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<IEventoService, EventoService>();
+builder.Services.AddScoped<IAcompanhamentoService, AcompanhamentoService>();
+
+builder.Services.AddScoped<EmailService>();
 
 //builder.Services.AddHttpClient<WhatsAppService>();
 

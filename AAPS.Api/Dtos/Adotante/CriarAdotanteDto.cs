@@ -13,7 +13,7 @@ namespace AAPS.Api.Dtos.Adotantes
         public string Instagram { get; set; } = string.Empty;
         public string Logradouro { get; set; } = string.Empty;
         public int Numero { get; set; } = 0;
-        public string Complemento { get; set; } = string.Empty;
+        public string? Complemento { get; set; } = string.Empty;
         public string Bairro { get; set; } = string.Empty;
         public string Uf { get; set; } = string.Empty;
         public string Cidade { get; set; } = string.Empty;

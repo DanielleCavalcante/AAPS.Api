@@ -1,9 +1,8 @@
 ﻿using AAPS.Api.Context;
-using AAPS.Api.Dtos.Animais;
-using AAPS.Api.Dtos.Doadores;
 using AAPS.Api.Dtos.PontoAdocao;
 using AAPS.Api.Dtos.PontosAdocao;
 using AAPS.Api.Models;
+using AAPS.Api.Models.Enums;
 using AAPS.Api.Services.PontosAdocao;
 using Microsoft.EntityFrameworkCore;
 public class PontoAdocaoService : IPontoAdocaoService
@@ -32,7 +31,8 @@ public class PontoAdocaoService : IPontoAdocaoService
             Bairro = pontoAdocaoDto.Bairro,
             Uf = pontoAdocaoDto.Uf,
             Cidade = pontoAdocaoDto.Cidade,
-            Cep = pontoAdocaoDto.Cep
+            Cep = pontoAdocaoDto.Cep,
+            Status = pontoAdocaoDto.Status
         };
 
         _context.PontosAdocao.Add(pontoAdocao);
@@ -49,7 +49,8 @@ public class PontoAdocaoService : IPontoAdocaoService
             Bairro = pontoAdocaoDto.Bairro,
             Uf = pontoAdocaoDto.Uf,
             Cidade = pontoAdocaoDto.Cidade,
-            Cep = pontoAdocaoDto.Cep
+            Cep = pontoAdocaoDto.Cep,
+            Status = pontoAdocaoDto.Status
         };
     }
 
@@ -67,6 +68,11 @@ public class PontoAdocaoService : IPontoAdocaoService
             );
         }
 
+        if (filtro.Status.HasValue)
+        {
+            query = query.Where(a => a.Status == filtro.Status.Value);
+        }
+
         var pontoAdocaoDto = await query
             .Select(p => new PontoAdocaoDto
             {
@@ -80,7 +86,8 @@ public class PontoAdocaoService : IPontoAdocaoService
                 Bairro = p.Bairro,
                 Uf = p.Uf,
                 Cidade = p.Cidade,
-                Cep = p.Cep
+                Cep = p.Cep,
+                Status = p.Status
             })
             .ToListAsync();
 
@@ -108,7 +115,8 @@ public class PontoAdocaoService : IPontoAdocaoService
             Bairro = pontoAdocao.Bairro,
             Uf = pontoAdocao.Uf,
             Cidade = pontoAdocao.Cidade,
-            Cep = pontoAdocao.Cep
+            Cep = pontoAdocao.Cep,
+            Status = pontoAdocao.Status
         };
     }
 
@@ -136,6 +144,7 @@ public class PontoAdocaoService : IPontoAdocaoService
         pontoAdocao.Uf = string.IsNullOrEmpty(pontoAdocaoDto.Uf) ? pontoAdocao.Uf : pontoAdocaoDto.Uf;
         pontoAdocao.Cidade = string.IsNullOrEmpty(pontoAdocaoDto.Cidade) ? pontoAdocao.Cidade : pontoAdocaoDto.Cidade;
         pontoAdocao.Cep = pontoAdocaoDto.Cep.HasValue ? pontoAdocaoDto.Cep.Value : pontoAdocao.Cep;
+        pontoAdocao.Status = pontoAdocaoDto.Status.HasValue ? pontoAdocaoDto.Status.Value : pontoAdocao.Status;
 
         await _context.SaveChangesAsync();
 
@@ -151,7 +160,8 @@ public class PontoAdocaoService : IPontoAdocaoService
             Bairro = pontoAdocao.Bairro,
             Uf = pontoAdocao.Uf,
             Cidade = pontoAdocao.Cidade,
-            Cep = pontoAdocao.Cep
+            Cep = pontoAdocao.Cep,
+            Status = pontoAdocao.Status
         };
 
         return pontoAdocaoAtualizado;
@@ -166,7 +176,9 @@ public class PontoAdocaoService : IPontoAdocaoService
             return false;
         }
 
-        _context.PontosAdocao.Remove(pontoAdocao);
+        //_context.PontosAdocao.Remove(pontoAdocao);
+
+        pontoAdocao.Status = StatusEnum.Inativo;
         await _context.SaveChangesAsync();
 
         return true;
@@ -194,6 +206,8 @@ public class PontoAdocaoService : IPontoAdocaoService
             erros.Add("O campo 'Cidade' é obrigatório!");
         if (pontoAdocaoDto.Cep <= 0 || pontoAdocaoDto.Cep.ToString().Length != 8)
             erros.Add("O campo 'CEP' é obrigatório e deve ter exatamente 8 dígitos!");
+        if (string.IsNullOrEmpty(pontoAdocaoDto.Status.ToString()))
+            erros.Add("O campo 'Status' é obrigatório!");
 
         var pontoAdocaoExistente = await _context.PontosAdocao
             .Where(p =>
@@ -207,6 +221,7 @@ public class PontoAdocaoService : IPontoAdocaoService
                 p.Uf == pontoAdocaoDto.Uf &&
                 p.Cidade == pontoAdocaoDto.Cidade &&
                 p.Cep == pontoAdocaoDto.Cep
+                //p.Status == pontoAdocaoDto.Status
             )
             .FirstOrDefaultAsync();
 
@@ -240,6 +255,8 @@ public class PontoAdocaoService : IPontoAdocaoService
             erros.Add("O campo 'Cidade' não pode ser vazio!");
         if (pontoAdocaoDto.Cep != null && (pontoAdocaoDto.Cep <= 0 || pontoAdocaoDto.Cep.ToString().Length != 8))
             erros.Add("O campo 'CEP' é obrigatório e deve ter exatamente 8 dígitos!");
+        if (pontoAdocaoDto.Status != null && string.IsNullOrEmpty(pontoAdocaoDto.Status.ToString()))
+            erros.Add("O campo 'Status' não pode ser vazio!");
 
         return erros;
     }

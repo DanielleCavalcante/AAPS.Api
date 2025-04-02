@@ -36,7 +36,7 @@ public class AnimalController : ControllerBase
 
         if (animal is null)
         {
-            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { $"Doador com Id: {animalDto.DoadorId} não encontrado ou não está ativo" }));
+            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { $"Animal com Id: {animalDto.DoadorId} não encontrado ou não está ativo" }));
         }
 
         return Ok(ApiResponse<object>.SucessoResponse(animal, "Animal criado com sucesso!"));
@@ -75,7 +75,7 @@ public class AnimalController : ControllerBase
 
         if (animais is null)
         {
-            return BadRequest(ApiResponse<object>.ErroResponse(new List<string> { "Erro ao obter adotantes." }));
+            return BadRequest(ApiResponse<object>.ErroResponse(new List<string> { "Erro ao obter animais." }));
         }
 
         return Ok(ApiResponse<object>.SucessoResponse(animais));
@@ -107,7 +107,7 @@ public class AnimalController : ControllerBase
     {
         var animal = await _animalService.ExcluirAnimal(id);
 
-        if (animal is null)
+        if (!animal)
         {
             return NotFound(ApiResponse<object>.ErroResponse(new List<string> { $"Animal de id = {id} não encontrado." }));
 

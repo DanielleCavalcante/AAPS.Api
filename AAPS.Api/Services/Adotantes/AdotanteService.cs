@@ -255,22 +255,22 @@ public class AdotanteService : IAdotanteService
 
         var adotanteExistente = await _context.Adotantes
             .Where(a =>
-                a.Nome == adotanteDto.Nome ||
-                a.Rg == adotanteDto.Rg ||
-                a.Cpf == adotanteDto.Cpf ||
-                a.LocalTrabalho == adotanteDto.LocalTrabalho ||
-                a.Status == adotanteDto.Status ||
-                a.Facebook == adotanteDto.Facebook ||
-                a.Instagram == adotanteDto.Instagram ||
-                a.Logradouro == adotanteDto.Logradouro ||
-                a.Numero == adotanteDto.Numero ||
-                a.Complemento == adotanteDto.Complemento ||
-                a.Bairro == adotanteDto.Bairro ||
-                a.Uf == adotanteDto.Uf ||
-                a.Cidade == adotanteDto.Cidade ||
-                a.Cep == adotanteDto.Cep ||
-                a.SituacaoEndereco == adotanteDto.SituacaoEndereco ||
-                a.Bloqueio == adotanteDto.Bloqueio
+                a.Nome == adotanteDto.Nome &&
+                a.Rg == adotanteDto.Rg &&
+                a.Cpf == adotanteDto.Cpf &&
+                a.LocalTrabalho == adotanteDto.LocalTrabalho &&
+                //a.Status == adotanteDto.Status &&
+                a.Facebook == adotanteDto.Facebook &&
+                a.Instagram == adotanteDto.Instagram &&
+                a.Logradouro == adotanteDto.Logradouro &&
+                a.Numero == adotanteDto.Numero &&
+                //a.Complemento == adotanteDto.Complemento &&
+                a.Bairro == adotanteDto.Bairro &&
+                a.Uf == adotanteDto.Uf &&
+                a.Cidade == adotanteDto.Cidade &&
+                a.Cep == adotanteDto.Cep &&
+                a.SituacaoEndereco == adotanteDto.SituacaoEndereco
+                //a.Bloqueio == adotanteDto.Bloqueio
             )
             .FirstOrDefaultAsync();
 
@@ -314,6 +314,8 @@ public class AdotanteService : IAdotanteService
             erros.Add("O campo 'CEP' não pode ter ser vazio e deve ter exatamente 8 dígitos!");
         if (adotanteDto.SituacaoEndereco != null && string.IsNullOrWhiteSpace(adotanteDto.SituacaoEndereco))
             erros.Add("O campo 'Situacao de Endereco' não pode ter ser vazio!");
+        if (adotanteDto.Bloqueio != null && string.IsNullOrWhiteSpace(adotanteDto.Bloqueio.ToString()))
+            erros.Add("O campo 'Bloqueio' não pode ter ser vazio!");
 
         return erros;
     }

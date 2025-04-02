@@ -243,8 +243,8 @@ public class DoadorService : IDoadorService
                 d.Bairro == doadorDto.Bairro &&
                 d.Uf == doadorDto.Uf &&
                 d.Cidade == doadorDto.Cidade &&
-                d.Cep == doadorDto.Cep &&
-                d.Status == doadorDto.Status
+                d.Cep == doadorDto.Cep
+                //d.Status == doadorDto.Status
             )
             .FirstOrDefaultAsync();
 

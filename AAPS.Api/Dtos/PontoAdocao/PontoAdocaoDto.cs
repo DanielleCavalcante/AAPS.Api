@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AAPS.Api.Models.Enums;
 
 namespace AAPS.Api.Dtos.PontoAdocao;
 
@@ -15,4 +15,5 @@ public class PontoAdocaoDto
     public required string Uf { get; set; }
     public required string Cidade { get; set; }
     public required int Cep { get; set; }
+    public required StatusEnum Status { get; set; }
 }

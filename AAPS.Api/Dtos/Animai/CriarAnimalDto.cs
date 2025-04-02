@@ -9,9 +9,9 @@ namespace AAPS.Api.Dtos.Animais
         public string Raca { get; set; } = string.Empty;
         public string Pelagem { get; set; } = string.Empty;
         public string Sexo { get; set; } = string.Empty;
-        public DateTime DataNascimento { get; set; }
+        public DateTime? DataNascimento { get; set; }
         public StatusEnum Status { get; set; } = StatusEnum.Ativo;
-        public int DoadorId { get; set; }
-        public DisponibilidadeEnum Disponibilidade { get; set; }
+        public int DoadorId { get; set; } = 0;
+        public DisponibilidadeEnum Disponibilidade { get; set; } = DisponibilidadeEnum.Disponivel;
     }
 }

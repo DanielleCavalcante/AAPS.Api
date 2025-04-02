@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 public class AnimalService : IAnimalService
 {
-
     #region ATRIBUTOS E CONSTRUTOR
     private readonly AppDbContext _context;
     private readonly IDoadorService _doadorService;
@@ -42,6 +41,8 @@ public class AnimalService : IAnimalService
             DoadorId = doador.Id,
             Disponibilidade = animalDto.Disponibilidade
         };
+
+        var a = new Animal();
 
         _context.Animais.Add(animal);
         await _context.SaveChangesAsync();
@@ -178,13 +179,13 @@ public class AnimalService : IAnimalService
         return animalAtualizado;
     }
 
-    public async Task<AnimalDto> ExcluirAnimal(int id)
+    public async Task<bool> ExcluirAnimal(int id)
     {
         var animal = await BuscarAnimalPorId(id);
 
         if (animal is null)
         {
-            return null;
+            return false;
         }
 
         animal.Status = StatusEnum.Inativo;
@@ -192,19 +193,7 @@ public class AnimalService : IAnimalService
         //_context.Animais.Remove(animal);
         await _context.SaveChangesAsync();
 
-        return new AnimalDto
-        {
-            Id = animal.Id,
-            Nome = animal.Nome,
-            Especie = animal.Especie,
-            Raca = animal.Raca,
-            Pelagem = animal.Pelagem,
-            Sexo = animal.Sexo,
-            DataNascimento = animal.DataNascimento,
-            Status = animal.Status,
-            DoadorId = animal.DoadorId,
-            Disponibilidade = animal.Disponibilidade,
-        };
+        return true;
     }
 
     public async Task<List<string>> ValidarCriacaoAnimal(CriarAnimalDto animalDto)
@@ -238,9 +227,9 @@ public class AnimalService : IAnimalService
                 a.Pelagem == animalDto.Pelagem &&
                 a.Sexo == animalDto.Sexo &&
                 a.DataNascimento == animalDto.DataNascimento
-                //a.Status == animalDto.Status &&
-                //a.DoadorId == animalDto.DoadorId &&
-                //a.Disponibilidade == animalDto.Disponibilidade
+            //a.Status == animalDto.Status &&
+            //a.DoadorId == animalDto.DoadorId &&
+            //a.Disponibilidade == animalDto.Disponibilidade
             )
             .FirstOrDefaultAsync();
 

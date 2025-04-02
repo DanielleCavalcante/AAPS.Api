@@ -1,4 +1,4 @@
-﻿namespace AAPS.Api.Dtos.Voluntarios
+﻿namespace AAPS.Api.Dtos.Senha
 {
     public class ResetarSenhaDto
     {

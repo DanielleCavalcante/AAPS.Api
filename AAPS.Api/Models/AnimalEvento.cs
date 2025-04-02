@@ -3,8 +3,8 @@
 public class AnimalEvento
 {
     public int Id { get; set; }
-    public DateTime Data { get; set; } = DateTime.MinValue;
-    public string Observacao { get; set; } = string.Empty;
+    public DateTime Data { get; set; }
+    public string? Observacao { get; set; }
     public int AnimalId { get; set; }
     public int EventoId { get; set; }
 

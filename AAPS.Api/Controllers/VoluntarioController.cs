@@ -1,4 +1,5 @@
-﻿using AAPS.Api.Dtos.Voluntarios;
+﻿using AAPS.Api.Dtos.Senha;
+using AAPS.Api.Dtos.Voluntarios;
 using AAPS.Api.Responses;
 using AAPS.Api.Services;
 using AAPS.Api.Services.Autenticacao;

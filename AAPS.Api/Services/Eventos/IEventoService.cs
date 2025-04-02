@@ -6,7 +6,10 @@ namespace AAPS.Api.Services.Eventos
     {
         Task<EventoDto> CriarEvento(CriarEventoDto eventoDto);
         Task<IEnumerable<EventoDto>> ObterEventos(FiltroEventoDto filtro);
+        Task<EventoDto?> ObterEventoPorId(int id);
         Task<EventoDto?> AtualizarEvento(int id, AtualizarEventoDto eventoDto);
         Task<bool> ExcluirEvento(int id);
+        Task<List<string>> ValidarCriacaoEvento(CriarEventoDto eventoDto);
+        Task<List<string>> ValidarAtualizacaoEvento(AtualizarEventoDto eventoDto);
     }
 }

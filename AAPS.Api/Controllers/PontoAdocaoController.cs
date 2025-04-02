@@ -92,7 +92,7 @@ namespace AAPS.Api.Controllers
             return Ok(ApiResponse<object>.SucessoResponse(pontoAdocao, $"Ponto de Adoção de id = {id} foi atualizado com sucesso!"));
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpPut("{id:int}")]
         public async Task<ActionResult> ExcluirPontoAdocao(int id)
         {
             bool pontoAdocao = await _pontoAdocaoService.ExcluirPontoAdocao(id);
