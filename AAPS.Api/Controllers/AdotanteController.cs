@@ -1,4 +1,5 @@
-﻿using AAPS.Api.Dtos.Adotantes;
+﻿using AAPS.Api.Dtos.Adotante;
+using AAPS.Api.Dtos.Adotantes;
 using AAPS.Api.Models;
 using AAPS.Api.Responses;
 using AAPS.Api.Services.Adotantes;
@@ -45,7 +46,7 @@ public class AdotanteController : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<IAsyncEnumerable<Adotante>>> ObterAdotantes([FromQuery] FiltroAdotanteDto filtro)
+    public async Task<ActionResult<IAsyncEnumerable<AdotanteDto>>> ObterAdotantes([FromQuery] FiltroAdotanteDto filtro)
     {
         var adotantes = await _adotanteService.ObterAdotantes(filtro);
 
@@ -57,14 +58,27 @@ public class AdotanteController : Controller
         return Ok(ApiResponse<object>.SucessoResponse(adotantes));
     }
 
-    [HttpGet]
-    public async Task<ActionResult<IAsyncEnumerable<Adotante>>> ObterAdotantePorNome([FromQuery] string nome)
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult> ObterAdotantePorId(int id)
     {
-        var adotantes = await _adotanteService.ObterAdotantePorNome(nome);
+        var adotante = await _adotanteService.ObterAdotantePorId(id);
 
-        if (adotantes is null)
+        if (adotante is null)
         {
-            return BadRequest(ApiResponse<object>.ErroResponse(new List<string> { "Erro ao obter adotantes." }));
+            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { $"Adotante de id = {id} não encontrado." }));
+        }
+
+        return Ok(ApiResponse<object>.SucessoResponse(adotante));
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IAsyncEnumerable<AdotanteDto>>> ObterAdotantesAtivos()
+    {
+        var adotantes = await _adotanteService.ObterAdotantesAtivos();
+
+        if(adotantes is null)
+        {
+            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { "Nenhum adotante foi encontrado." }));
         }
 
         return Ok(ApiResponse<object>.SucessoResponse(adotantes));
@@ -103,4 +117,17 @@ public class AdotanteController : Controller
 
         return Ok(ApiResponse<object>.SucessoResponse($"Adotante de id = {id} foi inativado com sucesso!"));
     }
+
+    //[HttpGet]
+    //public async Task<ActionResult<IAsyncEnumerable<Adotante>>> ObterAdotantePorNome([FromQuery] string nome)
+    //{
+    //    var adotantes = await _adotanteService.ObterAdotantePorNome(nome);
+
+    //    if (adotantes is null)
+    //    {
+    //        return BadRequest(ApiResponse<object>.ErroResponse(new List<string> { "Erro ao obter adotantes." }));
+    //    }
+
+    //    return Ok(ApiResponse<object>.SucessoResponse(adotantes));
+    //}
 }

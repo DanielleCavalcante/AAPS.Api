@@ -1,12 +1,9 @@
-﻿using AAPS.Api.Dtos.Adotante;
-using AAPS.Api.Dtos.Evento;
-using AAPS.Api.Models;
+﻿using AAPS.Api.Dtos.Evento;
 using AAPS.Api.Responses;
 using AAPS.Api.Services.Eventos;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AAPS.Api.Controllers;
 
@@ -29,10 +26,11 @@ public class EventoController : Controller
     [HttpPost]
     public async Task<IActionResult> CriarEvento([FromBody] CriarEventoDto eventoDto)
     {
-        if (string.IsNullOrEmpty(eventoDto.Descricao))
+        var erros = await _eventoService.ValidarCriacaoEvento(eventoDto);
+
+        if (erros.Count > 0)
         {
-            return BadRequest(ApiResponse<object>.ErroResponse(
-                new List<string> { "O campo 'Descrição' é obrigatório!" }, "Erro ao registrar animal!"));
+            return BadRequest(ApiResponse<object>.ErroResponse(erros, "Erro ao registrar evento!"));
         }
 
         var evento = await _eventoService.CriarEvento(eventoDto);
@@ -46,7 +44,7 @@ public class EventoController : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<IAsyncEnumerable<Evento>>> ObterEventos([FromQuery] FiltroEventoDto filtro)
+    public async Task<ActionResult<IAsyncEnumerable<EventoDto>>> ObterEventos([FromQuery] FiltroEventoDto filtro)
     {
         var eventos = await _eventoService.ObterEventos(filtro);
 
@@ -58,13 +56,40 @@ public class EventoController : Controller
         return Ok(ApiResponse<object>.SucessoResponse(eventos));
     }
 
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult> ObterEventoPorId(int id)
+    {
+        var evento = await _eventoService.ObterEventoPorId(id);
+
+        if (evento is null)
+        {
+            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { $"Evento de id = {id} não encontrado." }));
+        }
+
+        return Ok(ApiResponse<object>.SucessoResponse(evento));
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IAsyncEnumerable<EventoDto>>> ObterEventosAtivos()
+    {
+        var eventos = await _eventoService.ObterEventosAtivos();
+
+        if (eventos is null) //|| !eventos.Any()
+        {
+            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { "Nenhum evento foi encontrado." }));
+        }
+
+        return Ok(ApiResponse<object>.SucessoResponse(eventos));
+    }
+
     [HttpPut("{id:int}")]
     public async Task<ActionResult> AtualizarEvento(int id, [FromBody] AtualizarEventoDto eventoDto)
     {
-        if (string.IsNullOrEmpty(eventoDto.Descricao))
+        var erros = await _eventoService.ValidarAtualizacaoEvento(eventoDto);
+
+        if (erros.Count > 0)
         {
-            return BadRequest(ApiResponse<object>.ErroResponse(
-                new List<string> { "O campo 'Descrição' não pode ser vazio!" }, "Erro ao atualizar evento!"));
+            return BadRequest(ApiResponse<object>.ErroResponse(erros, "Erro ao atualizar evento!"));
         }
 
         var evento = await _eventoService.AtualizarEvento(id, eventoDto);
@@ -77,7 +102,7 @@ public class EventoController : Controller
         return Ok(ApiResponse<object>.SucessoResponse(evento, "Evento atualizado com sucesso!"));
     }
 
-    [HttpDelete("{id:int}")]
+    [HttpPut("{id:int}")]
     public async Task<ActionResult> ExcluirEvento(int id)
     {
         var evento = await _eventoService.ExcluirEvento(id);

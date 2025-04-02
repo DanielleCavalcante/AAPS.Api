@@ -1,6 +1,6 @@
 ﻿using AAPS.Api.Models.Enums;
 
-namespace AAPS.Api.Dtos.Animais
+namespace AAPS.Api.Dtos.Animal
 {
     public class AtualizarAnimalDto
     {

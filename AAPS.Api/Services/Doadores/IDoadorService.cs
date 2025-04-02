@@ -1,5 +1,4 @@
-﻿using AAPS.Api.Dtos.Doadores;
-using AAPS.Api.Models;
+﻿using AAPS.Api.Dtos.Doador;
 
 namespace AAPS.Api.Services.Doadores;
 
@@ -9,7 +8,6 @@ public interface IDoadorService
     Task<IEnumerable<DoadorDto>> ObterDoadores(FiltroDoadorDto filtro);
     Task<DoadorDto?> ObterDoadorPorId(int id);
     Task<IEnumerable<DoadorDto>> ObterDoadoresAtivos();
-    Task<IEnumerable<Doador>> ObterDoadorPorNome(string nome);
     Task<DoadorDto?> AtualizarDoador(int id, AtualizarDoadorDto doadorDto);
     Task<bool> ExcluirDoador(int id);
     Task<List<string>> ValidarCriacaoDoador(CriarDoadorDto doadorDto);

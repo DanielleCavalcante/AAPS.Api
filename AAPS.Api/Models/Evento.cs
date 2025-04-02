@@ -1,9 +1,12 @@
-﻿namespace AAPS.Api.Models;
+﻿using AAPS.Api.Models.Enums;
+
+namespace AAPS.Api.Models;
 
 public class Evento
 {
     public int Id { get; set; }
-    public string Descricao { get; set; } = string.Empty;
+    public string Descricao { get; set; }
+    public StatusEnum Status { get; set; } = StatusEnum.Ativo;
 
     public ICollection<AnimalEvento> AnimalEvento { get; set; }
 }

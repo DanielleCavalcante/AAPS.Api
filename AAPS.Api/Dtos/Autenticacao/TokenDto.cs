@@ -1,6 +1,4 @@
-﻿using AAPS.Api.Dtos.Voluntarios;
-
-namespace AAPS.Api.Dtos.Autenticacao
+﻿namespace AAPS.Api.Dtos.Autenticacao
 {
     public class TokenDto
     {

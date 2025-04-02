@@ -1,8 +1,8 @@
 ﻿using AAPS.Api.Models.Enums;
 
-namespace AAPS.Api.Dtos.Evento
+namespace AAPS.Api.Dtos.PontoAdocao
 {
-    public class FiltroEventoDto
+    public class FiltroPontoAdocaoDto
     {
         public string? Busca { get; set; }
         public StatusEnum? Status { get; set; }

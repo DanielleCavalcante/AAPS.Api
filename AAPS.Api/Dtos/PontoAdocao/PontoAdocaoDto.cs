@@ -1,13 +1,13 @@
 ﻿using AAPS.Api.Models.Enums;
 
-namespace AAPS.Api.Dtos.Doadores;
+namespace AAPS.Api.Dtos.PontoAdocao;
 
-public class DoadorDto
+public class PontoAdocaoDto
 {
     public int Id { get; set; }
-    public required string Nome { get; set; }
-    public required string Rg { get; set; }
-    public required string Cpf { get; set; }
+    public required string NomeFantasia { get; set; }
+    public required string Responsavel { get; set; }
+    public required string Cnpj { get; set; }
     public required string Logradouro { get; set; }
     public required int Numero { get; set; }
     public string? Complemento { get; set; }

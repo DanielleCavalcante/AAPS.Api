@@ -201,6 +201,7 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
             entity.HasKey(x => x.Id);
 
             entity.Property(x => x.Descricao).HasColumnType("nvarchar(50)").IsRequired();
+            entity.Property(x => x.Status).HasColumnType("int").IsRequired();
 
             // Relações
             entity.HasMany(x => x.AnimalEvento)
@@ -220,6 +221,7 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
             entity.Property(x => x.NomeFantasia).HasColumnType("nvarchar(60)").IsRequired();
             entity.Property(x => x.Responsavel).HasColumnType("nvarchar(60)").IsRequired();  // ver se precisa deixar
             entity.Property(x => x.Cnpj).HasColumnType("nvarchar(14)").IsRequired();
+            entity.Property(x => x.Status).HasColumnType("int").IsRequired();
 
             entity.Property(x => x.Logradouro).HasColumnType("nvarchar(150)").IsRequired();
             entity.Property(x => x.Numero).HasColumnType("int").IsRequired();
