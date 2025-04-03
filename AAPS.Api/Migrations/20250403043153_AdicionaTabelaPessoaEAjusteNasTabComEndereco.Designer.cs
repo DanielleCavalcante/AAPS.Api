@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AAPS.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250316022534_AdicionaUsuarioERolesPorMigration")]
-    partial class AdicionaUsuarioERolesPorMigration
+    [Migration("20250403043153_AdicionaTabelaPessoaEAjusteNasTabComEndereco")]
+    partial class AdicionaTabelaPessoaEAjusteNasTabComEndereco
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,35 @@ namespace AAPS.Api.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("AAPS.Api.Models.Acompanhamento", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AnimalId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Data")
+                        .HasColumnType("date");
+
+                    b.Property<int>("EventoId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Observacao")
+                        .HasColumnType("nvarchar(600)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnimalId");
+
+                    b.HasIndex("EventoId");
+
+                    b.ToTable("Acompanhamentos", "dbo");
+                });
 
             modelBuilder.Entity("AAPS.Api.Models.Adocao", b =>
                 {
@@ -39,7 +68,7 @@ namespace AAPS.Api.Migrations
                     b.Property<int>("AnimalId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("DataAdocao")
+                    b.Property<DateTime>("Data")
                         .HasColumnType("date");
 
                     b.Property<int>("PontoAdocaoId")
@@ -58,7 +87,7 @@ namespace AAPS.Api.Migrations
 
                     b.HasIndex("VoluntarioId");
 
-                    b.ToTable("Adocao", "dbo");
+                    b.ToTable("Adocoes", "dbo");
                 });
 
             modelBuilder.Entity("AAPS.Api.Models.Adotante", b =>
@@ -69,24 +98,8 @@ namespace AAPS.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Bairro")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("Cep")
+                    b.Property<int>("Bloqueio")
                         .HasColumnType("int");
-
-                    b.Property<string>("Cidade")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Complemento")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Cpf")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(11)");
 
                     b.Property<string>("Facebook")
                         .IsRequired()
@@ -100,35 +113,15 @@ namespace AAPS.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(80)");
 
-                    b.Property<string>("Logradouro")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(60)");
-
-                    b.Property<int>("Numero")
+                    b.Property<int>("PessoaId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Rg")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(9)");
-
-                    b.Property<string>("SituacaoEndereco")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Uf")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(2)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Adotante", "dbo");
+                    b.HasIndex("PessoaId")
+                        .IsUnique();
+
+                    b.ToTable("Adotantes", "dbo");
                 });
 
             modelBuilder.Entity("AAPS.Api.Models.Animal", b =>
@@ -139,10 +132,10 @@ namespace AAPS.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("DataNascimento")
+                    b.Property<DateTime?>("DataNascimento")
                         .HasColumnType("date");
 
-                    b.Property<int>("DoadorId")
+                    b.Property<int>("Disponibilidade")
                         .HasColumnType("int");
 
                     b.Property<string>("Especie")
@@ -157,6 +150,9 @@ namespace AAPS.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(25)");
 
+                    b.Property<int>("PessoaId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Raca")
                         .IsRequired()
                         .HasColumnType("nvarchar(25)");
@@ -165,47 +161,17 @@ namespace AAPS.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(10)");
 
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DoadorId");
+                    b.HasIndex("PessoaId");
 
-                    b.ToTable("Animal", "dbo");
+                    b.ToTable("Animais", "dbo");
                 });
 
-            modelBuilder.Entity("AAPS.Api.Models.AnimalEvento", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AnimalId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("DataAcompanhamento")
-                        .HasColumnType("date");
-
-                    b.Property<int>("EventoId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Observacao")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(500)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AnimalId");
-
-                    b.HasIndex("EventoId");
-
-                    b.ToTable("AnimalEvento", "dbo");
-                });
-
-            modelBuilder.Entity("AAPS.Api.Models.Doador", b =>
+            modelBuilder.Entity("AAPS.Api.Models.Endereco", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -217,43 +183,40 @@ namespace AAPS.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("Cep")
-                        .HasColumnType("int");
+                    b.Property<string>("Cep")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(8)");
 
                     b.Property<string>("Cidade")
                         .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Complemento")
-                        .IsRequired()
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Cpf")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Logradouro")
                         .IsRequired()
                         .HasColumnType("nvarchar(150)");
 
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<int>("Numero")
                         .HasColumnType("int");
 
-                    b.Property<string>("Rg")
-                        .IsRequired()
+                    b.Property<int>("PessoaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SituacaoEndereco")
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Uf")
                         .IsRequired()
-                        .HasColumnType("nvarchar(2)");
+                        .HasColumnType("char(2)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Doador", "dbo");
+                    b.HasIndex("PessoaId")
+                        .IsUnique();
+
+                    b.ToTable("Enderecos", "dbo");
                 });
 
             modelBuilder.Entity("AAPS.Api.Models.Evento", b =>
@@ -264,12 +227,44 @@ namespace AAPS.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<byte>("Code")
-                        .HasColumnType("tinyint");
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Evento", "dbo");
+                    b.ToTable("Eventos", "dbo");
+                });
+
+            modelBuilder.Entity("AAPS.Api.Models.Pessoa", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Cpf")
+                        .HasColumnType("nvarchar(11)");
+
+                    b.Property<string>("Nome")
+                        .HasColumnType("nvarchar(60)");
+
+                    b.Property<string>("Rg")
+                        .HasColumnType("nvarchar(9)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Tipo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Pessoas", "dbo");
                 });
 
             modelBuilder.Entity("AAPS.Api.Models.PontoAdocao", b =>
@@ -280,47 +275,27 @@ namespace AAPS.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Bairro")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("Cep")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Cidade")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<string>("Cnpj")
                         .IsRequired()
                         .HasColumnType("nvarchar(14)");
-
-                    b.Property<string>("Complemento")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Logradouro")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("NomeFantasia")
                         .IsRequired()
                         .HasColumnType("nvarchar(60)");
 
-                    b.Property<int>("Numero")
+                    b.Property<int>("PessoaId")
                         .HasColumnType("int");
 
                     b.Property<string>("Responsavel")
                         .IsRequired()
                         .HasColumnType("nvarchar(60)");
 
-                    b.Property<string>("Uf")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(2)");
-
                     b.HasKey("Id");
 
-                    b.ToTable("PontoAdocao", "dbo");
+                    b.HasIndex("PessoaId")
+                        .IsUnique();
+
+                    b.ToTable("PontosAdocao", "dbo");
                 });
 
             modelBuilder.Entity("AAPS.Api.Models.Telefone", b =>
@@ -331,32 +306,18 @@ namespace AAPS.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AdotanteId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DoadorId")
-                        .HasColumnType("int");
-
                     b.Property<string>("NumeroTelefone")
                         .IsRequired()
                         .HasColumnType("nvarchar(11)");
 
-                    b.Property<int>("PontoAdocaoId")
+                    b.Property<int>("PessoaId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Responsavel")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(60)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AdotanteId");
+                    b.HasIndex("PessoaId");
 
-                    b.HasIndex("DoadorId");
-
-                    b.HasIndex("PontoAdocaoId");
-
-                    b.ToTable("Telefone", "dbo");
+                    b.ToTable("Telefones", "dbo");
                 });
 
             modelBuilder.Entity("AAPS.Api.Models.Voluntario", b =>
@@ -367,17 +328,9 @@ namespace AAPS.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Cpf")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(11)");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NomeCompleto")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(60)");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
@@ -386,14 +339,14 @@ namespace AAPS.Api.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("PessoaId")
+                        .HasColumnType("int");
+
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte>("Status")
-                        .HasColumnType("tinyint");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
@@ -406,7 +359,10 @@ namespace AAPS.Api.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("Voluntario", "dbo");
+                    b.HasIndex("PessoaId")
+                        .IsUnique();
+
+                    b.ToTable("Voluntarios", "dbo");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
@@ -542,6 +498,25 @@ namespace AAPS.Api.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("AAPS.Api.Models.Acompanhamento", b =>
+                {
+                    b.HasOne("AAPS.Api.Models.Animal", "Animal")
+                        .WithMany("Acompanhamentos")
+                        .HasForeignKey("AnimalId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("AAPS.Api.Models.Evento", "Evento")
+                        .WithMany("Acompanhamentos")
+                        .HasForeignKey("EventoId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Animal");
+
+                    b.Navigation("Evento");
+                });
+
             modelBuilder.Entity("AAPS.Api.Models.Adocao", b =>
                 {
                     b.HasOne("AAPS.Api.Models.Adotante", "Adotante")
@@ -577,61 +552,70 @@ namespace AAPS.Api.Migrations
                     b.Navigation("Voluntario");
                 });
 
-            modelBuilder.Entity("AAPS.Api.Models.Animal", b =>
+            modelBuilder.Entity("AAPS.Api.Models.Adotante", b =>
                 {
-                    b.HasOne("AAPS.Api.Models.Doador", "Doador")
-                        .WithMany("Animais")
-                        .HasForeignKey("DoadorId")
+                    b.HasOne("AAPS.Api.Models.Pessoa", "Pessoa")
+                        .WithOne("Adotante")
+                        .HasForeignKey("AAPS.Api.Models.Adotante", "PessoaId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Doador");
+                    b.Navigation("Pessoa");
                 });
 
-            modelBuilder.Entity("AAPS.Api.Models.AnimalEvento", b =>
+            modelBuilder.Entity("AAPS.Api.Models.Animal", b =>
                 {
-                    b.HasOne("AAPS.Api.Models.Animal", "Animal")
-                        .WithMany("AnimalEventos")
-                        .HasForeignKey("AnimalId")
+                    b.HasOne("AAPS.Api.Models.Pessoa", "Pessoa")
+                        .WithMany("Animais")
+                        .HasForeignKey("PessoaId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("AAPS.Api.Models.Evento", "Evento")
-                        .WithMany("AnimalEventos")
-                        .HasForeignKey("EventoId")
+                    b.Navigation("Pessoa");
+                });
+
+            modelBuilder.Entity("AAPS.Api.Models.Endereco", b =>
+                {
+                    b.HasOne("AAPS.Api.Models.Pessoa", "Pessoa")
+                        .WithOne("Endereco")
+                        .HasForeignKey("AAPS.Api.Models.Endereco", "PessoaId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Animal");
+                    b.Navigation("Pessoa");
+                });
 
-                    b.Navigation("Evento");
+            modelBuilder.Entity("AAPS.Api.Models.PontoAdocao", b =>
+                {
+                    b.HasOne("AAPS.Api.Models.Pessoa", "Pessoa")
+                        .WithOne("PontoAdocao")
+                        .HasForeignKey("AAPS.Api.Models.PontoAdocao", "PessoaId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Pessoa");
                 });
 
             modelBuilder.Entity("AAPS.Api.Models.Telefone", b =>
                 {
-                    b.HasOne("AAPS.Api.Models.Adotante", "Adotante")
+                    b.HasOne("AAPS.Api.Models.Pessoa", "Pessoa")
                         .WithMany("Telefones")
-                        .HasForeignKey("AdotanteId")
+                        .HasForeignKey("PessoaId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("AAPS.Api.Models.Doador", "Doador")
-                        .WithMany("Telefones")
-                        .HasForeignKey("DoadorId")
+                    b.Navigation("Pessoa");
+                });
+
+            modelBuilder.Entity("AAPS.Api.Models.Voluntario", b =>
+                {
+                    b.HasOne("AAPS.Api.Models.Pessoa", "Pessoa")
+                        .WithOne("Voluntario")
+                        .HasForeignKey("AAPS.Api.Models.Voluntario", "PessoaId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("AAPS.Api.Models.PontoAdocao", "PontoAdocao")
-                        .WithMany("Telefones")
-                        .HasForeignKey("PontoAdocaoId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Adotante");
-
-                    b.Navigation("Doador");
-
-                    b.Navigation("PontoAdocao");
+                    b.Navigation("Pessoa");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -688,34 +672,38 @@ namespace AAPS.Api.Migrations
             modelBuilder.Entity("AAPS.Api.Models.Adotante", b =>
                 {
                     b.Navigation("Adocoes");
-
-                    b.Navigation("Telefones");
                 });
 
             modelBuilder.Entity("AAPS.Api.Models.Animal", b =>
                 {
+                    b.Navigation("Acompanhamentos");
+
                     b.Navigation("Adocoes");
-
-                    b.Navigation("AnimalEventos");
-                });
-
-            modelBuilder.Entity("AAPS.Api.Models.Doador", b =>
-                {
-                    b.Navigation("Animais");
-
-                    b.Navigation("Telefones");
                 });
 
             modelBuilder.Entity("AAPS.Api.Models.Evento", b =>
                 {
-                    b.Navigation("AnimalEventos");
+                    b.Navigation("Acompanhamentos");
+                });
+
+            modelBuilder.Entity("AAPS.Api.Models.Pessoa", b =>
+                {
+                    b.Navigation("Adotante");
+
+                    b.Navigation("Animais");
+
+                    b.Navigation("Endereco");
+
+                    b.Navigation("PontoAdocao");
+
+                    b.Navigation("Telefones");
+
+                    b.Navigation("Voluntario");
                 });
 
             modelBuilder.Entity("AAPS.Api.Models.PontoAdocao", b =>
                 {
                     b.Navigation("Adocoes");
-
-                    b.Navigation("Telefones");
                 });
 
             modelBuilder.Entity("AAPS.Api.Models.Voluntario", b =>

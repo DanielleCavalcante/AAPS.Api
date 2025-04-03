@@ -1,5 +1,5 @@
 ﻿using AAPS.Api.Context;
-using AAPS.Api.Dtos.Animais;
+using AAPS.Api.Dtos.Animal;
 using AAPS.Api.Models;
 using AAPS.Api.Models.Enums;
 using AAPS.Api.Services.Doadores;
@@ -39,7 +39,7 @@ namespace AAPS.Api.Services.Animais
                 Sexo = animalDto.Sexo,
                 DataNascimento = animalDto.DataNascimento,
                 Status = animalDto.Status,
-                DoadorId = doador.Id,
+                PessoaId = doador.Id,
                 Disponibilidade = animalDto.Disponibilidade
             };
 
@@ -58,7 +58,7 @@ namespace AAPS.Api.Services.Animais
                 Sexo = animal.Sexo,
                 DataNascimento = animal.DataNascimento,
                 Status = animal.Status,
-                DoadorId = animal.DoadorId,
+                DoadorId = animal.PessoaId,
                 Disponibilidade = animal.Disponibilidade,
             };
         }
@@ -103,7 +103,7 @@ namespace AAPS.Api.Services.Animais
                     Sexo = a.Sexo,
                     DataNascimento = a.DataNascimento,
                     Status = a.Status,
-                    DoadorId = a.DoadorId,
+                    DoadorId = a.PessoaId,
                     Disponibilidade = a.Disponibilidade,
                 })
                 .ToListAsync();
@@ -115,7 +115,7 @@ namespace AAPS.Api.Services.Animais
         {
             var animal = await BuscarAnimalPorId(id);
 
-            var doador = await _doadorService.ObterDoadorPorId(animal.DoadorId);
+            var doador = await _doadorService.ObterDoadorPorId(animal.PessoaId);
 
             if (animal == null)
             {
@@ -132,7 +132,7 @@ namespace AAPS.Api.Services.Animais
                 Sexo = animal.Sexo,
                 DataNascimento = animal.DataNascimento,
                 Status = animal.Status,
-                DoadorId = animal.DoadorId,
+                DoadorId = animal.PessoaId,
                 Disponibilidade = animal.Disponibilidade,
             };
         }
@@ -151,7 +151,7 @@ namespace AAPS.Api.Services.Animais
                     Sexo = a.Sexo,
                     DataNascimento = a.DataNascimento,
                     Status = a.Status,
-                    DoadorId = a.DoadorId,
+                    DoadorId = a.PessoaId,
                     Disponibilidade = a.Disponibilidade,
                 });
 
@@ -174,7 +174,7 @@ namespace AAPS.Api.Services.Animais
             animal.Sexo = string.IsNullOrEmpty(animalDto.Sexo) ? animal.Sexo : animalDto.Sexo;
             animal.DataNascimento = animalDto.DataNascimento.HasValue ? animalDto.DataNascimento.Value : animal.DataNascimento;
             animal.Status = animalDto.Status.HasValue ? animalDto.Status.Value : animal.Status;
-            animal.DoadorId = animalDto.DoadorId.HasValue ? animalDto.DoadorId.Value : animal.DoadorId;
+            animal.PessoaId = animalDto.DoadorId.HasValue ? animalDto.DoadorId.Value : animal.PessoaId;
             animal.Disponibilidade = animalDto.Disponibilidade.HasValue ? animalDto.Disponibilidade.Value : animal.Disponibilidade;
 
             await _context.SaveChangesAsync();
@@ -189,7 +189,7 @@ namespace AAPS.Api.Services.Animais
                 Sexo = animal.Sexo,
                 DataNascimento = animal.DataNascimento,
                 Status = animal.Status,
-                DoadorId = animal.DoadorId,
+                DoadorId = animal.PessoaId,
                 Disponibilidade = animal.Disponibilidade,
             };
 

@@ -10,6 +10,6 @@ public class VoluntarioDto
     public required StatusEnum Status { get; set; }
     public required string UserName { get; set; }
     public required string Email { get; set; }
-    public required string Telefone { get; set; }
+    public required string PhoneNumber { get; set; }
     public required string Acesso { get; set; }
 }

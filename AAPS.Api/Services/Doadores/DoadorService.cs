@@ -1,8 +1,8 @@
 ﻿using AAPS.Api.Context;
-using AAPS.Api.Dtos.Doadores;
+using AAPS.Api.Dtos.Adotante;
+using AAPS.Api.Dtos.Doador;
 using AAPS.Api.Models;
 using AAPS.Api.Models.Enums;
-using AAPS.Api.Services.Doadores;
 using Microsoft.EntityFrameworkCore;
 
 namespace AAPS.Api.Services.Doadores
@@ -22,11 +22,20 @@ namespace AAPS.Api.Services.Doadores
 
         public async Task<DoadorDto> CriarDoador(CriarDoadorDto doadorDto)
         {
-            var doador = new Doador
+            var doador = new Pessoa
             {
                 Nome = doadorDto.Nome,
                 Rg = doadorDto.Rg,
                 Cpf = doadorDto.Cpf,
+                Tipo = TipoPessoaEnum.Doador,
+                Status = doadorDto.Status,
+            };
+
+            _context.Pessoas.Add(doador);
+            await _context.SaveChangesAsync();
+
+            var endereco = new Endereco
+            {
                 Logradouro = doadorDto.Logradouro,
                 Numero = doadorDto.Numero,
                 Complemento = doadorDto.Complemento,
@@ -34,10 +43,10 @@ namespace AAPS.Api.Services.Doadores
                 Uf = doadorDto.Uf,
                 Cidade = doadorDto.Cidade,
                 Cep = doadorDto.Cep,
-                Status = doadorDto.Status,
+                PessoaId = doador.Id
             };
 
-            _context.Doadores.Add(doador);
+            _context.Enderecos.Add(endereco);
             await _context.SaveChangesAsync();
 
             return new DoadorDto
@@ -59,20 +68,24 @@ namespace AAPS.Api.Services.Doadores
 
         public async Task<IEnumerable<DoadorDto>> ObterDoadores(FiltroDoadorDto filtro)
         {
-            var query = _context.Doadores.AsQueryable();
+            var query = _context.Pessoas
+                .Where(d => d.Tipo == TipoPessoaEnum.Doador)
+                .AsQueryable();
 
             if (!string.IsNullOrEmpty(filtro.Busca))
             {
+                string buscaLower = filtro.Busca.ToLower();
+
                 query = query.Where(p =>
-                    p.Nome.Contains(filtro.Busca.ToLower()) ||
-                    p.Cpf.Contains(filtro.Busca.ToLower()) ||
+                    p.Nome.ToLower().Contains(buscaLower) ||
+                    p.Cpf.Contains(buscaLower) ||
                     p.Rg.Contains(filtro.Busca)
                 );
             }
 
             if (filtro.Status.HasValue)
             {
-                query = query.Where(a => a.Status == filtro.Status.Value);
+                query = query.Where(d => d.Status == filtro.Status.Value);
             }
 
             var doadoresDto = await query
@@ -82,13 +95,13 @@ namespace AAPS.Api.Services.Doadores
                     Nome = d.Nome,
                     Rg = d.Rg,
                     Cpf = d.Cpf,
-                    Logradouro = d.Logradouro,
-                    Numero = d.Numero,
-                    Complemento = d.Complemento,
-                    Bairro = d.Bairro,
-                    Uf = d.Uf,
-                    Cidade = d.Cidade,
-                    Cep = d.Cep,
+                    Logradouro = d.Endereco.Logradouro,
+                    Numero = d.Endereco.Numero,
+                    Complemento = d.Endereco.Complemento,
+                    Bairro = d.Endereco.Bairro,
+                    Uf = d.Endereco.Uf,
+                    Cidade = d.Endereco.Cidade,
+                    Cep = d.Endereco.Cep,
                     Status = d.Status,
                 })
                 .ToListAsync();
@@ -111,20 +124,20 @@ namespace AAPS.Api.Services.Doadores
                 Nome = doador.Nome,
                 Rg = doador.Rg,
                 Cpf = doador.Cpf,
-                Logradouro = doador.Logradouro,
-                Numero = doador.Numero,
-                Complemento = doador.Complemento,
-                Bairro = doador.Bairro,
-                Uf = doador.Uf,
-                Cidade = doador.Cidade,
-                Cep = doador.Cep,
+                Logradouro = doador.Endereco.Logradouro,
+                Numero = doador.Endereco.Numero,
+                Complemento = doador.Endereco.Complemento,
+                Bairro = doador.Endereco.Bairro,
+                Uf = doador.Endereco.Uf,
+                Cidade = doador.Endereco.Cidade,
+                Cep = doador.Endereco.Cep,
                 Status = doador.Status,
             };
         }
 
         public async Task<IEnumerable<DoadorDto>> ObterDoadoresAtivos()
         {
-            var doadores = _context.Doadores
+            var doadores = _context.Pessoas
                 .Where(d => d.Status == StatusEnum.Ativo)
                 .Select(d => new DoadorDto
                 {
@@ -132,13 +145,13 @@ namespace AAPS.Api.Services.Doadores
                     Nome = d.Nome,
                     Rg = d.Rg,
                     Cpf = d.Cpf,
-                    Logradouro = d.Logradouro,
-                    Numero = d.Numero,
-                    Complemento = d.Complemento,
-                    Bairro = d.Bairro,
-                    Uf = d.Uf,
-                    Cidade = d.Cidade,
-                    Cep = d.Cep,
+                    Logradouro = d.Endereco.Logradouro,
+                    Numero = d.Endereco.Numero,
+                    Complemento = d.Endereco.Complemento,
+                    Bairro = d.Endereco.Bairro,
+                    Uf = d.Endereco.Uf,
+                    Cidade = d.Endereco.Cidade,
+                    Cep = d.Endereco.Cep,
                     Status = d.Status,
                 });
 
@@ -157,34 +170,33 @@ namespace AAPS.Api.Services.Doadores
             doador.Nome = string.IsNullOrEmpty(doadorDto.Nome) ? doador.Nome : doadorDto.Nome;
             doador.Rg = string.IsNullOrEmpty(doadorDto.Rg) ? doador.Rg : doadorDto.Rg;
             doador.Cpf = string.IsNullOrEmpty(doadorDto.Cpf) ? doador.Cpf : doadorDto.Cpf;
-            doador.Logradouro = string.IsNullOrEmpty(doadorDto.Logradouro) ? doador.Logradouro : doadorDto.Logradouro;
-            doador.Numero = doadorDto.Numero.HasValue ? doadorDto.Numero.Value : doador.Numero;
-            doador.Complemento = string.IsNullOrEmpty(doadorDto.Complemento) ? doador.Complemento : doadorDto.Complemento;
-            doador.Bairro = string.IsNullOrEmpty(doadorDto.Bairro) ? doador.Bairro : doadorDto.Bairro;
-            doador.Uf = string.IsNullOrEmpty(doadorDto.Uf) ? doador.Uf : doadorDto.Uf;
-            doador.Cidade = string.IsNullOrEmpty(doadorDto.Cidade) ? doador.Cidade : doadorDto.Cidade;
-            doador.Cep = doadorDto.Cep.HasValue ? doadorDto.Cep.Value : doador.Cep;
             doador.Status = doadorDto.Status.HasValue ? doadorDto.Status.Value : doador.Status;
+
+            doador.Endereco.Logradouro = string.IsNullOrEmpty(doadorDto.Logradouro) ? doador.Endereco.Logradouro : doadorDto.Logradouro;
+            doador.Endereco.Numero = doadorDto.Numero.HasValue ? doadorDto.Numero.Value : doador.Endereco.Numero;
+            doador.Endereco.Complemento = string.IsNullOrEmpty(doadorDto.Complemento) ? doador.Endereco.Complemento : doadorDto.Complemento;
+            doador.Endereco.Bairro = string.IsNullOrEmpty(doadorDto.Bairro) ? doador.Endereco.Bairro : doadorDto.Bairro;
+            doador.Endereco.Uf = string.IsNullOrEmpty(doadorDto.Uf) ? doador.Endereco.Uf : doadorDto.Uf;
+            doador.Endereco.Cidade = string.IsNullOrEmpty(doadorDto.Cidade) ? doador.Endereco.Cidade : doadorDto.Cidade;
+            doador.Endereco.Cep = string.IsNullOrEmpty(doadorDto.Cep) ? doador.Endereco.Cep : doadorDto.Cep;
 
             await _context.SaveChangesAsync();
 
-            var doadorAtualizado = new DoadorDto
+            return new DoadorDto
             {
                 Id = doador.Id,
                 Nome = doador.Nome,
                 Rg = doador.Rg,
                 Cpf = doador.Cpf,
-                Logradouro = doador.Logradouro,
-                Numero = doador.Numero,
-                Complemento = doador.Complemento,
-                Bairro = doador.Bairro,
-                Uf = doador.Uf,
-                Cidade = doador.Cidade,
-                Cep = doador.Cep,
+                Logradouro = doador.Endereco.Logradouro,
+                Numero = doador.Endereco.Numero,
+                Complemento = doador.Endereco.Complemento,
+                Bairro = doador.Endereco.Bairro,
+                Uf = doador.Endereco.Uf,
+                Cidade = doador.Endereco.Cidade,
+                Cep = doador.Endereco.Cep,
                 Status = doador.Status,
             };
-
-            return doadorAtualizado;
         }
 
         public async Task<bool> ExcluirDoador(int id)
@@ -198,7 +210,6 @@ namespace AAPS.Api.Services.Doadores
 
             doador.Status = StatusEnum.Inativo;
 
-            //_context.Doadores.Remove(doador);
             await _context.SaveChangesAsync();
 
             return true;
@@ -214,6 +225,9 @@ namespace AAPS.Api.Services.Doadores
                 erros.Add("O campo 'RG' é obrigatório!");
             if (string.IsNullOrEmpty(doadorDto.Cpf))
                 erros.Add("O campo 'CPF' é obrigatório!");
+            if (string.IsNullOrEmpty(doadorDto.Status.ToString()))
+                erros.Add("O campo 'Status' é obrigatório!");
+
             if (string.IsNullOrEmpty(doadorDto.Logradouro))
                 erros.Add("O campo 'Logradouro' é obrigatório!");
             if (string.IsNullOrEmpty(doadorDto.Numero.ToString()) || doadorDto.Numero <= 0 || string.IsNullOrWhiteSpace(doadorDto.Numero.ToString()))
@@ -224,24 +238,16 @@ namespace AAPS.Api.Services.Doadores
                 erros.Add("O campo 'UF' é obrigatório e deve ter 2 caracteres!");
             if (string.IsNullOrEmpty(doadorDto.Cidade))
                 erros.Add("O campo 'Cidade' é obrigatório!");
-            if (doadorDto.Cep <= 0 || doadorDto.Cep.ToString().Length != 8)
-                erros.Add("O campo 'CEP' é obrigatório e deve ter exatamente 8 dígitos!");
+            if (string.IsNullOrEmpty(doadorDto.Cep) || doadorDto.Cep.Length != 8)
+                erros.Add("O campo 'CEP' é obrigatório e deve conter exatamente 8 dígitos!");
             if (string.IsNullOrEmpty(doadorDto.Status.ToString()))
                 erros.Add("O campo 'Status' é obrigatório!");
 
-            var doadorExistente = await _context.Doadores
+            var doadorExistente = await _context.Pessoas
                 .Where(d =>
                     d.Nome == doadorDto.Nome &&
                     d.Rg == doadorDto.Rg &&
-                    d.Cpf == doadorDto.Cpf &&
-                    d.Logradouro == doadorDto.Logradouro &&
-                    d.Numero == doadorDto.Numero &&
-                    d.Complemento == doadorDto.Complemento &&
-                    d.Bairro == doadorDto.Bairro &&
-                    d.Uf == doadorDto.Uf &&
-                    d.Cidade == doadorDto.Cidade &&
-                    d.Cep == doadorDto.Cep
-                //d.Status == doadorDto.Status
+                    d.Cpf == doadorDto.Cpf
                 )
                 .FirstOrDefaultAsync();
 
@@ -263,6 +269,9 @@ namespace AAPS.Api.Services.Doadores
                 erros.Add("O campo 'RG' não pode ser vazio!");
             if (doadorDto.Cpf != null && string.IsNullOrEmpty(doadorDto.Cpf))
                 erros.Add("O campo 'CPF' não pode ser vazio!");
+            if (doadorDto.Status != null && string.IsNullOrWhiteSpace(doadorDto.Status.ToString()))
+                erros.Add("O campo 'Status' não pode ser vazio!");
+
             if (doadorDto.Logradouro != null && string.IsNullOrEmpty(doadorDto.Logradouro))
                 erros.Add("O campo 'Logradouro' não pode ser vazio!");
             if (doadorDto.Numero != null && (doadorDto.Numero <= 0 || string.IsNullOrWhiteSpace(doadorDto.Numero.ToString())))
@@ -273,20 +282,19 @@ namespace AAPS.Api.Services.Doadores
                 erros.Add("O campo 'UF' é obrigatório e deve ter 2 caracteres!");
             if (doadorDto.Cidade != null && string.IsNullOrEmpty(doadorDto.Cidade))
                 erros.Add("O campo 'Cidade' não pode ser vazio!");
-            if (doadorDto.Cep != null && (doadorDto.Cep <= 0 || doadorDto.Cep.ToString().Length != 8))
-                erros.Add("O campo 'CEP' é obrigatório e deve ter exatamente 8 dígitos!");
-            if (doadorDto.Status != null && string.IsNullOrWhiteSpace(doadorDto.Status.ToString()))
-                erros.Add("O campo 'Status' não pode ser vazio!");
+            if (doadorDto.Cep != null && string.IsNullOrEmpty(doadorDto.Cep) || doadorDto.Cep.ToString().Length != 8)
+                erros.Add("O campo 'Logradouro' não pode ser vazio!");
 
             return erros;
         }
 
         #region MÉTODOS PRIVADAS
 
-        private async Task<Doador?> BuscarDoadorPorId(int id)
+        private async Task<Pessoa?> BuscarDoadorPorId(int id)
         {
-            var doador = await _context.Doadores.FindAsync(id);
-            return doador;
+            return await _context.Pessoas
+                .Include(p => p.Endereco)
+                .FirstOrDefaultAsync(d => d.Id == id);
         }
 
         #endregion

@@ -1,5 +1,4 @@
 ﻿using AAPS.Api.Dtos.PontoAdocao;
-using AAPS.Api.Dtos.PontosAdocao;
 using AAPS.Api.Models;
 using AAPS.Api.Responses;
 using AAPS.Api.Services.PontosAdocao;

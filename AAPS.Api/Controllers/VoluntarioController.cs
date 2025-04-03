@@ -1,5 +1,5 @@
 ﻿using AAPS.Api.Dtos.Senha;
-using AAPS.Api.Dtos.Voluntarios;
+using AAPS.Api.Dtos.Voluntario;
 using AAPS.Api.Responses;
 using AAPS.Api.Services;
 using AAPS.Api.Services.Autenticacao;
@@ -48,7 +48,7 @@ public class VoluntarioController : Controller
                 "Erro na validação das senhas"));
         }
 
-        var resultado = await _voluntarioService.RegistrarVoluntario(voluntarioDto);
+        var resultado = await _voluntarioService.CriarVoluntario(voluntarioDto);
 
         if (!resultado)
         {

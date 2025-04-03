@@ -1,4 +1,4 @@
-﻿using AAPS.Api.Dtos.Doadores;
+﻿using AAPS.Api.Dtos.Doador;
 using AAPS.Api.Responses;
 using AAPS.Api.Services.Doadores;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

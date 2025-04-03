@@ -14,6 +14,6 @@ public class PontoAdocaoDto
     public required string Bairro { get; set; }
     public required string Uf { get; set; }
     public required string Cidade { get; set; }
-    public required int Cep { get; set; }
+    public required string Cep { get; set; }
     public required StatusEnum Status { get; set; }
 }

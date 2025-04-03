@@ -17,7 +17,7 @@ namespace AAPS.Api.Dtos.Adotante
         public string Bairro { get; set; } = string.Empty;
         public string Uf { get; set; } = string.Empty;
         public string Cidade { get; set; } = string.Empty;
-        public int Cep { get; set; } = 0;
+        public string Cep { get; set; } = string.Empty;
         public string SituacaoEndereco { get; set; } = string.Empty;
         public BloqueioEnum Bloqueio { get; set; } = BloqueioEnum.Desbloquado;
     }
