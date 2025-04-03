@@ -45,7 +45,7 @@ public class VoluntarioService : IVoluntarioService
         {
             UserName = voluntarioDto.UserName,
             Email = voluntarioDto.Email,
-            PhoneNumber = voluntarioDto.Telefone,
+            PhoneNumber = voluntarioDto.PhoneNumber,
             SecurityStamp = Guid.NewGuid().ToString(),
             PessoaId = pessoa.Id
         };
@@ -149,7 +149,7 @@ public class VoluntarioService : IVoluntarioService
             erros.Add("O campo 'Nome de Usuário' é obrigatório!");
         if (string.IsNullOrEmpty(voluntarioDto.Email))
             erros.Add("O campo 'Email' é obrigatório!");
-        if (string.IsNullOrEmpty(voluntarioDto.Telefone))
+        if (string.IsNullOrEmpty(voluntarioDto.PhoneNumber))
             erros.Add("O campo 'Telefone' é obrigatório!");
         if (string.IsNullOrEmpty(voluntarioDto.Acesso))
             erros.Add("O campo 'Acesso' é obrigatório!");
@@ -174,7 +174,7 @@ public class VoluntarioService : IVoluntarioService
                 v.Pessoa.Nome == voluntarioDto.Nome &&
                 v.Pessoa.Cpf == voluntarioDto.Cpf &&
                 v.Email == voluntarioDto.Email &&
-                v.PhoneNumber == voluntarioDto.Telefone
+                v.PhoneNumber == voluntarioDto.PhoneNumber
             )
             .FirstOrDefaultAsync();
 

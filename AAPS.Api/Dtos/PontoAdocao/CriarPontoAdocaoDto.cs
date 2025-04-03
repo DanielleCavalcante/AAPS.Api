@@ -7,6 +7,7 @@ namespace AAPS.Api.Dtos.PontoAdocao
         public string NomeFantasia { get; set; } = string.Empty;
         public string Responsavel { get; set; } = string.Empty;
         public string Cnpj { get; set; } = string.Empty;
+        public StatusEnum Status { get; set; } = StatusEnum.Ativo;
         public string Logradouro { get; set; } = string.Empty;
         public int Numero { get; set; } = 0;
         public string? Complemento { get; set; } = string.Empty;
@@ -14,6 +15,5 @@ namespace AAPS.Api.Dtos.PontoAdocao
         public string Uf { get; set; } = string.Empty;
         public string Cidade { get; set; } = string.Empty;
         public string Cep { get; set; } = string.Empty;
-        public StatusEnum Status { get; set; } = StatusEnum.Ativo;
     }
 }

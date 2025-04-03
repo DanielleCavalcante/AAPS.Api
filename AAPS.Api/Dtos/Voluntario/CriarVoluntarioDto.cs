@@ -9,7 +9,7 @@ namespace AAPS.Api.Dtos.Voluntario
         public StatusEnum Status { get; set; } = StatusEnum.Ativo;
         public string UserName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
-        public string Telefone { get; set; } = string.Empty;
+        public string PhoneNumber { get; set; } = string.Empty;
         public string Acesso { get; set; } = string.Empty;
         public string Senha { get; set; } = string.Empty;
         public string? ConfirmarSenha { get; set; } = string.Empty;

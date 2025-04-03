@@ -7,6 +7,7 @@ namespace AAPS.Api.Dtos.Doador
         public string? Nome { get; set; }
         public string? Rg { get; set; }
         public string? Cpf { get; set; }
+        public StatusEnum? Status { get; set; }
         public string? Logradouro { get; set; }
         public int? Numero { get; set; }
         public string? Complemento { get; set; }
@@ -14,6 +15,5 @@ namespace AAPS.Api.Dtos.Doador
         public string? Uf { get; set; }
         public string? Cidade { get; set; }
         public string? Cep { get; set; }
-        public StatusEnum? Status { get; set; }
     }
 }

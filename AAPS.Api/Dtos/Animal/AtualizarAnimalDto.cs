@@ -11,7 +11,7 @@ namespace AAPS.Api.Dtos.Animal
         public string? Sexo { get; set; }
         public DateTime? DataNascimento { get; set; }
         public StatusEnum? Status { get; set; }
-        public int? DoadorId { get; set; }
         public DisponibilidadeEnum? Disponibilidade { get; set; }
+        public int? DoadorId { get; set; }
     }
 }

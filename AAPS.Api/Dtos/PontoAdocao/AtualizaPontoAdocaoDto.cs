@@ -7,6 +7,7 @@ namespace AAPS.Api.Dtos.PontoAdocao
         public string? NomeFantasia { get; set; }
         public string? Responsavel { get; set; }
         public string? Cnpj { get; set; }
+        public StatusEnum? Status { get; set; }
         public string? Logradouro { get; set; }
         public int? Numero { get; set; }
         public string? Complemento { get; set; }
@@ -14,6 +15,5 @@ namespace AAPS.Api.Dtos.PontoAdocao
         public string? Uf { get; set; }
         public string? Cidade { get; set; }
         public string? Cep { get; set; }
-        public StatusEnum? Status { get; set; }
     }
 }
