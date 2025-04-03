@@ -11,7 +11,7 @@ namespace AAPS.Api.Dtos.Animal
         public string Sexo { get; set; } = string.Empty;
         public DateTime? DataNascimento { get; set; }
         public StatusEnum Status { get; set; } = StatusEnum.Ativo;
-        public int DoadorId { get; set; } = 0;
         public DisponibilidadeEnum Disponibilidade { get; set; } = DisponibilidadeEnum.Disponivel;
+        public int DoadorId { get; set; } = 0;
     }
 }

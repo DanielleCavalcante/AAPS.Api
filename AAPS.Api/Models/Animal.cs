@@ -12,11 +12,10 @@ public class Animal
     public string Sexo { get; set; }
     public DateTime? DataNascimento { get; set; }
     public StatusEnum Status { get; set; } = StatusEnum.Ativo;
-    public int DoadorId { get; set; }
     public DisponibilidadeEnum Disponibilidade { get; set; } = DisponibilidadeEnum.Disponivel;
 
-    // Relacionamentos
-    public Doador Doador { get; set; }
-    public ICollection<AnimalEvento> AnimalEvento { get; set; }
-    public ICollection<Adocao> Adocoes { get; set; }
+    public int PessoaId { get; set; }
+    public Pessoa Pessoa { get; set; }
+    public ICollection<Acompanhamento>? Acompanhamentos { get; set; } = new List<Acompanhamento>();
+    public ICollection<Adocao>? Adocoes { get; set; } = new List<Adocao>();
 }

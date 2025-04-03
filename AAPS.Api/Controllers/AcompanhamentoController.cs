@@ -45,7 +45,7 @@ public class AcompanhamentoController : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<IAsyncEnumerable<AnimalEvento>>> ObterAcompanhamentos()
+    public async Task<ActionResult<IAsyncEnumerable<Acompanhamento>>> ObterAcompanhamentos()
     {
         var acompanhamentos = await _acompanhamentoService.ObterAcompanhamentos();
 

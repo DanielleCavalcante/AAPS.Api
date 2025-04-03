@@ -26,7 +26,7 @@ namespace AAPS.Api.Services.Acompanhamentos
 
         public async Task<AcompanhamentoDto> CriarAcompanhamento(CriarAcompanhamentoDto acompanhamentoDto)
         {
-            var acompanhamento = new AnimalEvento
+            var acompanhamento = new Acompanhamento
             {
                 Data = acompanhamentoDto.Data,
                 Observacao = acompanhamentoDto.Observacao,
@@ -34,7 +34,7 @@ namespace AAPS.Api.Services.Acompanhamentos
                 EventoId = acompanhamentoDto.EventoId
             };
 
-            _context.AnimalEvento.Add(acompanhamento);
+            _context.Acompanhamentos.Add(acompanhamento);
             await _context.SaveChangesAsync();
 
             return new AcompanhamentoDto
@@ -49,7 +49,7 @@ namespace AAPS.Api.Services.Acompanhamentos
 
         public async Task<IEnumerable<AcompanhamentoDto>> ObterAcompanhamentos()
         {
-            var acompanhamentos = await _context.AnimalEvento
+            var acompanhamentos = await _context.Acompanhamentos
                 .Select(a => new AcompanhamentoDto
                 {
                     Id = a.Id,
@@ -91,7 +91,7 @@ namespace AAPS.Api.Services.Acompanhamentos
                 return false;
             }
 
-            _context.AnimalEvento.Remove(acompanhamento);
+            _context.Acompanhamentos.Remove(acompanhamento);
             await _context.SaveChangesAsync();
 
             return true;
@@ -110,7 +110,7 @@ namespace AAPS.Api.Services.Acompanhamentos
             if (string.IsNullOrEmpty(acompanhamentoDto.EventoId.ToString()) || acompanhamentoDto.EventoId <= 0)
                 erros.Add("O campo 'Evento' é obrigatório!");
 
-            var acompanhamentoExistente = await _context.AnimalEvento
+            var acompanhamentoExistente = await _context.Acompanhamentos
             .Where(a =>
                 a.Data == acompanhamentoDto.Data &&
                 a.AnimalId == acompanhamentoDto.AnimalId &&
@@ -128,9 +128,9 @@ namespace AAPS.Api.Services.Acompanhamentos
 
         #region MÉTODOS PRIVADOS
 
-        private async Task<AnimalEvento?> BuscarAcompanhamentoPorId(int id)
+        private async Task<Acompanhamento?> BuscarAcompanhamentoPorId(int id)
         {
-            var acompanhamento = await _context.AnimalEvento.FindAsync(id);
+            var acompanhamento = await _context.Acompanhamentos.FindAsync(id);
             return acompanhamento;
         }
 

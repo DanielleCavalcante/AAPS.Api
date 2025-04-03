@@ -1,6 +1,8 @@
 ﻿using AAPS.Api.Context;
-using AAPS.Api.Dtos.Voluntarios;
+using AAPS.Api.Dtos.Adotante;
+using AAPS.Api.Dtos.Voluntario;
 using AAPS.Api.Models;
+using AAPS.Api.Models.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
@@ -26,17 +28,26 @@ public class VoluntarioService : IVoluntarioService
 
     #endregion
 
-    public async Task<bool> RegistrarVoluntario(CriarVoluntarioDto voluntarioDto)
+    public async Task<bool> CriarVoluntario(CriarVoluntarioDto voluntarioDto)
     {
+        var pessoa = new Pessoa
+        {
+            Nome = voluntarioDto.Nome,
+            Cpf = voluntarioDto.Cpf,
+            Tipo = TipoPessoaEnum.Voluntario,
+            Status = voluntarioDto.Status,
+        };
+
+        _context.Pessoas.Add(pessoa);
+        await _context.SaveChangesAsync();
+
         var voluntario = new Voluntario
         {
             UserName = voluntarioDto.UserName,
             Email = voluntarioDto.Email,
-            PhoneNumber = voluntarioDto.Telefone,
-            Nome = voluntarioDto.Nome,
-            Cpf = voluntarioDto.Cpf,
-            Status = voluntarioDto.Status,
+            PhoneNumber = voluntarioDto.PhoneNumber,
             SecurityStamp = Guid.NewGuid().ToString(),
+            PessoaId = pessoa.Id
         };
 
         var resultado = await _userManager.CreateAsync(voluntario, voluntarioDto.Senha);
@@ -71,25 +82,28 @@ public class VoluntarioService : IVoluntarioService
         return addResult.Succeeded;
     }
 
-    public async Task<Voluntario?> ObterVoluntarioPorId(int id) //TODO: usar DTO
+    public async Task<VoluntarioDto?> ObterVoluntarioPorId(int id) //TODO: usar DTO
     {
         var voluntario = await BuscarVoluntarioPorId(id);
+
+        var role = await _userManager.GetRolesAsync(voluntario);
 
         if (voluntario == null)
         {
             return null;
         }
 
-        return new Voluntario
+        return new VoluntarioDto
         {
             Id = voluntario.Id,
-            Nome = voluntario.Nome,
+            Nome = voluntario.Pessoa.Nome,
             UserName = voluntario.UserName,
             Email = voluntario.Email,
             PhoneNumber = voluntario.PhoneNumber,
-            Cpf = voluntario.Cpf,
-            Status = voluntario.Status,
-            SecurityStamp = voluntario.SecurityStamp,
+            Cpf = voluntario.Pessoa.Cpf,
+            Status = voluntario.Pessoa.Status,
+            Acesso = role.FirstOrDefault()
+            //SecurityStamp = voluntario.SecurityStamp,
         };
     }
 
@@ -126,16 +140,17 @@ public class VoluntarioService : IVoluntarioService
 
         if (string.IsNullOrEmpty(voluntarioDto.Nome))
             erros.Add("O campo 'Nome' é obrigatório!");
-        if (string.IsNullOrEmpty(voluntarioDto.UserName))
-            erros.Add("O campo 'Nome de Usuário' é obrigatório!");
         if (string.IsNullOrEmpty(voluntarioDto.Cpf))
             erros.Add("O campo 'CPF' é obrigatório!");
-        if (string.IsNullOrEmpty(voluntarioDto.Email))
-            erros.Add("O campo 'Email' é obrigatório!");
-        if (string.IsNullOrEmpty(voluntarioDto.Telefone))
-            erros.Add("O campo 'Telefone' é obrigatório!");
         if (string.IsNullOrEmpty(voluntarioDto.Status.ToString()))
             erros.Add("O campo 'Status' é obrigatório!");
+
+        if (string.IsNullOrEmpty(voluntarioDto.UserName))
+            erros.Add("O campo 'Nome de Usuário' é obrigatório!");
+        if (string.IsNullOrEmpty(voluntarioDto.Email))
+            erros.Add("O campo 'Email' é obrigatório!");
+        if (string.IsNullOrEmpty(voluntarioDto.PhoneNumber))
+            erros.Add("O campo 'Telefone' é obrigatório!");
         if (string.IsNullOrEmpty(voluntarioDto.Acesso))
             erros.Add("O campo 'Acesso' é obrigatório!");
         if (string.IsNullOrEmpty(voluntarioDto.Senha))
@@ -156,10 +171,10 @@ public class VoluntarioService : IVoluntarioService
 
         var voluntarioExistente = await _userManager.Users
             .Where(v =>
-                v.Nome == voluntarioDto.Nome &&
-                v.Cpf == voluntarioDto.Cpf &&
+                v.Pessoa.Nome == voluntarioDto.Nome &&
+                v.Pessoa.Cpf == voluntarioDto.Cpf &&
                 v.Email == voluntarioDto.Email &&
-                v.PhoneNumber == voluntarioDto.Telefone
+                v.PhoneNumber == voluntarioDto.PhoneNumber
             )
             .FirstOrDefaultAsync();
 

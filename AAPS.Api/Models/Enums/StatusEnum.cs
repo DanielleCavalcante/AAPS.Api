@@ -1,7 +1,8 @@
-﻿namespace AAPS.Api.Models.Enums;
-
-public enum StatusEnum
+﻿namespace AAPS.Api.Models.Enums
 {
-    Ativo = 1,
-    Inativo = 0
+    public enum StatusEnum
+    {
+        Ativo = 1,
+        Inativo = 0
+    }
 }

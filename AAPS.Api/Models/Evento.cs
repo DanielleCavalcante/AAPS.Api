@@ -8,5 +8,5 @@ public class Evento
     public string Descricao { get; set; }
     public StatusEnum Status { get; set; } = StatusEnum.Ativo;
 
-    public ICollection<AnimalEvento> AnimalEvento { get; set; }
+    public ICollection<Acompanhamento>? Acompanhamentos { get; set; }
 }

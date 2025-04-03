@@ -1,6 +1,5 @@
 ﻿using AAPS.Api.Context;
 using AAPS.Api.Dtos.Adotante;
-using AAPS.Api.Dtos.Adotantes;
 using AAPS.Api.Models;
 using AAPS.Api.Models.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -22,15 +21,20 @@ namespace AAPS.Api.Services.Adotantes
 
         public async Task<AdotanteDto> CriarAdotante(CriarAdotanteDto adotanteDto)
         {
-            var adotante = new Adotante
+            var pessoa = new Pessoa
             {
                 Nome = adotanteDto.Nome,
                 Rg = adotanteDto.Rg,
                 Cpf = adotanteDto.Cpf,
-                LocalTrabalho = adotanteDto.LocalTrabalho,
+                Tipo = TipoPessoaEnum.Adotante,
                 Status = adotanteDto.Status,
-                Facebook = adotanteDto.Facebook,
-                Instagram = adotanteDto.Instagram,
+            };
+
+            _context.Pessoas.Add(pessoa);
+            await _context.SaveChangesAsync();
+
+            var endereco = new Endereco
+            {
                 Logradouro = adotanteDto.Logradouro,
                 Numero = adotanteDto.Numero,
                 Complemento = adotanteDto.Complemento,
@@ -39,7 +43,19 @@ namespace AAPS.Api.Services.Adotantes
                 Cidade = adotanteDto.Cidade,
                 Cep = adotanteDto.Cep,
                 SituacaoEndereco = adotanteDto.SituacaoEndereco,
-                Bloqueio = adotanteDto.Bloqueio
+                PessoaId = pessoa.Id
+            };
+
+            _context.Enderecos.Add(endereco);
+            await _context.SaveChangesAsync();
+
+            var adotante = new Adotante
+            {
+                LocalTrabalho = adotanteDto.LocalTrabalho,
+                Facebook = adotanteDto.Facebook,
+                Instagram = adotanteDto.Instagram,
+                Bloqueio = adotanteDto.Bloqueio,
+                PessoaId = pessoa.Id
             };
 
             _context.Adotantes.Add(adotante);
@@ -48,41 +64,46 @@ namespace AAPS.Api.Services.Adotantes
             return new AdotanteDto
             {
                 Id = adotante.Id,
-                Nome = adotante.Nome,
-                Rg = adotante.Rg,
-                Cpf = adotante.Cpf,
+                Nome = pessoa.Nome,
+                Rg = pessoa.Rg,
+                Cpf = pessoa.Cpf,
+                Status = pessoa.Status,
                 LocalTrabalho = adotante.LocalTrabalho,
-                Status = adotante.Status,
                 Facebook = adotante.Facebook,
                 Instagram = adotante.Instagram,
-                Logradouro = adotante.Logradouro,
-                Numero = adotante.Numero,
-                Complemento = adotante.Complemento,
-                Bairro = adotante.Bairro,
-                Uf = adotante.Uf,
-                Cidade = adotante.Cidade,
-                Cep = adotante.Cep,
-                SituacaoEndereco = adotante.SituacaoEndereco,
                 Bloqueio = adotante.Bloqueio,
+                Logradouro = endereco.Logradouro,
+                Numero = endereco.Numero,
+                Complemento = endereco.Complemento,
+                Bairro = endereco.Bairro,
+                Uf = endereco.Uf,
+                Cidade = endereco.Cidade,
+                Cep = endereco.Cep,
+                SituacaoEndereco = endereco.SituacaoEndereco
             };
         }
 
         public async Task<IEnumerable<AdotanteDto>> ObterAdotantes(FiltroAdotanteDto filtro)
         {
-            var query = _context.Adotantes.AsQueryable();
+            var query = _context.Adotantes
+                .Include(a => a.Pessoa)
+                .Where(a => a.Pessoa.Tipo == TipoPessoaEnum.Adotante)
+                .AsQueryable();
 
             if (!string.IsNullOrEmpty(filtro.Busca))
             {
-                query = query.Where(p =>
-                    p.Nome.Contains(filtro.Busca.ToLower()) ||
-                    p.Cpf.Contains(filtro.Busca.ToLower()) ||
-                    p.Rg.Contains(filtro.Busca)
+                string buscaLower = filtro.Busca.ToLower();
+
+                query = query.Where(a =>
+                    a.Pessoa.Nome.ToLower().Contains(buscaLower) ||
+                    a.Pessoa.Cpf.Contains(buscaLower) ||
+                    a.Pessoa.Rg.Contains(filtro.Busca)
                 );
             }
 
             if (filtro.Status.HasValue)
             {
-                query = query.Where(a => a.Status == filtro.Status.Value);
+                query = query.Where(a => a.Pessoa.Status == filtro.Status.Value);
             }
 
             if (filtro.Bloqueio.HasValue)
@@ -94,21 +115,21 @@ namespace AAPS.Api.Services.Adotantes
                 .Select(a => new AdotanteDto
                 {
                     Id = a.Id,
-                    Nome = a.Nome,
-                    Rg = a.Rg,
-                    Cpf = a.Cpf,
+                    Nome = a.Pessoa.Nome,
+                    Rg = a.Pessoa.Rg,
+                    Cpf = a.Pessoa.Cpf,
                     LocalTrabalho = a.LocalTrabalho,
-                    Status = a.Status,
+                    Status = a.Pessoa.Status,
                     Facebook = a.Facebook,
                     Instagram = a.Instagram,
-                    Logradouro = a.Logradouro,
-                    Numero = a.Numero,
-                    Complemento = a.Complemento,
-                    Bairro = a.Bairro,
-                    Uf = a.Uf,
-                    Cidade = a.Cidade,
-                    Cep = a.Cep,
-                    SituacaoEndereco = a.SituacaoEndereco,
+                    Logradouro = a.Pessoa.Endereco.Logradouro,
+                    Numero = a.Pessoa.Endereco.Numero,
+                    Complemento = a.Pessoa.Endereco.Complemento,
+                    Bairro = a.Pessoa.Endereco.Bairro,
+                    Uf = a.Pessoa.Endereco.Uf,
+                    Cidade = a.Pessoa.Endereco.Cidade,
+                    Cep = a.Pessoa.Endereco.Cep,
+                    SituacaoEndereco = a.Pessoa.Endereco.SituacaoEndereco,
                     Bloqueio = a.Bloqueio
                 })
                 .ToListAsync();
@@ -128,51 +149,54 @@ namespace AAPS.Api.Services.Adotantes
             return new AdotanteDto
             {
                 Id = adotante.Id,
-                Nome = adotante.Nome,
-                Rg = adotante.Rg,
-                Cpf = adotante.Cpf,
+                Nome = adotante.Pessoa.Nome,
+                Rg = adotante.Pessoa.Rg,
+                Cpf = adotante.Pessoa.Cpf,
                 LocalTrabalho = adotante.LocalTrabalho,
-                Status = adotante.Status,
+                Status = adotante.Pessoa.Status,
                 Facebook = adotante.Facebook,
                 Instagram = adotante.Instagram,
-                Logradouro = adotante.Logradouro,
-                Numero = adotante.Numero,
-                Complemento = adotante.Complemento,
-                Bairro = adotante.Bairro,
-                Uf = adotante.Uf,
-                Cidade = adotante.Cidade,
-                Cep = adotante.Cep,
-                SituacaoEndereco = adotante.SituacaoEndereco,
+                Logradouro = adotante.Pessoa.Endereco.Logradouro,
+                Numero = adotante.Pessoa.Endereco.Numero,
+                Complemento = adotante.Pessoa.Endereco.Complemento,
+                Bairro = adotante.Pessoa.Endereco.Bairro,
+                Uf = adotante.Pessoa.Endereco.Uf,
+                Cidade = adotante.Pessoa.Endereco.Cidade,
+                Cep = adotante.Pessoa.Endereco.Cep,
+                SituacaoEndereco = adotante.Pessoa.Endereco.SituacaoEndereco,
                 Bloqueio = adotante.Bloqueio
             };
         }
 
         public async Task<IEnumerable<AdotanteDto>> ObterAdotantesAtivos()
         {
-            var adotantes = _context.Adotantes
-                .Where(a => a.Status == StatusEnum.Ativo)
+            var adotantes = await _context.Adotantes
+                .Include(a => a.Pessoa)
+                .ThenInclude(a => a.Endereco)
+                .Where(a => a.Pessoa.Status == StatusEnum.Ativo)
                 .Select(a => new AdotanteDto
                 {
                     Id = a.Id,
-                    Nome = a.Nome,
-                    Rg = a.Rg,
-                    Cpf = a.Cpf,
+                    Nome = a.Pessoa.Nome,
+                    Rg = a.Pessoa.Rg,
+                    Cpf = a.Pessoa.Cpf,
                     LocalTrabalho = a.LocalTrabalho,
-                    Status = a.Status,
+                    Status = a.Pessoa.Status,
                     Facebook = a.Facebook,
                     Instagram = a.Instagram,
-                    Logradouro = a.Logradouro,
-                    Numero = a.Numero,
-                    Complemento = a.Complemento,
-                    Bairro = a.Bairro,
-                    Uf = a.Uf,
-                    Cidade = a.Cidade,
-                    Cep = a.Cep,
-                    SituacaoEndereco = a.SituacaoEndereco,
+                    Logradouro = a.Pessoa.Endereco.Logradouro,
+                    Numero = a.Pessoa.Endereco.Numero,
+                    Complemento = a.Pessoa.Endereco.Complemento,
+                    Bairro = a.Pessoa.Endereco.Bairro,
+                    Uf = a.Pessoa.Endereco.Uf,
+                    Cidade = a.Pessoa.Endereco.Cidade,
+                    Cep = a.Pessoa.Endereco.Cep,
+                    SituacaoEndereco = a.Pessoa.Endereco.SituacaoEndereco,
                     Bloqueio = a.Bloqueio
-                });
+                })
+                .ToListAsync();
 
-            return await adotantes.ToListAsync();
+            return adotantes;
         }
 
         public async Task<AdotanteDto?> AtualizarAdotante(int id, AtualizarAdotanteDto adotanteDto)
@@ -184,47 +208,47 @@ namespace AAPS.Api.Services.Adotantes
                 return null;
             }
 
-            adotante.Nome = string.IsNullOrEmpty(adotanteDto.Nome) ? adotante.Nome : adotanteDto.Nome;
-            adotante.Rg = string.IsNullOrEmpty(adotanteDto.Rg) ? adotante.Rg : adotanteDto.Rg;
-            adotante.Cpf = string.IsNullOrEmpty(adotanteDto.Cpf) ? adotante.Cpf : adotanteDto.Cpf;
+            adotante.Pessoa.Nome = string.IsNullOrEmpty(adotanteDto.Nome) ? adotante.Pessoa.Nome : adotanteDto.Nome;
+            adotante.Pessoa.Rg = string.IsNullOrEmpty(adotanteDto.Rg) ? adotante.Pessoa.Rg : adotanteDto.Rg;
+            adotante.Pessoa.Cpf = string.IsNullOrEmpty(adotanteDto.Cpf) ? adotante.Pessoa.Cpf : adotanteDto.Cpf;
+            adotante.Pessoa.Status = adotanteDto.Status.HasValue ? adotanteDto.Status.Value : adotante.Pessoa.Status;
+
+            adotante.Pessoa.Endereco.Logradouro = string.IsNullOrEmpty(adotanteDto.Logradouro) ? adotante.Pessoa.Endereco.Logradouro : adotanteDto.Logradouro;
+            adotante.Pessoa.Endereco.Numero = adotanteDto.Numero.HasValue ? adotanteDto.Numero.Value : adotante.Pessoa.Endereco.Numero;
+            adotante.Pessoa.Endereco.Complemento = string.IsNullOrEmpty(adotanteDto.Complemento) ? adotante.Pessoa.Endereco.Complemento : adotanteDto.Complemento;
+            adotante.Pessoa.Endereco.Bairro = string.IsNullOrEmpty(adotanteDto.Bairro) ? adotante.Pessoa.Endereco.Bairro : adotanteDto.Bairro;
+            adotante.Pessoa.Endereco.Uf = string.IsNullOrEmpty(adotanteDto.Uf) ? adotante.Pessoa.Endereco.Uf : adotanteDto.Uf;
+            adotante.Pessoa.Endereco.Cidade = string.IsNullOrEmpty(adotanteDto.Cidade) ? adotante.Pessoa.Endereco.Cidade : adotanteDto.Cidade;
+            adotante.Pessoa.Endereco.Cep = string.IsNullOrEmpty(adotanteDto.Cep) ? adotante.Pessoa.Endereco.Cep : adotanteDto.Cep;
+            adotante.Pessoa.Endereco.SituacaoEndereco = string.IsNullOrEmpty(adotanteDto.SituacaoEndereco) ? adotante.Pessoa.Endereco.SituacaoEndereco : adotanteDto.SituacaoEndereco;
+
             adotante.LocalTrabalho = string.IsNullOrEmpty(adotanteDto.LocalTrabalho) ? adotante.LocalTrabalho : adotanteDto.LocalTrabalho;
-            adotante.Status = adotanteDto.Status.HasValue ? adotanteDto.Status.Value : adotante.Status;
             adotante.Facebook = string.IsNullOrEmpty(adotanteDto.Facebook) ? adotante.Facebook : adotanteDto.Facebook;
             adotante.Instagram = string.IsNullOrEmpty(adotanteDto.Instagram) ? adotante.Instagram : adotanteDto.Instagram;
-            adotante.Logradouro = string.IsNullOrEmpty(adotanteDto.Logradouro) ? adotante.Logradouro : adotanteDto.Logradouro;
-            adotante.Numero = adotanteDto.Numero.HasValue ? adotanteDto.Numero.Value : adotante.Numero;
-            adotante.Complemento = string.IsNullOrEmpty(adotanteDto.Complemento) ? adotante.Complemento : adotanteDto.Complemento;
-            adotante.Bairro = string.IsNullOrEmpty(adotanteDto.Bairro) ? adotante.Bairro : adotanteDto.Bairro;
-            adotante.Uf = string.IsNullOrEmpty(adotanteDto.Uf) ? adotante.Uf : adotanteDto.Uf;
-            adotante.Cidade = string.IsNullOrEmpty(adotanteDto.Cidade) ? adotante.Cidade : adotanteDto.Cidade;
-            adotante.Cep = adotanteDto.Cep.HasValue ? adotanteDto.Cep.Value : adotante.Cep;
-            adotante.SituacaoEndereco = string.IsNullOrEmpty(adotanteDto.SituacaoEndereco) ? adotante.SituacaoEndereco : adotanteDto.SituacaoEndereco;
             adotante.Bloqueio = adotanteDto.Bloqueio.HasValue ? adotanteDto.Bloqueio.Value : adotante.Bloqueio;
 
             await _context.SaveChangesAsync();
 
-            var adotanteAtualizado = new AdotanteDto
+            return new AdotanteDto
             {
                 Id = adotante.Id,
-                Nome = adotante.Nome,
-                Rg = adotante.Rg,
-                Cpf = adotante.Cpf,
+                Nome = adotante.Pessoa.Nome,
+                Rg = adotante.Pessoa.Rg,
+                Cpf = adotante.Pessoa.Cpf,
                 LocalTrabalho = adotante.LocalTrabalho,
-                Status = adotante.Status,
+                Status = adotante.Pessoa.Status,
                 Facebook = adotante.Facebook,
                 Instagram = adotante.Instagram,
-                Logradouro = adotante.Logradouro,
-                Numero = adotante.Numero,
-                Complemento = adotante.Complemento,
-                Bairro = adotante.Bairro,
-                Uf = adotante.Uf,
-                Cidade = adotante.Cidade,
-                Cep = adotante.Cep,
-                SituacaoEndereco = adotante.SituacaoEndereco,
+                Logradouro = adotante.Pessoa.Endereco.Logradouro,
+                Numero = adotante.Pessoa.Endereco.Numero,
+                Complemento = adotante.Pessoa.Endereco.Complemento,
+                Bairro = adotante.Pessoa.Endereco.Bairro,
+                Uf = adotante.Pessoa.Endereco.Uf,
+                Cidade = adotante.Pessoa.Endereco.Cidade,
+                Cep = adotante.Pessoa.Endereco.Cep,
+                SituacaoEndereco = adotante.Pessoa.Endereco.SituacaoEndereco,
                 Bloqueio = adotante.Bloqueio
             };
-
-            return adotanteAtualizado;
         }
 
         public async Task<bool> ExcluirAdotante(int id)
@@ -236,7 +260,7 @@ namespace AAPS.Api.Services.Adotantes
                 return false;
             }
 
-            adotante.Status = StatusEnum.Inativo; //
+            adotante.Pessoa.Status = StatusEnum.Inativo;
 
             //_context.Adotantes.Remove(adotante);
             await _context.SaveChangesAsync();
@@ -254,14 +278,9 @@ namespace AAPS.Api.Services.Adotantes
                 erros.Add("O campo 'RG' é obrigatório!");
             if (string.IsNullOrEmpty(adotanteDto.Cpf))
                 erros.Add("O campo 'CPF' é obrigatório!");
-            if (string.IsNullOrEmpty(adotanteDto.LocalTrabalho))
-                erros.Add("O campo 'Local de Trabalho' é obrigatório!");
             if (string.IsNullOrEmpty(adotanteDto.Status.ToString()))
                 erros.Add("O campo 'Status' é obrigatório!");
-            if (string.IsNullOrEmpty(adotanteDto.Facebook))
-                erros.Add("O campo 'Facebook' é obrigatório!");
-            if (string.IsNullOrEmpty(adotanteDto.Instagram))
-                erros.Add("O campo 'Instagram' é obrigatório!");
+
             if (string.IsNullOrEmpty(adotanteDto.Logradouro))
                 erros.Add("O campo 'Logradouro' é obrigatório!");
             if (string.IsNullOrEmpty(adotanteDto.Numero.ToString()) || adotanteDto.Numero <= 0)
@@ -272,29 +291,27 @@ namespace AAPS.Api.Services.Adotantes
                 erros.Add("O campo 'UF' é obrigatório!");
             if (string.IsNullOrEmpty(adotanteDto.Cidade))
                 erros.Add("O campo 'Cidade' é obrigatório!");
-            if (adotanteDto.Cep <= 0 || adotanteDto.Cep.ToString().Length != 8)
-                erros.Add("O campo 'CEP' é obrigatório e deve ter exatamente 8 dígitos!");
+            if (string.IsNullOrEmpty(adotanteDto.Cep) || adotanteDto.Cep.Length != 8) //|| !adotanteDto.Cep.All(char.IsDigit)
+                erros.Add("O campo 'CEP' é obrigatório e deve conter exatamente 8 dígitos!");
             if (string.IsNullOrEmpty(adotanteDto.SituacaoEndereco))
                 erros.Add("O campo 'Situacao de Endereco' é obrigatório!");
 
+            if (string.IsNullOrEmpty(adotanteDto.LocalTrabalho))
+                erros.Add("O campo 'Local de Trabalho' é obrigatório!");
+            if (string.IsNullOrEmpty(adotanteDto.Facebook))
+                erros.Add("O campo 'Facebook' é obrigatório!");
+            if (string.IsNullOrEmpty(adotanteDto.Instagram))
+                erros.Add("O campo 'Instagram' é obrigatório!");
+
             var adotanteExistente = await _context.Adotantes
+                .Include(a => a.Pessoa)
                 .Where(a =>
-                    a.Nome == adotanteDto.Nome &&
-                    a.Rg == adotanteDto.Rg &&
-                    a.Cpf == adotanteDto.Cpf &&
+                    a.Pessoa.Nome == adotanteDto.Nome &&
+                    a.Pessoa.Rg == adotanteDto.Rg &&
+                    a.Pessoa.Cpf == adotanteDto.Cpf &&
                     a.LocalTrabalho == adotanteDto.LocalTrabalho &&
-                    //a.Status == adotanteDto.Status &&
                     a.Facebook == adotanteDto.Facebook &&
-                    a.Instagram == adotanteDto.Instagram &&
-                    a.Logradouro == adotanteDto.Logradouro &&
-                    a.Numero == adotanteDto.Numero &&
-                    //a.Complemento == adotanteDto.Complemento &&
-                    a.Bairro == adotanteDto.Bairro &&
-                    a.Uf == adotanteDto.Uf &&
-                    a.Cidade == adotanteDto.Cidade &&
-                    a.Cep == adotanteDto.Cep &&
-                    a.SituacaoEndereco == adotanteDto.SituacaoEndereco
-                //a.Bloqueio == adotanteDto.Bloqueio
+                    a.Instagram == adotanteDto.Instagram
                 )
                 .FirstOrDefaultAsync();
 
@@ -316,14 +333,9 @@ namespace AAPS.Api.Services.Adotantes
                 erros.Add("O campo 'Rg' não pode ter ser vazio!");
             if (adotanteDto.Cpf != null && string.IsNullOrWhiteSpace(adotanteDto.Cpf))
                 erros.Add("O campo 'Cpf' não pode ter ser vazio!");
-            if (adotanteDto.LocalTrabalho != null && string.IsNullOrWhiteSpace(adotanteDto.LocalTrabalho))
-                erros.Add("O campo 'Local de Trabalho' não pode ter ser vazio!");
             if (adotanteDto.Status != null && string.IsNullOrWhiteSpace(adotanteDto.Status.ToString()))
                 erros.Add("O campo 'Status' não pode ter ser vazio!");
-            if (adotanteDto.Facebook != null && string.IsNullOrWhiteSpace(adotanteDto.Facebook))
-                erros.Add("O campo 'Facebook' não pode ter ser vazio!");
-            if (adotanteDto.Instagram != null && string.IsNullOrWhiteSpace(adotanteDto.Instagram))
-                erros.Add("O campo 'Instagram' não pode ter ser vazio!");
+
             if (adotanteDto.Logradouro != null && string.IsNullOrWhiteSpace(adotanteDto.Logradouro))
                 erros.Add("O campo 'Logradouro' não pode ter ser vazio!");
             if (adotanteDto.Numero != null && (adotanteDto.Numero <= 0 || string.IsNullOrWhiteSpace(adotanteDto.Numero.ToString())))
@@ -334,10 +346,17 @@ namespace AAPS.Api.Services.Adotantes
                 erros.Add("O campo 'UF' não pode ter ser vazio e deve ter 2 caracteres!");
             if (adotanteDto.Cidade != null && string.IsNullOrWhiteSpace(adotanteDto.Cidade))
                 erros.Add("O campo 'Cidade' não pode ter ser vazio!");
-            if (adotanteDto.Cep != null && (adotanteDto.Cep <= 0 || adotanteDto.Cep.ToString().Length != 8 || string.IsNullOrWhiteSpace(adotanteDto.Cep.ToString())))
+            if (adotanteDto.Cep != null && string.IsNullOrWhiteSpace(adotanteDto.Cep) || adotanteDto.Cep.ToString().Length != 8 )
                 erros.Add("O campo 'CEP' não pode ter ser vazio e deve ter exatamente 8 dígitos!");
             if (adotanteDto.SituacaoEndereco != null && string.IsNullOrWhiteSpace(adotanteDto.SituacaoEndereco))
                 erros.Add("O campo 'Situacao de Endereco' não pode ter ser vazio!");
+
+            if (adotanteDto.LocalTrabalho != null && string.IsNullOrWhiteSpace(adotanteDto.LocalTrabalho))
+                erros.Add("O campo 'Local de Trabalho' não pode ter ser vazio!");
+            if (adotanteDto.Facebook != null && string.IsNullOrWhiteSpace(adotanteDto.Facebook))
+                erros.Add("O campo 'Facebook' não pode ter ser vazio!");
+            if (adotanteDto.Instagram != null && string.IsNullOrWhiteSpace(adotanteDto.Instagram))
+                erros.Add("O campo 'Instagram' não pode ter ser vazio!");
             if (adotanteDto.Bloqueio != null && string.IsNullOrWhiteSpace(adotanteDto.Bloqueio.ToString()))
                 erros.Add("O campo 'Bloqueio' não pode ter ser vazio!");
 
@@ -353,8 +372,10 @@ namespace AAPS.Api.Services.Adotantes
 
         private async Task<Adotante?> BuscarAdotantePorId(int id)
         {
-            var adotante = await _context.Adotantes.FindAsync(id);
-            return adotante;
+            return await _context.Adotantes
+                .Include(a => a.Pessoa)
+                .ThenInclude(p => p.Endereco)
+                .FirstOrDefaultAsync(a => a.Id == id);
         }
 
         //private IQueryable<Adotante> BuscarAdotantePorNome(string nome)

@@ -1,6 +1,4 @@
 ﻿using AAPS.Api.Dtos.Adotante;
-using AAPS.Api.Dtos.Adotantes;
-using AAPS.Api.Models;
 using AAPS.Api.Responses;
 using AAPS.Api.Services.Adotantes;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -76,7 +74,7 @@ public class AdotanteController : Controller
     {
         var adotantes = await _adotanteService.ObterAdotantesAtivos();
 
-        if(adotantes is null)
+        if (adotantes is null)
         {
             return NotFound(ApiResponse<object>.ErroResponse(new List<string> { "Nenhum adotante foi encontrado." }));
         }

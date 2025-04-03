@@ -1,4 +1,4 @@
-﻿using AAPS.Api.Dtos.Animais;
+﻿using AAPS.Api.Dtos.Animal;
 using AAPS.Api.Models;
 using AAPS.Api.Responses;
 using AAPS.Api.Services.Animais;
