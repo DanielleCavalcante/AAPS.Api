@@ -30,7 +30,7 @@ namespace AAPS.Api.Services.Eventos
             _context.Eventos.Add(evento);
             await _context.SaveChangesAsync();
 
-            return new Dtos.Evento.EventoDto
+            return new EventoDto
             {
                 Id = evento.Id,
                 Descricao = evento.Descricao,
@@ -42,7 +42,7 @@ namespace AAPS.Api.Services.Eventos
         {
             var query = _context.Eventos.AsQueryable();
 
-            if (!string.IsNullOrEmpty(filtro.Busca)) // busca por nome
+            if (!string.IsNullOrEmpty(filtro.Busca))
             {
                 query = query.Where(a => a.Descricao.Contains(filtro.Busca.ToLower()));
             }
@@ -128,7 +128,6 @@ namespace AAPS.Api.Services.Eventos
 
             evento.Status = StatusEnum.Inativo;
 
-            //_context.Eventos.Remove(evento);
             await _context.SaveChangesAsync();
 
             return true;
@@ -141,7 +140,7 @@ namespace AAPS.Api.Services.Eventos
             if (string.IsNullOrEmpty(eventoDto.Descricao.ToString()))
                 erros.Add("O campo 'Descrição' é obrigatório!");
 
-            if (string.IsNullOrEmpty(eventoDto.Status.ToString()))
+            if (string.IsNullOrEmpty(eventoDto.Status.ToString()) || !Enum.IsDefined(typeof(StatusEnum), eventoDto.Status))
                 erros.Add("O campo 'Status' é obrigatório!");
 
             var eventoExistente = await _context.Eventos
@@ -156,17 +155,18 @@ namespace AAPS.Api.Services.Eventos
             return erros;
         }
 
-        public async Task<List<string>> ValidarAtualizacaoEvento(AtualizarEventoDto eventoDto)
+        public async Task<List<string>> ValidarAtualizacaoEvento(int id, AtualizarEventoDto eventoDto)
         {
             var erros = new List<string>();
 
-            if (eventoDto.Descricao != null && string.IsNullOrEmpty(eventoDto.Descricao))
+            if (eventoDto.Descricao != null && string.IsNullOrWhiteSpace(eventoDto.Descricao))
                 erros.Add("O campo 'Descrição' não pode ser vazio!");
+
             if (eventoDto.Status != null && string.IsNullOrWhiteSpace(eventoDto.Status.ToString()))
-                erros.Add("O campo 'Status' não pode ser vazio!");
+                erros.Add("O campo 'Status' não pode ter ser vazio!");
 
             var eventoExistente = await _context.Eventos
-                .Where(a => a.Descricao == eventoDto.Descricao)
+                .Where(a => a.Descricao == eventoDto.Descricao && a.Id != id)
                 .FirstOrDefaultAsync();
 
             if (eventoExistente != null)

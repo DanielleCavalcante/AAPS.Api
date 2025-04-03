@@ -1,5 +1,4 @@
 ﻿using AAPS.Api.Context;
-using AAPS.Api.Dtos.Adotante;
 using AAPS.Api.Dtos.Voluntario;
 using AAPS.Api.Models;
 using AAPS.Api.Models.Enums;
@@ -66,22 +65,6 @@ public class VoluntarioService : IVoluntarioService
         return resultado.Succeeded;
     }
 
-    public async Task<bool> RedefinirSenha(int voluntarioId)
-    {
-        var voluntario = await BuscarVoluntarioPorId(voluntarioId);
-        if (voluntario == null)
-            return false;
-
-        string novaSenha = "Aaps@123";
-
-        var removeResult = await _userManager.RemovePasswordAsync(voluntario);
-        if (!removeResult.Succeeded)
-            return false;
-
-        var addResult = await _userManager.AddPasswordAsync(voluntario, novaSenha);
-        return addResult.Succeeded;
-    }
-
     public async Task<VoluntarioDto?> ObterVoluntarioPorId(int id) //TODO: usar DTO
     {
         var voluntario = await BuscarVoluntarioPorId(id);
@@ -112,7 +95,7 @@ public class VoluntarioService : IVoluntarioService
         return await _context.Voluntarios.FirstOrDefaultAsync(v => v.UserName == username); //TODO: usar DTO
     }
 
-    public async Task<Voluntario> BuscarVoluntarioPorUsernameETelefoneAsync(string username, string telefone) //TODO: usar DTO
+    public async Task<Voluntario> BuscarVoluntarioPorUsernameETelefone(string username, string telefone) //TODO: usar DTO
     {
         var voluntario = await _context.Voluntarios
             .FirstOrDefaultAsync(v => v.UserName == username && v.PhoneNumber == telefone);
@@ -125,7 +108,7 @@ public class VoluntarioService : IVoluntarioService
         return voluntario;
     }
 
-    public async Task<List<Voluntario>> ObterAdministradoresAsync() //TODO: usar DTO
+    public async Task<List<Voluntario>> ObterAdministradores() //TODO: usar DTO
     {
         var admins = await _userManager.GetUsersInRoleAsync("Admin");
 
@@ -185,27 +168,6 @@ public class VoluntarioService : IVoluntarioService
 
         return erros;
     }
-
-    //public async Task<bool> AlterarSenhaAsync(int voluntarioId, string novaSenha)
-    //{
-    //    var voluntario = await ObterVoluntarioPorId(voluntarioId);
-    //    if (voluntario == null)
-    //        return false;
-
-    //    // Validação de senha (ex: complexidade mínima, etc.)
-    //    if (string.IsNullOrWhiteSpace(novaSenha) || novaSenha.Length < 6)
-    //    {
-    //        // Senha deve ter pelo menos 6 caracteres
-    //        return false;
-    //    }
-
-    //    // Atualizando a senha (assumindo que a senha é salva de forma segura)
-    //    voluntario.PasswordHash = novaSenha;  // A senha deve ser armazenada de forma segura, como um hash
-
-    //    await _context.SaveChangesAsync();
-
-    //    return true;
-    //}
 
     #region MÉTODOS PRIVADOS
 

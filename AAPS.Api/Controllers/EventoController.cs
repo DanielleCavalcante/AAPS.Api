@@ -85,7 +85,7 @@ public class EventoController : Controller
     [HttpPut("{id:int}")]
     public async Task<ActionResult> AtualizarEvento(int id, [FromBody] AtualizarEventoDto eventoDto)
     {
-        var erros = await _eventoService.ValidarAtualizacaoEvento(eventoDto);
+        var erros = await _eventoService.ValidarAtualizacaoEvento(id, eventoDto);
 
         if (erros.Count > 0)
         {

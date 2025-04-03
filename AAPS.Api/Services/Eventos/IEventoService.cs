@@ -11,5 +11,5 @@ public interface IEventoService
     Task<EventoDto?> AtualizarEvento(int id, AtualizarEventoDto eventoDto);
     Task<bool> ExcluirEvento(int id);
     Task<List<string>> ValidarCriacaoEvento(CriarEventoDto eventoDto);
-    Task<List<string>> ValidarAtualizacaoEvento(AtualizarEventoDto eventoDto);
+    Task<List<string>> ValidarAtualizacaoEvento(int id, AtualizarEventoDto eventoDto);
 }

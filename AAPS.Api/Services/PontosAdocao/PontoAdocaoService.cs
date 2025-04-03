@@ -61,6 +61,7 @@ namespace AAPS.Api.Services.PontosAdocao
                 NomeFantasia = pontoAdocaoDto.NomeFantasia,
                 Responsavel = pontoAdocaoDto.Responsavel,
                 Cnpj = pontoAdocaoDto.Cnpj,
+                Status = pontoAdocaoDto.Status,
                 Logradouro = pontoAdocaoDto.Logradouro,
                 Numero = pontoAdocaoDto.Numero,
                 Complemento = pontoAdocaoDto.Complemento,
@@ -68,7 +69,6 @@ namespace AAPS.Api.Services.PontosAdocao
                 Uf = pontoAdocaoDto.Uf,
                 Cidade = pontoAdocaoDto.Cidade,
                 Cep = pontoAdocaoDto.Cep,
-                Status = pontoAdocaoDto.Status
             };
         }
 
@@ -102,6 +102,7 @@ namespace AAPS.Api.Services.PontosAdocao
                     NomeFantasia = p.NomeFantasia,
                     Responsavel = p.Responsavel,
                     Cnpj = p.Cnpj,
+                    Status = p.Pessoa.Status,
                     Logradouro = p.Pessoa.Endereco.Logradouro,
                     Numero = p.Pessoa.Endereco.Numero,
                     Complemento = p.Pessoa.Endereco.Complemento,
@@ -109,7 +110,6 @@ namespace AAPS.Api.Services.PontosAdocao
                     Uf = p.Pessoa.Endereco.Uf,
                     Cidade = p.Pessoa.Endereco.Cidade,
                     Cep = p.Pessoa.Endereco.Cep,
-                    Status = p.Pessoa.Status
                 })
                 .ToListAsync();
 
@@ -131,6 +131,7 @@ namespace AAPS.Api.Services.PontosAdocao
                 NomeFantasia = pontoAdocao.NomeFantasia,
                 Responsavel = pontoAdocao.Responsavel,
                 Cnpj = pontoAdocao.Cnpj,
+                Status = pontoAdocao.Pessoa.Status,
                 Logradouro = pontoAdocao.Pessoa.Endereco.Logradouro,
                 Numero = pontoAdocao.Pessoa.Endereco.Numero,
                 Complemento = pontoAdocao.Pessoa.Endereco.Complemento,
@@ -138,7 +139,6 @@ namespace AAPS.Api.Services.PontosAdocao
                 Uf = pontoAdocao.Pessoa.Endereco.Uf,
                 Cidade = pontoAdocao.Pessoa.Endereco.Cidade,
                 Cep = pontoAdocao.Pessoa.Endereco.Cep,
-                Status = pontoAdocao.Pessoa.Status
             };
         }
 
@@ -147,13 +147,14 @@ namespace AAPS.Api.Services.PontosAdocao
             var pontosAdocao = await _context.PontosAdocao
                 .Include(p => p.Pessoa)
                 .ThenInclude(p => p.Endereco)
-                .Where(p => p.Pessoa.Status == StatusEnum.Ativo)
+                .Where(p => p.Pessoa.Status == StatusEnum.Ativo && p.Pessoa.Tipo == TipoPessoaEnum.PontoAdocao)
                 .Select(p => new PontoAdocaoDto
                 {
                     Id = p.Id,
                     NomeFantasia = p.NomeFantasia,
                     Responsavel = p.Responsavel,
                     Cnpj = p.Cnpj,
+                    Status = p.Pessoa.Status,
                     Logradouro = p.Pessoa.Endereco.Logradouro,
                     Numero = p.Pessoa.Endereco.Numero,
                     Complemento = p.Pessoa.Endereco.Complemento,
@@ -161,7 +162,6 @@ namespace AAPS.Api.Services.PontosAdocao
                     Uf = p.Pessoa.Endereco.Uf,
                     Cidade = p.Pessoa.Endereco.Cidade,
                     Cep = p.Pessoa.Endereco.Cep,
-                    Status = p.Pessoa.Status
                 })
                 .ToListAsync();
 
@@ -231,7 +231,7 @@ namespace AAPS.Api.Services.PontosAdocao
         {
             var erros = new List<string>();
 
-            if (string.IsNullOrEmpty(pontoAdocaoDto.Status.ToString()))
+            if (string.IsNullOrEmpty(pontoAdocaoDto.Status.ToString()) || !Enum.IsDefined(typeof(StatusEnum), pontoAdocaoDto.Status))
                 erros.Add("O campo 'Status' é obrigatório!");
 
             if (string.IsNullOrEmpty(pontoAdocaoDto.NomeFantasia))
@@ -284,27 +284,27 @@ namespace AAPS.Api.Services.PontosAdocao
         {
             var erros = new List<string>();
 
-            if (pontoAdocaoDto.Status != null && string.IsNullOrEmpty(pontoAdocaoDto.Status.ToString()))
-                erros.Add("O campo 'Status' não pode ser vazio!");
+            if (pontoAdocaoDto.Status != null && string.IsNullOrWhiteSpace(pontoAdocaoDto.Status.ToString()))
+                erros.Add("O campo 'Status' não pode ter ser vazio!");
 
-            if (pontoAdocaoDto.Logradouro != null && string.IsNullOrEmpty(pontoAdocaoDto.Logradouro))
-                erros.Add("O campo 'Logradouro' não pode ser vazio!");
+            if (pontoAdocaoDto.Logradouro != null && string.IsNullOrWhiteSpace(pontoAdocaoDto.Logradouro))
+                erros.Add("O campo 'Logradouro' não pode ter ser vazio!");
             if (pontoAdocaoDto.Numero != null && pontoAdocaoDto.Numero <= 0)
-                erros.Add("O campo 'Número' é obrigatório e deve ser maior que zero!");
-            if (pontoAdocaoDto.Bairro != null && string.IsNullOrEmpty(pontoAdocaoDto.Bairro))
-                erros.Add("O campo 'Bairro' não pode ser vazio!");
-            if (pontoAdocaoDto.Uf != null && (string.IsNullOrEmpty(pontoAdocaoDto.Uf) || pontoAdocaoDto.Uf.Length != 2))
-                erros.Add("O campo 'UF' não pode ser vazio!");
-            if (pontoAdocaoDto.Cidade != null && string.IsNullOrEmpty(pontoAdocaoDto.Cidade))
-                erros.Add("O campo 'Cidade' não pode ser vazio!");
-            if (pontoAdocaoDto.Cep != null && string.IsNullOrWhiteSpace(pontoAdocaoDto.Cep) || pontoAdocaoDto.Cep.ToString().Length != 8)
+                erros.Add("O campo 'Número' não pode ter ser vazio e deve ser maior que zero!");
+            if (pontoAdocaoDto.Bairro != null && string.IsNullOrWhiteSpace(pontoAdocaoDto.Bairro))
+                erros.Add("O campo 'Bairro' não pode ter ser vazio!");
+            if (pontoAdocaoDto.Uf != null && (pontoAdocaoDto.Uf.Length != 2 || string.IsNullOrWhiteSpace(pontoAdocaoDto.Uf)))
+                erros.Add("O campo 'UF' não pode ter ser vazio e deve ter 2 caracteres!");
+            if (pontoAdocaoDto.Cidade != null && string.IsNullOrWhiteSpace(pontoAdocaoDto.Cidade))
+                erros.Add("O campo 'Cidade' não pode ter ser vazio!");
+            if (pontoAdocaoDto.Cep != null && (string.IsNullOrWhiteSpace(pontoAdocaoDto.Cep) || pontoAdocaoDto.Cep.ToString().Length != 8))
                 erros.Add("O campo 'CEP' não pode ter ser vazio e deve ter exatamente 8 dígitos!");
 
-            if (pontoAdocaoDto.NomeFantasia != null && string.IsNullOrEmpty(pontoAdocaoDto.NomeFantasia))
+            if (pontoAdocaoDto.NomeFantasia != null && string.IsNullOrWhiteSpace(pontoAdocaoDto.NomeFantasia))
                 erros.Add("O campo 'Nome Fantasia' não pode ser vazio!");
-            if (pontoAdocaoDto.Responsavel != null && string.IsNullOrEmpty(pontoAdocaoDto.Responsavel))
+            if (pontoAdocaoDto.Responsavel != null && string.IsNullOrWhiteSpace(pontoAdocaoDto.Responsavel))
                 erros.Add("O campo 'Responsavel' não pode ser vazio!");
-            if (pontoAdocaoDto.Cnpj != null && string.IsNullOrEmpty(pontoAdocaoDto.Cnpj))
+            if (pontoAdocaoDto.Cnpj != null && string.IsNullOrWhiteSpace(pontoAdocaoDto.Cnpj))
                 erros.Add("O campo 'CNPJ' não pode ser vazio!");
 
             return erros;
@@ -317,6 +317,7 @@ namespace AAPS.Api.Services.PontosAdocao
             return await _context.PontosAdocao
                 .Include(p => p.Pessoa)
                 .ThenInclude(p => p.Endereco)
+                .Where(p => p.Pessoa.Tipo == TipoPessoaEnum.PontoAdocao)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 

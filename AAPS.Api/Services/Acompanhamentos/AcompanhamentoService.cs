@@ -101,7 +101,7 @@ namespace AAPS.Api.Services.Acompanhamentos
         {
             var erros = new List<string>();
 
-            if (string.IsNullOrEmpty(acompanhamentoDto.Data.ToString()))
+            if (string.IsNullOrEmpty(acompanhamentoDto.Data.ToString()) || acompanhamentoDto.Data == DateTime.MinValue)
                 erros.Add("O campo 'Data' é obrigatório!");
 
             if (string.IsNullOrEmpty(acompanhamentoDto.AnimalId.ToString()) || acompanhamentoDto.AnimalId <= 0)
