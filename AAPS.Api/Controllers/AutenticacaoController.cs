@@ -64,7 +64,7 @@ public class AutenticacaoController : Controller
             return BadRequest(ApiResponse<object>.ErroResponse(
                 new List<string> { "Nome de usuário e telefone são obrigatórios!" }, "Erro ao enviar solicitação."));
 
-        var voluntario = await _voluntarioService.BuscarVoluntarioPorUsernameETelefone(dto.UserName, dto.Telefone);
+        var voluntario = await _voluntarioService.ObterVoluntarioPorUsernameETelefone(dto.UserName, dto.Telefone);
 
         if (voluntario == null)
             return NotFound(ApiResponse<object>.ErroResponse(new List<string> { "Usuário não encontrado." }));

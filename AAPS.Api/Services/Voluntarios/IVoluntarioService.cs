@@ -1,14 +1,18 @@
 ﻿using AAPS.Api.Dtos.Voluntario;
-using AAPS.Api.Models;
 
 namespace AAPS.Api.Services.Voluntarios;
 
 public interface IVoluntarioService
 {
     Task<bool> CriarVoluntario(CriarVoluntarioDto voluntarioDto);
+    Task<IEnumerable<VoluntarioDto>> ObterVoluntarios(FiltroVoluntarioDto filtro);
     Task<VoluntarioDto?> ObterVoluntarioPorId(int id);
-    Task<Voluntario?> ObterVoluntarioPorUserName(string username); //todo: usar dto
-    Task<Voluntario> BuscarVoluntarioPorUsernameETelefone(string username, string telefone); //todo: usar dto
-    Task<List<Voluntario>> ObterAdministradores();
+    Task<IEnumerable<VoluntarioDto>> ObterVoluntariosAtivos();
+    Task<VoluntarioDto?> ObterVoluntarioPorUsernameETelefone(string username, string telefone);
+    Task<List<VoluntarioDto>> ObterAdministradores();
+    Task<VoluntarioDto?> ObterVoluntarioPorUserName(string username);
+    Task<VoluntarioDto> AtualizarVoluntario(int id, AtualizarVoluntarioDto voluntarioDto);
+    Task<bool> ExcluirVoluntario(int id);
     Task<List<string>> ValidarCriacaoVoluntario(CriarVoluntarioDto voluntarioDto);
+    List<string> ValidarAtualizacaoVoluntario(AtualizarVoluntarioDto voluntarioDto);
 }

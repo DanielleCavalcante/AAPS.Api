@@ -177,7 +177,7 @@ namespace AAPS.Api.Services.Animais
 
             await _context.SaveChangesAsync();
 
-            var animalAtualizado = new AnimalDto
+            return new AnimalDto
             {
                 Id = animal.Id,
                 Nome = animal.Nome,
@@ -190,8 +190,6 @@ namespace AAPS.Api.Services.Animais
                 Disponibilidade = animal.Disponibilidade,
                 DoadorId = animal.PessoaId,
             };
-
-            return animalAtualizado;
         }
 
         public async Task<bool> ExcluirAnimal(int id)

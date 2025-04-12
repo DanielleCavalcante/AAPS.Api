@@ -193,7 +193,7 @@ namespace AAPS.Api.Services.PontosAdocao
 
             await _context.SaveChangesAsync();
 
-            var pontoAdocaoAtualizado = new PontoAdocaoDto
+            return new PontoAdocaoDto
             {
                 Id = pontoAdocao.Id,
                 NomeFantasia = pontoAdocao.NomeFantasia,
@@ -208,8 +208,6 @@ namespace AAPS.Api.Services.PontosAdocao
                 Cep = pontoAdocao.Pessoa.Endereco.Cep,
                 Status = pontoAdocao.Pessoa.Status
             };
-
-            return pontoAdocaoAtualizado;
         }
 
         public async Task<bool> ExcluirPontoAdocao(int id)

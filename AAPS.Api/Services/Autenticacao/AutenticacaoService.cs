@@ -1,7 +1,9 @@
 ﻿using AAPS.Api.Context;
 using AAPS.Api.Dtos.Autenticacao;
 using AAPS.Api.Models;
+using AAPS.Api.Models.Enums;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -39,7 +41,14 @@ public class AutenticacaoService : IAutenticacaoService
 
     public async Task<TokenDto> LoginComToken(LoginDto infoUsuario)
     {
-        var usuario = await _userManager.FindByNameAsync(infoUsuario.UserName);
+        var usuario = await _userManager.Users
+            .Include(v => v.Pessoa)
+            .Where(v =>
+                v.Pessoa.Status == StatusEnum.Ativo)
+            .FirstOrDefaultAsync(v =>
+                v.UserName == infoUsuario.UserName);
+        //.FindByNameAsync(infoUsuario.UserName);
+
         if (usuario == null)
         {
             return null;
