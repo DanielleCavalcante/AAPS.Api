@@ -92,9 +92,9 @@ public class AdotanteController : Controller
             return BadRequest(ApiResponse<object>.ErroResponse(erros, "Erro ao atualizar adotante!"));
         }
 
-        await _adotanteService.AtualizarAdotante(id, adotanteDto);
+        var adotante = await _adotanteService.AtualizarAdotante(id, adotanteDto);
 
-        if (adotanteDto is null)
+        if (adotante is null)
         {
             return NotFound(ApiResponse<object>.ErroResponse(new List<string> { $"Adotante de id = {id} não encontrado." }));
         }

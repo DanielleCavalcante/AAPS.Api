@@ -1,7 +1,9 @@
 ﻿using AAPS.Api.Context;
 using AAPS.Api.Dtos.Autenticacao;
 using AAPS.Api.Models;
+using AAPS.Api.Models.Enums;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -39,7 +41,14 @@ public class AutenticacaoService : IAutenticacaoService
 
     public async Task<TokenDto> LoginComToken(LoginDto infoUsuario)
     {
-        var usuario = await _userManager.FindByNameAsync(infoUsuario.UserName);
+        var usuario = await _userManager.Users
+            .Include(v => v.Pessoa)
+            .Where(v =>
+                v.Pessoa.Status == StatusEnum.Ativo)
+            .FirstOrDefaultAsync(v =>
+                v.UserName == infoUsuario.UserName);
+        //.FindByNameAsync(infoUsuario.UserName);
+
         if (usuario == null)
         {
             return null;
@@ -64,53 +73,6 @@ public class AutenticacaoService : IAutenticacaoService
     {
         await _signInManager.SignOutAsync();
     }
-
-
-
-
-    //// senha com whatsapp
-    //public async Task<string> GerarCodigoRecuperacao(int voluntarioId)
-    //{
-    //    // Gera um código aleatório de 6 dígitos
-    //    var codigo = new Random().Next(100000, 999999).ToString();
-
-    //    // Salva o código no banco
-    //    await SalvarCodigoRecuperacaoAsync(voluntarioId, codigo);
-
-    //    return codigo;
-    //}
-
-    //public async Task SalvarCodigoRecuperacaoAsync(int voluntarioId, string codigo)
-    //{
-    //    var expiracao = DateTime.UtcNow.AddMinutes(10); // Código expira em 10 minutos
-
-    //    var codigoRecuperacao = new CodigoRecuperacao
-    //    {
-    //        VoluntarioId = voluntarioId,
-    //        Codigo = codigo,
-    //        ExpiraEm = expiracao,
-    //        Usado = false
-    //    };
-
-    //    _context.CodigosRecuperacao.Add(codigoRecuperacao);
-    //    await _context.SaveChangesAsync();
-    //}
-
-    //public async Task<bool> ValidarCodigoRecuperacao(int voluntarioId, string codigo)
-    //{
-    //    var codigoValido = await _context.CodigosRecuperacao
-    //        .Where(c => c.VoluntarioId == voluntarioId && c.Codigo == codigo && c.ExpiraEm > DateTime.UtcNow && !c.Usado)
-    //        .FirstOrDefaultAsync();
-
-    //    if (codigoValido == null)
-    //        return false;
-
-    //    // Marcar o código como usado
-    //    codigoValido.Usado = true;
-    //    await _context.SaveChangesAsync();
-
-    //    return true;
-    //}
 
     #region MÉTODOS PRIVADOS
 

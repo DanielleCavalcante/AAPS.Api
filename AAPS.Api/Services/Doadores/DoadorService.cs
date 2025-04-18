@@ -1,5 +1,4 @@
 ﻿using AAPS.Api.Context;
-using AAPS.Api.Dtos.Adotante;
 using AAPS.Api.Dtos.Doador;
 using AAPS.Api.Models;
 using AAPS.Api.Models.Enums;
@@ -55,6 +54,7 @@ namespace AAPS.Api.Services.Doadores
                 Nome = doadorDto.Nome,
                 Rg = doadorDto.Rg,
                 Cpf = doadorDto.Cpf,
+                Status = doadorDto.Status,
                 Logradouro = doadorDto.Logradouro,
                 Numero = doadorDto.Numero,
                 Complemento = doadorDto.Complemento,
@@ -62,7 +62,6 @@ namespace AAPS.Api.Services.Doadores
                 Uf = doadorDto.Uf,
                 Cidade = doadorDto.Cidade,
                 Cep = doadorDto.Cep,
-                Status = doadorDto.Status,
             };
         }
 
@@ -95,6 +94,7 @@ namespace AAPS.Api.Services.Doadores
                     Nome = d.Nome,
                     Rg = d.Rg,
                     Cpf = d.Cpf,
+                    Status = d.Status,
                     Logradouro = d.Endereco.Logradouro,
                     Numero = d.Endereco.Numero,
                     Complemento = d.Endereco.Complemento,
@@ -102,7 +102,6 @@ namespace AAPS.Api.Services.Doadores
                     Uf = d.Endereco.Uf,
                     Cidade = d.Endereco.Cidade,
                     Cep = d.Endereco.Cep,
-                    Status = d.Status,
                 })
                 .ToListAsync();
 
@@ -122,8 +121,9 @@ namespace AAPS.Api.Services.Doadores
             {
                 Id = doador.Id,
                 Nome = doador.Nome,
-                Rg = doador.Rg,
-                Cpf = doador.Cpf,
+                Rg = doador?.Rg,
+                Cpf = doador?.Cpf,
+                Status = doador.Status,
                 Logradouro = doador.Endereco.Logradouro,
                 Numero = doador.Endereco.Numero,
                 Complemento = doador.Endereco.Complemento,
@@ -131,20 +131,20 @@ namespace AAPS.Api.Services.Doadores
                 Uf = doador.Endereco.Uf,
                 Cidade = doador.Endereco.Cidade,
                 Cep = doador.Endereco.Cep,
-                Status = doador.Status,
             };
         }
 
         public async Task<IEnumerable<DoadorDto>> ObterDoadoresAtivos()
         {
             var doadores = _context.Pessoas
-                .Where(d => d.Status == StatusEnum.Ativo)
+                .Where(d => d.Status == StatusEnum.Ativo && d.Tipo == TipoPessoaEnum.Doador)
                 .Select(d => new DoadorDto
                 {
                     Id = d.Id,
                     Nome = d.Nome,
                     Rg = d.Rg,
                     Cpf = d.Cpf,
+                    Status = d.Status,
                     Logradouro = d.Endereco.Logradouro,
                     Numero = d.Endereco.Numero,
                     Complemento = d.Endereco.Complemento,
@@ -152,7 +152,6 @@ namespace AAPS.Api.Services.Doadores
                     Uf = d.Endereco.Uf,
                     Cidade = d.Endereco.Cidade,
                     Cep = d.Endereco.Cep,
-                    Status = d.Status,
                 });
 
             return await doadores.ToListAsync();
@@ -188,6 +187,7 @@ namespace AAPS.Api.Services.Doadores
                 Nome = doador.Nome,
                 Rg = doador.Rg,
                 Cpf = doador.Cpf,
+                Status = doador.Status,
                 Logradouro = doador.Endereco.Logradouro,
                 Numero = doador.Endereco.Numero,
                 Complemento = doador.Endereco.Complemento,
@@ -195,7 +195,6 @@ namespace AAPS.Api.Services.Doadores
                 Uf = doador.Endereco.Uf,
                 Cidade = doador.Endereco.Cidade,
                 Cep = doador.Endereco.Cep,
-                Status = doador.Status,
             };
         }
 
@@ -225,12 +224,12 @@ namespace AAPS.Api.Services.Doadores
                 erros.Add("O campo 'RG' é obrigatório!");
             if (string.IsNullOrEmpty(doadorDto.Cpf))
                 erros.Add("O campo 'CPF' é obrigatório!");
-            if (string.IsNullOrEmpty(doadorDto.Status.ToString()))
+            if (string.IsNullOrEmpty(doadorDto.Status.ToString()) || !Enum.IsDefined(typeof(StatusEnum), doadorDto.Status))
                 erros.Add("O campo 'Status' é obrigatório!");
 
             if (string.IsNullOrEmpty(doadorDto.Logradouro))
                 erros.Add("O campo 'Logradouro' é obrigatório!");
-            if (string.IsNullOrEmpty(doadorDto.Numero.ToString()) || doadorDto.Numero <= 0 || string.IsNullOrWhiteSpace(doadorDto.Numero.ToString()))
+            if (string.IsNullOrEmpty(doadorDto.Numero.ToString()) || doadorDto.Numero <= 0)
                 erros.Add("O campo 'Número' é obrigatório e deve ser maior que zero!");
             if (string.IsNullOrEmpty(doadorDto.Bairro))
                 erros.Add("O campo 'Bairro' é obrigatório!");
@@ -240,8 +239,6 @@ namespace AAPS.Api.Services.Doadores
                 erros.Add("O campo 'Cidade' é obrigatório!");
             if (string.IsNullOrEmpty(doadorDto.Cep) || doadorDto.Cep.Length != 8)
                 erros.Add("O campo 'CEP' é obrigatório e deve conter exatamente 8 dígitos!");
-            if (string.IsNullOrEmpty(doadorDto.Status.ToString()))
-                erros.Add("O campo 'Status' é obrigatório!");
 
             var doadorExistente = await _context.Pessoas
                 .Where(d =>
@@ -263,27 +260,27 @@ namespace AAPS.Api.Services.Doadores
         {
             var erros = new List<string>();
 
-            if (doadorDto.Nome != null && string.IsNullOrEmpty(doadorDto.Nome))
-                erros.Add("O campo 'Nome' não pode ser vazio!");
-            if (doadorDto.Rg != null && string.IsNullOrEmpty(doadorDto.Rg))
-                erros.Add("O campo 'RG' não pode ser vazio!");
-            if (doadorDto.Cpf != null && string.IsNullOrEmpty(doadorDto.Cpf))
-                erros.Add("O campo 'CPF' não pode ser vazio!");
+            if (doadorDto.Nome != null && string.IsNullOrWhiteSpace(doadorDto.Nome))
+                erros.Add("O campo 'Nome' não pode ter ser vazio!");
+            if (doadorDto.Rg != null && string.IsNullOrWhiteSpace(doadorDto.Rg))
+                erros.Add("O campo 'Rg' não pode ter ser vazio!");
+            if (doadorDto.Cpf != null && string.IsNullOrWhiteSpace(doadorDto.Cpf))
+                erros.Add("O campo 'Cpf' não pode ter ser vazio!");
             if (doadorDto.Status != null && string.IsNullOrWhiteSpace(doadorDto.Status.ToString()))
-                erros.Add("O campo 'Status' não pode ser vazio!");
+                erros.Add("O campo 'Status' não pode ter ser vazio!");
 
-            if (doadorDto.Logradouro != null && string.IsNullOrEmpty(doadorDto.Logradouro))
-                erros.Add("O campo 'Logradouro' não pode ser vazio!");
-            if (doadorDto.Numero != null && (doadorDto.Numero <= 0 || string.IsNullOrWhiteSpace(doadorDto.Numero.ToString())))
-                erros.Add("O campo 'Número' é obrigatório e deve ser maior que zero!");
-            if (doadorDto.Bairro != null && string.IsNullOrEmpty(doadorDto.Bairro))
-                erros.Add("O campo 'Bairro' não pode ser vazio!");
-            if (doadorDto.Uf != null && (string.IsNullOrEmpty(doadorDto.Uf) || doadorDto.Uf.Length != 2))
-                erros.Add("O campo 'UF' é obrigatório e deve ter 2 caracteres!");
-            if (doadorDto.Cidade != null && string.IsNullOrEmpty(doadorDto.Cidade))
-                erros.Add("O campo 'Cidade' não pode ser vazio!");
-            if (doadorDto.Cep != null && string.IsNullOrEmpty(doadorDto.Cep) || doadorDto.Cep.ToString().Length != 8)
-                erros.Add("O campo 'Logradouro' não pode ser vazio!");
+            if (doadorDto.Logradouro != null && string.IsNullOrWhiteSpace(doadorDto.Logradouro))
+                erros.Add("O campo 'Logradouro' não pode ter ser vazio!");
+            if (doadorDto.Numero != null && doadorDto.Numero <= 0)
+                erros.Add("O campo 'Número' não pode ter ser vazio e deve ser maior que zero!");
+            if (doadorDto.Bairro != null && string.IsNullOrWhiteSpace(doadorDto.Bairro))
+                erros.Add("O campo 'Bairro' não pode ter ser vazio!");
+            if (doadorDto.Uf != null && (doadorDto.Uf.Length != 2 || string.IsNullOrWhiteSpace(doadorDto.Uf)))
+                erros.Add("O campo 'UF' não pode ter ser vazio e deve ter 2 caracteres!");
+            if (doadorDto.Cidade != null && string.IsNullOrWhiteSpace(doadorDto.Cidade))
+                erros.Add("O campo 'Cidade' não pode ter ser vazio!");
+            if (doadorDto.Cep != null && (string.IsNullOrWhiteSpace(doadorDto.Cep) || doadorDto.Cep.ToString().Length != 8))
+                erros.Add("O campo 'CEP' não pode ter ser vazio e deve ter exatamente 8 dígitos!");
 
             return erros;
         }
@@ -294,6 +291,7 @@ namespace AAPS.Api.Services.Doadores
         {
             return await _context.Pessoas
                 .Include(p => p.Endereco)
+                .Where(p => p.Tipo == TipoPessoaEnum.Doador)
                 .FirstOrDefaultAsync(d => d.Id == id);
         }
 

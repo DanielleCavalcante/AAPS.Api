@@ -1,37 +1,36 @@
 ﻿using AAPS.Api.Dtos.Senha;
 using AAPS.Api.Dtos.Voluntario;
 using AAPS.Api.Responses;
-using AAPS.Api.Services;
 using AAPS.Api.Services.Autenticacao;
+using AAPS.Api.Services.Senhas;
 using AAPS.Api.Services.Voluntarios;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AAPS.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
-//[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Route("api/[controller]/[action]")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
 public class VoluntarioController : Controller
 {
     #region ATRIBUTOS E CONSTRUTOR
 
     private readonly IVoluntarioService _voluntarioService;
     private readonly IAutenticacaoService _autenticacaoService;
-    private readonly EmailService _emailService;
-    //private readonly WhatsAppService _whatsAppService;
+    private readonly ISenhaService _senhaService;
 
-    public VoluntarioController(IVoluntarioService voluntario, IAutenticacaoService autenticacao, EmailService emailService)
+    public VoluntarioController(IVoluntarioService voluntario, IAutenticacaoService autenticacao, ISenhaService senhaService)
     {
         _voluntarioService = voluntario;
         _autenticacaoService = autenticacao;
-        _emailService = emailService;
+        _senhaService = senhaService;
     }
 
     #endregion
 
-    [Authorize(Roles = "Admin")]
-    [HttpPost("CriarVoluntario")]
+    [HttpPost]
     public async Task<IActionResult> CriarVoluntario([FromBody] CriarVoluntarioDto voluntarioDto)
     {
         var erros = await _voluntarioService.ValidarCriacaoVoluntario(voluntarioDto);
@@ -41,59 +40,97 @@ public class VoluntarioController : Controller
             return BadRequest(ApiResponse<object>.ErroResponse(erros, "Erro ao registrar voluntário!"));
         }
 
-        if (voluntarioDto.Senha != voluntarioDto.ConfirmarSenha)
-        {
-            return BadRequest(ApiResponse<object>.ErroResponse(
-                new List<string> { "As senhas não conferem!" },
-                "Erro na validação das senhas"));
-        }
+        //if (voluntarioDto.Senha != voluntarioDto.ConfirmarSenha)
+        //{
+        //    return BadRequest(ApiResponse<object>.ErroResponse(
+        //        new List<string> { "As senhas não conferem!" },
+        //        "Erro na validação das senhas"));
+        //}
 
-        var resultado = await _voluntarioService.CriarVoluntario(voluntarioDto);
+        var voluntario = await _voluntarioService.CriarVoluntario(voluntarioDto);
 
-        if (!resultado)
+        if (!voluntario)
         {
             return BadRequest(ApiResponse<object>.ErroResponse(new List<string> { "Erro ao criar voluntário." }));
         }
 
-        return Ok(ApiResponse<object>.SucessoResponse(resultado, $"Usuário {voluntarioDto.UserName} cadastrado com sucesso!"));
+        return Ok(ApiResponse<object>.SucessoResponse(voluntario, $"Usuário {voluntarioDto.UserName} cadastrado com sucesso!"));
     }
 
-    [HttpPost("SolicitarResetSenha")]
-    public async Task<IActionResult> SolicitarResetSenha([FromBody] SolicitarResetSenhaDto dto)
+    [HttpGet]
+    public async Task<ActionResult<IAsyncEnumerable<VoluntarioDto>>> ObterVoluntarios([FromQuery] FiltroVoluntarioDto filtro)
     {
-        if (string.IsNullOrWhiteSpace(dto.UserName) || string.IsNullOrWhiteSpace(dto.Telefone))
-            return BadRequest(ApiResponse<object>.ErroResponse(
-                new List<string> { "Nome de usuário e telefone são obrigatórios!" }, "Erro ao enviar solicitação."));
+        var voluntarios = await _voluntarioService.ObterVoluntarios(filtro);
 
-        var voluntario = await _voluntarioService.BuscarVoluntarioPorUsernameETelefoneAsync(dto.UserName, dto.Telefone);
-
-        if (voluntario == null)
-            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { "Usuário não encontrado." }));
-
-        var admins = await _voluntarioService.ObterAdministradoresAsync();
-
-        if (!admins.Any())
-            return BadRequest(ApiResponse<object>.ErroResponse(
-                new List<string> { "Nenhum administrador encontrado para receber a solicitação." }, "Erro ao enviar solicitação."));
-
-        foreach (var admin in admins)
+        if (voluntarios is null || !voluntarios.Any())
         {
-            if (!string.IsNullOrWhiteSpace(admin.Email))
-            {
-                await _emailService.EnviarEmailAsync(
-                    admin.Email,
-                    "Solicitação de Reset de Senha",
-                    $"O voluntário {voluntario.UserName} solicitou um reset de senha. Contato: {voluntario.PhoneNumber}"
-                );
-            }
+            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { "Nenhum voluntário foi encontrado." }));
         }
 
-        return Ok(ApiResponse<object>.SucessoResponse("Solicitação enviada com sucesso!"));
+        return Ok(ApiResponse<object>.SucessoResponse(voluntarios));
     }
 
-    [HttpPost("RedefinirSenha")]
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> RedefinirSenha([FromBody] ResetarSenhaDto dto)
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult> ObterVoluntarioPorId(int id)
+    {
+        var voluntario = await _voluntarioService.ObterVoluntarioPorId(id);
+
+        if (voluntario is null)
+        {
+            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { $"Voluntário de id = {id} não encontrado." }));
+        }
+
+        return Ok(ApiResponse<object>.SucessoResponse(voluntario));
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<IAsyncEnumerable<VoluntarioDto>>> ObterVoluntariosAtivos()
+    {
+        var voluntarios = await _voluntarioService.ObterVoluntariosAtivos();
+
+        if (voluntarios is null)
+        {
+            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { "Nenhum voluntário foi encontrado." }));
+        }
+
+        return Ok(ApiResponse<object>.SucessoResponse(voluntarios));
+    }
+
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> AtualizarVoluntario(int id, [FromBody] AtualizarVoluntarioDto voluntarioDto)
+    {
+        var erros = _voluntarioService.ValidarAtualizacaoVoluntario(voluntarioDto);
+
+        if (erros.Count > 0)
+        {
+            return BadRequest(ApiResponse<object>.ErroResponse(erros, "Erro ao atualizar voluntário!"));
+        }
+
+        var voluntario = await _voluntarioService.AtualizarVoluntario(id, voluntarioDto);
+
+        if (voluntario is null)
+        {
+            return BadRequest(ApiResponse<object>.ErroResponse(new List<string> { $"Voluntário de id = {id} não encontrado." }));
+        }
+
+        return Ok(ApiResponse<object>.SucessoResponse(voluntario, $"Usuário {voluntarioDto.UserName} atualizado com sucesso!"));
+    }
+
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult> ExcluirVoluntario(int id)
+    {
+        bool voluntario = await _voluntarioService.ExcluirVoluntario(id);
+
+        if (!voluntario)
+        {
+            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { $"Voluntário de id = {id} não encontrado." }));
+        }
+
+        return Ok(ApiResponse<object>.SucessoResponse($"Voluntário de id = {id} excluído com sucesso!"));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ResetarSenha([FromBody] ResetarSenhaDto dto)
     {
         if (dto.VoluntarioId <= 0)
             return BadRequest(ApiResponse<object>.ErroResponse(
@@ -108,7 +145,7 @@ public class VoluntarioController : Controller
 
         try
         {
-            bool sucesso = await _voluntarioService.RedefinirSenha(dto.VoluntarioId);
+            bool sucesso = await _senhaService.ResetarSenha(dto.VoluntarioId);
             if (sucesso)
                 return Ok(ApiResponse<object>.SucessoResponse("Senha redefinida com sucesso."));
 
@@ -120,65 +157,4 @@ public class VoluntarioController : Controller
             return StatusCode(500, $"Erro interno: {ex.Message}");
         }
     }
-
-    //[HttpPost("SolicitarResetSenhaWhatsApp")]
-    //public async Task<IActionResult> SolicitarResetSenhaWhatsApp([FromBody] SolicitarResetSenhaDto dto)
-    //{
-    //    if (string.IsNullOrWhiteSpace(dto.UserName) || string.IsNullOrWhiteSpace(dto.Telefone))
-    //        return BadRequest(ApiResponse<object>.ErroResponse(
-    //            new List<string> { "Nome de usuário e telefone são obrigatórios!" }, "Erro ao enviar solicitação."));
-
-    //    var voluntario = await _voluntarioService.BuscarVoluntarioPorUsernameETelefoneAsync(dto.UserName, dto.Telefone);
-
-    //    if (voluntario == null)
-    //        return NotFound(ApiResponse<object>.ErroResponse(new List<string> { "Usuário não encontrado." }));
-
-    //    // Gera código de recuperação (expirável)
-    //    var codigoRecuperacao = await _autenticacaoService.GerarCodigoRecuperacao(voluntario.Id);
-
-    //    // Envia código via WhatsApp
-    //    var sucessoEnvio = await _whatsAppService.EnviarCodigoRecuperacaoAsync(dto.Telefone, codigoRecuperacao);
-
-    //    if (!sucessoEnvio)
-    //        return BadRequest(ApiResponse<object>.ErroResponse(new List<string> { "Falha ao enviar código pelo WhatsApp." }));
-
-    //    return Ok(ApiResponse<object>.SucessoResponse("Código de recuperação enviado com sucesso!"));
-    //}
-
-    //[HttpPost("ConfirmarResetSenha")]
-    //public async Task<IActionResult> ConfirmarResetSenha([FromBody] ConfirmarResetSenhaDto dto)
-    //{
-    //    if (string.IsNullOrWhiteSpace(dto.UserName) || string.IsNullOrWhiteSpace(dto.Telefone) ||
-    //        string.IsNullOrWhiteSpace(dto.CodigoRecuperacao) || string.IsNullOrWhiteSpace(dto.NovaSenha) ||
-    //        string.IsNullOrWhiteSpace(dto.ConfirmarNovaSenha))
-    //    {
-    //        return BadRequest(ApiResponse<object>.ErroResponse(
-    //            new List<string> { "Todos os campos são obrigatórios!" }, "Erro ao redefinir senha."));
-    //    }
-
-    //    if (dto.NovaSenha != dto.ConfirmarNovaSenha)
-    //    {
-    //        return BadRequest(ApiResponse<object>.ErroResponse(
-    //            new List<string> { "As senhas não coincidem!" }, "Erro ao redefinir senha."));
-    //    }
-
-    //    var voluntario = await _voluntarioService.BuscarVoluntarioPorUsernameETelefoneAsync(dto.UserName, dto.Telefone);
-
-    //    if (voluntario == null)
-    //        return NotFound(ApiResponse<object>.ErroResponse(new List<string> { "Usuário não encontrado." }));
-
-    //    // Valida código de recuperação
-    //    var codigoValido = _autenticacaoService.ValidarCodigoRecuperacao(voluntario.Id, dto.CodigoRecuperacao);
-
-    //    //if (!codigoValido)
-    //    //    return BadRequest(ApiResponse<object>.ErroResponse(new List<string> { "Código inválido ou expirado." }));
-
-    //    // Atualiza senha
-    //    var sucesso = await _voluntarioService.AlterarSenhaAsync(voluntario.Id, dto.NovaSenha);
-
-    //    if (!sucesso)
-    //        return BadRequest(ApiResponse<object>.ErroResponse(new List<string> { "Erro ao redefinir senha." }));
-
-    //    return Ok(ApiResponse<object>.SucessoResponse("Senha redefinida com sucesso!"));
-    //}
 }

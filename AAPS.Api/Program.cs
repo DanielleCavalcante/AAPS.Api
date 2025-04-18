@@ -9,6 +9,7 @@ using AAPS.Api.Services.Autenticacao;
 using AAPS.Api.Services.Doadores;
 using AAPS.Api.Services.Eventos;
 using AAPS.Api.Services.PontosAdocao;
+using AAPS.Api.Services.Senhas;
 using AAPS.Api.Services.Voluntarios;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -35,6 +36,7 @@ builder.Services.AddScoped<IAdotanteService, AdotanteService>();
 builder.Services.AddScoped<IPontoAdocaoService, PontoAdocaoService>();
 builder.Services.AddScoped<IEventoService, EventoService>();
 builder.Services.AddScoped<IAcompanhamentoService, AcompanhamentoService>();
+builder.Services.AddScoped<ISenhaService, SenhaService>();
 
 builder.Services.AddScoped<EmailService>();
 

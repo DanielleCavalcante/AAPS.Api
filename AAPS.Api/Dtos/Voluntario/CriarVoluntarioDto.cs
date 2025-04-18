@@ -11,7 +11,7 @@ namespace AAPS.Api.Dtos.Voluntario
         public string Email { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
         public string Acesso { get; set; } = string.Empty;
-        public string Senha { get; set; } = string.Empty;
-        public string? ConfirmarSenha { get; set; } = string.Empty;
+        //public string Senha { get; set; } = string.Empty;
+        //public string? ConfirmarSenha { get; set; } = string.Empty;
     }
 }
