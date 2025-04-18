@@ -40,12 +40,12 @@ public class VoluntarioController : Controller
             return BadRequest(ApiResponse<object>.ErroResponse(erros, "Erro ao registrar voluntário!"));
         }
 
-        if (voluntarioDto.Senha != voluntarioDto.ConfirmarSenha)
-        {
-            return BadRequest(ApiResponse<object>.ErroResponse(
-                new List<string> { "As senhas não conferem!" },
-                "Erro na validação das senhas"));
-        }
+        //if (voluntarioDto.Senha != voluntarioDto.ConfirmarSenha)
+        //{
+        //    return BadRequest(ApiResponse<object>.ErroResponse(
+        //        new List<string> { "As senhas não conferem!" },
+        //        "Erro na validação das senhas"));
+        //}
 
         var voluntario = await _voluntarioService.CriarVoluntario(voluntarioDto);
 

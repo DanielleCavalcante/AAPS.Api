@@ -51,7 +51,9 @@ public class VoluntarioService : IVoluntarioService
             PessoaId = pessoa.Id
         };
 
-        var resultado = await _userManager.CreateAsync(voluntario, voluntarioDto.Senha);
+        var senhaPadrao = "Aaps@123";
+
+        var resultado = await _userManager.CreateAsync(voluntario, senhaPadrao);
 
         if (!resultado.Succeeded)
         {
@@ -327,22 +329,22 @@ public class VoluntarioService : IVoluntarioService
         if (string.IsNullOrEmpty(voluntarioDto.PhoneNumber))
             erros.Add("O campo 'Telefone' é obrigatório!");
 
-        if (string.IsNullOrEmpty(voluntarioDto.Acesso))
-            erros.Add("O campo 'Acesso' é obrigatório!");
-        if (string.IsNullOrEmpty(voluntarioDto.Senha))
-            erros.Add("O campo 'Senha' é obrigatório!");
-        if (voluntarioDto.Senha != voluntarioDto.ConfirmarSenha)
-            erros.Add("As senhas não conferem!");
+        //if (string.IsNullOrEmpty(voluntarioDto.Acesso))
+        //    erros.Add("O campo 'Acesso' é obrigatório!");
+        //if (string.IsNullOrEmpty(voluntarioDto.Senha))
+        //    erros.Add("O campo 'Senha' é obrigatório!");
+        //if (voluntarioDto.Senha != voluntarioDto.ConfirmarSenha)
+        //    erros.Add("As senhas não conferem!");
 
         if (!await _roleManager.RoleExistsAsync(voluntarioDto.Acesso))
         {
             erros.Add("A role informada não existe.");
         }
 
-        if (!Regex.IsMatch(voluntarioDto.Senha, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?"":{}|<>])[A-Za-z\d!@#$%^&*(),.?"":{}|<>]{8,}$"))
-        {
-            erros.Add("A senha deve ter pelo menos 8 caracteres, incluindo 1 letra maiúscula, 1 letra minúscula, 1 número e 1 caractere especial.");
-        }
+        //if (!Regex.IsMatch(voluntarioDto.Senha, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?"":{}|<>])[A-Za-z\d!@#$%^&*(),.?"":{}|<>]{8,}$"))
+        //{
+        //    erros.Add("A senha deve ter pelo menos 8 caracteres, incluindo 1 letra maiúscula, 1 letra minúscula, 1 número e 1 caractere especial.");
+        //}
 
         var usuarioExistente = await ObterVoluntarioPorUserName(voluntarioDto.UserName);
         if (usuarioExistente != null)
