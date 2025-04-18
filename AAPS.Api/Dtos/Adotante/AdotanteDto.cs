@@ -9,6 +9,9 @@ public class AdotanteDto
     public required string Rg { get; set; }
     public required string Cpf { get; set; }
     public required StatusEnum Status { get; set; }
+
+    public required List<string> Telefones { get; set; }
+
     public required string LocalTrabalho { get; set; }
     public required string Facebook { get; set; }
     public required string Instagram { get; set; }

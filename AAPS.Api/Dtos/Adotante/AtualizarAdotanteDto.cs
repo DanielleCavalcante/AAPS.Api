@@ -8,6 +8,9 @@ namespace AAPS.Api.Dtos.Adotante
         public string? Rg { get; set; }
         public string? Cpf { get; set; }
         public StatusEnum? Status { get; set; }
+
+        public List<string?> Telefones { get; set; }
+
         public string? LocalTrabalho { get; set; }
         public string? Facebook { get; set; }
         public string? Instagram { get; set; }

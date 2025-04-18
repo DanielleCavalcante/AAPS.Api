@@ -33,6 +33,16 @@ namespace AAPS.Api.Services.Adotantes
             _context.Pessoas.Add(pessoa);
             await _context.SaveChangesAsync();
 
+            var telefones = adotanteDto.Telefones
+                .Select(t => new Telefone
+                {
+                    NumeroTelefone = t,
+                    PessoaId = pessoa.Id
+                }).ToList();
+
+            _context.Telefones.AddRange(telefones);
+            await _context.SaveChangesAsync();
+
             var endereco = new Endereco
             {
                 Logradouro = adotanteDto.Logradouro,
@@ -68,6 +78,7 @@ namespace AAPS.Api.Services.Adotantes
                 Rg = pessoa.Rg,
                 Cpf = pessoa.Cpf,
                 Status = pessoa.Status,
+                Telefones = telefones.Select(t => t.NumeroTelefone).ToList(),
                 LocalTrabalho = adotante.LocalTrabalho,
                 Facebook = adotante.Facebook,
                 Instagram = adotante.Instagram,
@@ -87,6 +98,8 @@ namespace AAPS.Api.Services.Adotantes
         {
             var query = _context.Adotantes
                 .Include(a => a.Pessoa)
+                    .ThenInclude(p => p.Telefones)
+                .Include(a => a.Pessoa.Endereco)
                 .Where(a => a.Pessoa.Tipo == TipoPessoaEnum.Adotante)
                 .AsQueryable();
 
@@ -119,6 +132,7 @@ namespace AAPS.Api.Services.Adotantes
                     Rg = a.Pessoa.Rg,
                     Cpf = a.Pessoa.Cpf,
                     Status = a.Pessoa.Status,
+                    Telefones = a.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
                     LocalTrabalho = a.LocalTrabalho,
                     Facebook = a.Facebook,
                     Instagram = a.Instagram,
@@ -153,6 +167,7 @@ namespace AAPS.Api.Services.Adotantes
                 Rg = adotante.Pessoa.Rg,
                 Cpf = adotante.Pessoa.Cpf,
                 Status = adotante.Pessoa.Status,
+                Telefones = adotante.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
                 LocalTrabalho = adotante.LocalTrabalho,
                 Facebook = adotante.Facebook,
                 Instagram = adotante.Instagram,
@@ -172,7 +187,9 @@ namespace AAPS.Api.Services.Adotantes
         {
             var adotantes = await _context.Adotantes
                 .Include(a => a.Pessoa)
-                .ThenInclude(a => a.Endereco)
+                    .ThenInclude(p => p.Endereco)
+                .Include(a => a.Pessoa)
+                    .ThenInclude(p => p.Telefones)
                 .Where(a => a.Pessoa.Status == StatusEnum.Ativo && a.Pessoa.Tipo == TipoPessoaEnum.Adotante)
                 .Select(a => new AdotanteDto
                 {
@@ -181,6 +198,7 @@ namespace AAPS.Api.Services.Adotantes
                     Rg = a.Pessoa.Rg,
                     Cpf = a.Pessoa.Cpf,
                     Status = a.Pessoa.Status,
+                    Telefones = a.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
                     LocalTrabalho = a.LocalTrabalho,
                     Facebook = a.Facebook,
                     Instagram = a.Instagram,
@@ -227,6 +245,33 @@ namespace AAPS.Api.Services.Adotantes
             adotante.Instagram = string.IsNullOrEmpty(adotanteDto.Instagram) ? adotante.Instagram : adotanteDto.Instagram;
             adotante.Bloqueio = adotanteDto.Bloqueio.HasValue ? adotanteDto.Bloqueio.Value : adotante.Bloqueio;
 
+            if (adotanteDto.Telefones != null)
+            {
+                var telefonesAtuais = adotante.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList();
+
+                var telefonesMantidos = adotante.Pessoa.Telefones
+                    .Where(t => adotanteDto.Telefones.Contains(t.NumeroTelefone))
+                    .ToList();
+
+                var telefonesParaRemover = adotante.Pessoa.Telefones
+                    .Where(t => !adotanteDto.Telefones.Contains(t.NumeroTelefone))
+                    .ToList();
+
+                var telefonesParaAdicionar = adotanteDto.Telefones
+                    .Where(t => !telefonesAtuais.Contains(t))
+                    .ToList();
+
+                _context.RemoveRange(telefonesParaRemover);
+
+                foreach (var novoTelefone in telefonesParaAdicionar)
+                {
+                    adotante.Pessoa.Telefones.Add(new Telefone
+                    {
+                        NumeroTelefone = novoTelefone
+                    });
+                }
+            }
+
             await _context.SaveChangesAsync();
 
             return new AdotanteDto
@@ -236,6 +281,7 @@ namespace AAPS.Api.Services.Adotantes
                 Rg = adotante.Pessoa.Rg,
                 Cpf = adotante.Pessoa.Cpf,
                 Status = adotante.Pessoa.Status,
+                Telefones = adotante.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
                 LocalTrabalho = adotante.LocalTrabalho,
                 Facebook = adotante.Facebook,
                 Instagram = adotante.Instagram,
@@ -305,6 +351,9 @@ namespace AAPS.Api.Services.Adotantes
             if (string.IsNullOrEmpty(adotanteDto.Bloqueio.ToString()) || !Enum.IsDefined(typeof(BloqueioEnum), adotanteDto.Bloqueio))
                 erros.Add("O campo 'Bloqueado' é obrigatório!");
 
+            if (adotanteDto.Telefones == null || adotanteDto.Telefones.Count < 2)
+                erros.Add("É necessário informar pelo menos dois telefones!");
+
             var adotanteExistente = await _context.Adotantes
                 .Include(a => a.Pessoa)
                 .Where(a =>
@@ -362,6 +411,9 @@ namespace AAPS.Api.Services.Adotantes
             if (adotanteDto.Bloqueio != null && string.IsNullOrWhiteSpace(adotanteDto.Bloqueio.ToString()))
                 erros.Add("O campo 'Bloqueio' não pode ter ser vazio!");
 
+            if (adotanteDto.Telefones != null && adotanteDto.Telefones.Count < 2)
+                erros.Add("É necessário informar pelo menos dois telefones!");
+
             return erros;
         }
 
@@ -376,7 +428,9 @@ namespace AAPS.Api.Services.Adotantes
         {
             return await _context.Adotantes
                 .Include(a => a.Pessoa)
-                .ThenInclude(a => a.Endereco)
+                    .ThenInclude(p => p.Endereco)
+                .Include(a => a.Pessoa)
+                    .ThenInclude(p => p.Telefones)
                 .Where(a => a.Pessoa.Tipo == TipoPessoaEnum.Adotante)
                 .FirstOrDefaultAsync(a => a.Id == id);
         }
