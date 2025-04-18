@@ -10,6 +10,7 @@ namespace AAPS.Api.Services.Animais
     public class AnimalService : IAnimalService
     {
         #region ATRIBUTOS E CONSTRUTOR
+
         private readonly AppDbContext _context;
         private readonly IDoadorService _doadorService;
 
@@ -138,7 +139,9 @@ namespace AAPS.Api.Services.Animais
         public async Task<IEnumerable<AnimalDto>> ObterAnimaisAtivos()
         {
             var animais = _context.Animais
-                .Where(a => a.Status == StatusEnum.Ativo)
+                .Where(a => 
+                    a.Status == StatusEnum.Ativo && 
+                    a.Disponibilidade == DisponibilidadeEnum.Disponivel)
                 .Select(a => new AnimalDto
                 {
                     Id = a.Id,
@@ -156,7 +159,7 @@ namespace AAPS.Api.Services.Animais
             return await animais.ToListAsync();
         }
 
-        public async Task<AnimalDto?> AtualizarAnimal(int id, AtualizarAnimalDto animalDto)
+        public async Task<AnimalDto> AtualizarAnimal(int id, AtualizarAnimalDto animalDto)
         {
             var animal = await BuscarAnimalPorId(id);
 

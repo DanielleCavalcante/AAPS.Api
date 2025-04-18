@@ -3,6 +3,7 @@ using AAPS.Api.Middlewares;
 using AAPS.Api.Models;
 using AAPS.Api.Services;
 using AAPS.Api.Services.Acompanhamentos;
+using AAPS.Api.Services.Adocoes;
 using AAPS.Api.Services.Adotantes;
 using AAPS.Api.Services.Animais;
 using AAPS.Api.Services.Autenticacao;
@@ -36,6 +37,7 @@ builder.Services.AddScoped<IAdotanteService, AdotanteService>();
 builder.Services.AddScoped<IPontoAdocaoService, PontoAdocaoService>();
 builder.Services.AddScoped<IEventoService, EventoService>();
 builder.Services.AddScoped<IAcompanhamentoService, AcompanhamentoService>();
+builder.Services.AddScoped<IAdocaoService, AdocaoService>();
 builder.Services.AddScoped<ISenhaService, SenhaService>();
 
 builder.Services.AddScoped<EmailService>();

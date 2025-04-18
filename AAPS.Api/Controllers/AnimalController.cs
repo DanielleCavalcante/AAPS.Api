@@ -1,5 +1,4 @@
 ﻿using AAPS.Api.Dtos.Animal;
-using AAPS.Api.Models;
 using AAPS.Api.Responses;
 using AAPS.Api.Services.Animais;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -36,7 +35,7 @@ public class AnimalController : ControllerBase
 
         if (animal is null)
         {
-            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { $"Animal com Id: {animalDto.DoadorId} não encontrado ou não está ativo" }));
+            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { $"Doador com Id: {animalDto.DoadorId} não encontrado ou não está ativo" }));
         }
 
         return Ok(ApiResponse<object>.SucessoResponse(animal, "Animal criado com sucesso!"));
