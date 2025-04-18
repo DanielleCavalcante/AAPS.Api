@@ -8,6 +8,9 @@ namespace AAPS.Api.Dtos.PontoAdocao
         public string? Responsavel { get; set; }
         public string? Cnpj { get; set; }
         public StatusEnum? Status { get; set; }
+
+        public List<string?> Telefones { get; set; }
+
         public string? Logradouro { get; set; }
         public int? Numero { get; set; }
         public string? Complemento { get; set; }

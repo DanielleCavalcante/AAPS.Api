@@ -1,4 +1,5 @@
 ﻿using AAPS.Api.Context;
+using AAPS.Api.Dtos.Adotante;
 using AAPS.Api.Dtos.Doador;
 using AAPS.Api.Models;
 using AAPS.Api.Models.Enums;
@@ -33,6 +34,16 @@ namespace AAPS.Api.Services.Doadores
             _context.Pessoas.Add(doador);
             await _context.SaveChangesAsync();
 
+            var telefones = doadorDto.Telefones
+                .Select(t => new Telefone
+                {
+                    NumeroTelefone = t,
+                    PessoaId = doador.Id
+                }).ToList();
+
+            _context.Telefones.AddRange(telefones);
+            await _context.SaveChangesAsync();
+
             var endereco = new Endereco
             {
                 Logradouro = doadorDto.Logradouro,
@@ -55,6 +66,7 @@ namespace AAPS.Api.Services.Doadores
                 Rg = doadorDto.Rg,
                 Cpf = doadorDto.Cpf,
                 Status = doadorDto.Status,
+                Telefones = telefones.Select(t => t.NumeroTelefone).ToList(),
                 Logradouro = doadorDto.Logradouro,
                 Numero = doadorDto.Numero,
                 Complemento = doadorDto.Complemento,
@@ -68,6 +80,7 @@ namespace AAPS.Api.Services.Doadores
         public async Task<IEnumerable<DoadorDto>> ObterDoadores(FiltroDoadorDto filtro)
         {
             var query = _context.Pessoas
+                .Include(d => d.Telefones)
                 .Where(d => d.Tipo == TipoPessoaEnum.Doador)
                 .AsQueryable();
 
@@ -95,6 +108,7 @@ namespace AAPS.Api.Services.Doadores
                     Rg = d.Rg,
                     Cpf = d.Cpf,
                     Status = d.Status,
+                    Telefones = d.Telefones.Select(t => t.NumeroTelefone).ToList(),
                     Logradouro = d.Endereco.Logradouro,
                     Numero = d.Endereco.Numero,
                     Complemento = d.Endereco.Complemento,
@@ -124,6 +138,7 @@ namespace AAPS.Api.Services.Doadores
                 Rg = doador?.Rg,
                 Cpf = doador?.Cpf,
                 Status = doador.Status,
+                Telefones = doador.Telefones.Select(t => t.NumeroTelefone).ToList(),
                 Logradouro = doador.Endereco.Logradouro,
                 Numero = doador.Endereco.Numero,
                 Complemento = doador.Endereco.Complemento,
@@ -137,6 +152,7 @@ namespace AAPS.Api.Services.Doadores
         public async Task<IEnumerable<DoadorDto>> ObterDoadoresAtivos()
         {
             var doadores = _context.Pessoas
+                .Include(d => d.Telefones)
                 .Where(d => d.Status == StatusEnum.Ativo && d.Tipo == TipoPessoaEnum.Doador)
                 .Select(d => new DoadorDto
                 {
@@ -145,6 +161,7 @@ namespace AAPS.Api.Services.Doadores
                     Rg = d.Rg,
                     Cpf = d.Cpf,
                     Status = d.Status,
+                    Telefones = d.Telefones.Select(t => t.NumeroTelefone).ToList(),
                     Logradouro = d.Endereco.Logradouro,
                     Numero = d.Endereco.Numero,
                     Complemento = d.Endereco.Complemento,
@@ -179,6 +196,33 @@ namespace AAPS.Api.Services.Doadores
             doador.Endereco.Cidade = string.IsNullOrEmpty(doadorDto.Cidade) ? doador.Endereco.Cidade : doadorDto.Cidade;
             doador.Endereco.Cep = string.IsNullOrEmpty(doadorDto.Cep) ? doador.Endereco.Cep : doadorDto.Cep;
 
+            if (doadorDto.Telefones != null)
+            {
+                var telefonesAtuais = doador.Telefones.Select(t => t.NumeroTelefone).ToList();
+
+                var telefonesMantidos = doador.Telefones
+                    .Where(t => doadorDto.Telefones.Contains(t.NumeroTelefone))
+                    .ToList();
+
+                var telefonesParaRemover = doador.Telefones
+                    .Where(t => !doadorDto.Telefones.Contains(t.NumeroTelefone))
+                    .ToList();
+
+                var telefonesParaAdicionar = doadorDto.Telefones
+                    .Where(t => !telefonesAtuais.Contains(t))
+                    .ToList();
+
+                _context.RemoveRange(telefonesParaRemover);
+
+                foreach (var novoTelefone in telefonesParaAdicionar)
+                {
+                    doador.Telefones.Add(new Telefone
+                    {
+                        NumeroTelefone = novoTelefone
+                    });
+                }
+            }
+
             await _context.SaveChangesAsync();
 
             return new DoadorDto
@@ -188,6 +232,7 @@ namespace AAPS.Api.Services.Doadores
                 Rg = doador.Rg,
                 Cpf = doador.Cpf,
                 Status = doador.Status,
+                Telefones = doador.Telefones.Select(t => t.NumeroTelefone).ToList(),
                 Logradouro = doador.Endereco.Logradouro,
                 Numero = doador.Endereco.Numero,
                 Complemento = doador.Endereco.Complemento,
@@ -240,6 +285,9 @@ namespace AAPS.Api.Services.Doadores
             if (string.IsNullOrEmpty(doadorDto.Cep) || doadorDto.Cep.Length != 8)
                 erros.Add("O campo 'CEP' é obrigatório e deve conter exatamente 8 dígitos!");
 
+            if (doadorDto.Telefones == null || doadorDto.Telefones.Count < 2)
+                erros.Add("É necessário informar pelo menos dois telefones!");
+
             var doadorExistente = await _context.Pessoas
                 .Where(d =>
                     d.Nome == doadorDto.Nome &&
@@ -282,6 +330,9 @@ namespace AAPS.Api.Services.Doadores
             if (doadorDto.Cep != null && (string.IsNullOrWhiteSpace(doadorDto.Cep) || doadorDto.Cep.ToString().Length != 8))
                 erros.Add("O campo 'CEP' não pode ter ser vazio e deve ter exatamente 8 dígitos!");
 
+            if (doadorDto.Telefones != null && doadorDto.Telefones.Count < 2)
+                erros.Add("É necessário informar pelo menos dois telefones!");
+
             return erros;
         }
 
@@ -291,6 +342,7 @@ namespace AAPS.Api.Services.Doadores
         {
             return await _context.Pessoas
                 .Include(p => p.Endereco)
+                .Include(p => p.Telefones)
                 .Where(p => p.Tipo == TipoPessoaEnum.Doador)
                 .FirstOrDefaultAsync(d => d.Id == id);
         }

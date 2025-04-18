@@ -9,6 +9,9 @@ public class PontoAdocaoDto
     public required string Responsavel { get; set; }
     public required string Cnpj { get; set; }
     public required StatusEnum Status { get; set; }
+
+    public required List<string> Telefones { get; set; }
+
     public required string Logradouro { get; set; }
     public required int Numero { get; set; }
     public string? Complemento { get; set; }

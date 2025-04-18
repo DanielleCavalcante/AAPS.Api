@@ -8,6 +8,9 @@ namespace AAPS.Api.Dtos.Doador
         public string? Rg { get; set; }
         public string? Cpf { get; set; }
         public StatusEnum? Status { get; set; }
+
+        public List<string?> Telefones { get; set; }
+
         public string? Logradouro { get; set; }
         public int? Numero { get; set; }
         public string? Complemento { get; set; }

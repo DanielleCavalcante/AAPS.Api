@@ -98,7 +98,7 @@ namespace AAPS.Api.Services.Adotantes
         {
             var query = _context.Adotantes
                 .Include(a => a.Pessoa)
-                    .ThenInclude(p => p.Telefones)
+                    .ThenInclude(a => a.Telefones)
                 .Include(a => a.Pessoa.Endereco)
                 .Where(a => a.Pessoa.Tipo == TipoPessoaEnum.Adotante)
                 .AsQueryable();

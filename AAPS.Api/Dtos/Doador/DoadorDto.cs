@@ -9,6 +9,9 @@ public class DoadorDto
     public required string Rg { get; set; }
     public required string Cpf { get; set; }
     public required StatusEnum Status { get; set; }
+
+    public required List<string> Telefones { get; set; }
+
     public required string Logradouro { get; set; }
     public required int Numero { get; set; }
     public string? Complemento { get; set; }
