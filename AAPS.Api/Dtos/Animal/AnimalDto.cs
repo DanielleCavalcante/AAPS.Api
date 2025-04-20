@@ -14,4 +14,6 @@ public class AnimalDto
     public required StatusEnum Status { get; set; }
     public required DisponibilidadeEnum Disponibilidade { get; set; }
     public required int DoadorId { get; set; }
+    public string NomeDoador { get; set; }
+    public List<string> Telefones { get; set; }
 }

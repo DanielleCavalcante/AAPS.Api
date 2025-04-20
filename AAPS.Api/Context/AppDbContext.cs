@@ -196,6 +196,7 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
             entity.Property(x => x.DataNascimento).HasColumnType("date");
             entity.Property(x => x.Status).HasColumnType("int").IsRequired();
             entity.Property(x => x.Disponibilidade).HasColumnType("int").IsRequired();
+            entity.Property(x => x.Devolvido).HasColumnType("int").IsRequired();
 
             entity.Property(x => x.PessoaId).HasColumnType("int").IsRequired();
             

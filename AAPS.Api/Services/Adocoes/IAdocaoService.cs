@@ -11,6 +11,6 @@ namespace AAPS.Api.Services.Adocoes
         Task<AdocaoDto> AtualizarAdocao(int id, AtualizarAdocaoDto adocaoDto);
         Task<bool> ExcluirAdocao(int id);
         Task<List<string>> ValidarCriacaoAdocao(CriarAdocaoDto adocaoDto);
-        List<string> ValidarAtualizacaoAdocao(AtualizarAdocaoDto adocaoDto);
+        Task<List<string>> ValidarAtualizacaoAdocao(AtualizarAdocaoDto adocaoDto);
     }
 }

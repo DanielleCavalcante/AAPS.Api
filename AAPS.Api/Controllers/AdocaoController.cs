@@ -15,7 +15,7 @@ namespace AAPS.Api.Controllers;
 [ApiController]
 [Route("api/[controller]/[action]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class AdocaoController : ControllerBase
+public class AdocaoController : Controller
 {
     #region ATRIBUTOS E CONSTRUTOR
 
@@ -84,7 +84,7 @@ public class AdocaoController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> AtualizarAdocao(int id, [FromBody] AtualizarAdocaoDto adocaoDto)
     {
-        var erros = _adocaoService.ValidarAtualizacaoAdocao(adocaoDto);
+        var erros = await _adocaoService.ValidarAtualizacaoAdocao(adocaoDto);
 
         if (erros.Count > 0)
         {
@@ -101,7 +101,7 @@ public class AdocaoController : ControllerBase
         return Ok(ApiResponse<object>.SucessoResponse($"Adoção de id = {id} atualizada com sucesso!"));
     }
 
-    [HttpPut("{id:int}")]
+    [HttpDelete("{id:int}")]
     public async Task<ActionResult> ExcluirAdocao(int id)
     {
         bool adocao = await _adocaoService.ExcluirAdocao(id);

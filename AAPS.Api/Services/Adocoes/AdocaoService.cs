@@ -1,13 +1,12 @@
 ﻿using AAPS.Api.Context;
 using AAPS.Api.Dtos.Adocao;
-using AAPS.Api.Dtos.Animal;
-using AAPS.Api.Dtos.PontoAdocao;
 using AAPS.Api.Models;
 using AAPS.Api.Models.Enums;
 using AAPS.Api.Services.Adotantes;
 using AAPS.Api.Services.Animais;
 using AAPS.Api.Services.PontosAdocao;
 using AAPS.Api.Services.Voluntarios;
+using DocumentFormat.OpenXml.Presentation;
 using Microsoft.EntityFrameworkCore;
 
 namespace AAPS.Api.Services.Adocoes
@@ -105,7 +104,7 @@ namespace AAPS.Api.Services.Adocoes
 
                 query = query.Where(a =>
                     a.Adotante.Pessoa.Nome.ToLower().Contains(buscaLower) ||
-                    a.Animal.Pessoa.Nome.Contains(buscaLower) ||
+                    a.Animal.Nome.Contains(buscaLower) ||
                     a.Voluntario.Pessoa.Nome.Contains(buscaLower) ||
                     a.PontoAdocao.Pessoa.Nome.Contains(buscaLower)
                 );
@@ -116,9 +115,13 @@ namespace AAPS.Api.Services.Adocoes
                 {
                     Id = a.Id,
                     Data = a.Data,
+                    NomeAdotante = a.Adotante.Pessoa.Nome,
                     AdotanteId = a.AdotanteId,
+                    NomeAnimal = a.Animal.Nome,
                     AnimalId = a.AnimalId,
+                    NomeVoluntario = a.Voluntario.Pessoa.Nome,
                     VoluntarioId = a.VoluntarioId,
+                    NomePontoAdocao = a.PontoAdocao.NomeFantasia,
                     PontoAdocaoId = a.PontoAdocaoId
                 })
                 .ToListAsync();
@@ -149,17 +152,41 @@ namespace AAPS.Api.Services.Adocoes
         public async Task<AdocaoDto> AtualizarAdocao(int id, AtualizarAdocaoDto adocaoDto)
         {
             var adocao = await BuscarAdocaoPorId(id);
-
             if (adocao is null)
             {
                 return null;
             }
+
+            var animalAnteriorId = adocao.AnimalId;
 
             adocao.Data = adocaoDto.Data.HasValue ? adocaoDto.Data.Value : adocao.Data;
             adocao.AdotanteId = adocaoDto.AdotanteId.HasValue ? adocaoDto.AdotanteId.Value : adocao.AdotanteId;
             adocao.AnimalId = adocaoDto.AnimalId.HasValue ? adocaoDto.AnimalId.Value : adocao.AnimalId;
             adocao.VoluntarioId = adocaoDto.VoluntarioId.HasValue ? adocaoDto.VoluntarioId.Value : adocao.VoluntarioId;
             adocao.PontoAdocaoId = adocaoDto.PontoAdocaoId.HasValue ? adocaoDto.PontoAdocaoId.Value : adocao.PontoAdocaoId;
+
+            if (adocao.AnimalId != animalAnteriorId)
+            {
+                var animalAnterior = await _context.Animais.FirstOrDefaultAsync(a => a.Id == animalAnteriorId);
+                if (animalAnterior != null)
+                {
+                    animalAnterior.Disponibilidade = DisponibilidadeEnum.Disponivel;
+                }
+            }
+
+            var animalAtual = await _context.Animais.FirstOrDefaultAsync(a => a.Id == adocao.AnimalId);
+            if (animalAtual != null)
+            {
+                if (adocaoDto.Devolvido == true)
+                {
+                    animalAtual.Disponibilidade = DisponibilidadeEnum.Disponivel;
+                    animalAtual.Devolvido = DevolvidoEnum.Devolvido;
+                }
+                else
+                {
+                    animalAtual.Disponibilidade = DisponibilidadeEnum.Adotado;
+                }
+            }
 
             await _context.SaveChangesAsync();
 
@@ -211,24 +238,80 @@ namespace AAPS.Api.Services.Adocoes
             return erros;
         }
 
-        public List<string> ValidarAtualizacaoAdocao(AtualizarAdocaoDto adocaoDto)
+        public async Task<List<string>> ValidarAtualizacaoAdocao(AtualizarAdocaoDto adocaoDto)
         {
             var erros = new List<string>();
 
             if (adocaoDto.Data != null && adocaoDto.Data == DateTime.MinValue && string.IsNullOrWhiteSpace(adocaoDto.Data.ToString()))
                 erros.Add("O campo 'Data' não pode estar vazio!");
 
-            if (adocaoDto.AdotanteId != null && string.IsNullOrWhiteSpace(adocaoDto.AdotanteId.ToString()))
-                erros.Add("O campo 'Adotante' não pode ser menor ou igual a zero!");
+            if (adocaoDto.AdotanteId != null)
+            {
+                if (string.IsNullOrWhiteSpace(adocaoDto.AdotanteId.ToString()) || adocaoDto.AdotanteId <= 0)
+                {
+                    erros.Add("O campo 'Adotante' não pode ser vazio!");
+                }
+                else
+                {
+                    var adotante = await _adotanteService.ObterAdotantePorId(adocaoDto.AdotanteId.Value);
+                    if (adotante == null)
+                        erros.Add("Adotante não encontrado.");
+                    else if (adotante.Status == StatusEnum.Inativo)
+                        erros.Add("Adotante está inativo.");
+                    else if (adotante.Bloqueio == BloqueioEnum.Bloqueado)
+                        erros.Add("Adotante está bloqueado.");
+                }
+            }
 
-            if (adocaoDto.AnimalId != null && string.IsNullOrWhiteSpace(adocaoDto.AnimalId.ToString()))
-                erros.Add("O campo 'Animal' não pode ser menor ou igual a zero!");
+            if (adocaoDto.AnimalId != null)
+            {
+                if (string.IsNullOrWhiteSpace(adocaoDto.AnimalId.ToString()) || adocaoDto.AnimalId <= 0)
+                {
+                    erros.Add("O campo 'Animal' não pode ser vazio!");
+                }
+                else
+                {
+                    var animal = await _context.Animais.FirstOrDefaultAsync(a => a.Id == adocaoDto.AnimalId.Value);
+                    if (animal == null)
+                        erros.Add("Animal não encontrado.");
+                    else if (animal.Status == StatusEnum.Inativo)
+                        erros.Add("Animal está inativo.");
+                    else if (animal.Disponibilidade == DisponibilidadeEnum.Adotado)
+                        erros.Add("Animal já está adotado.");
+                }
+            }
 
-            if (adocaoDto.VoluntarioId != null && string.IsNullOrWhiteSpace(adocaoDto.VoluntarioId.ToString()))
-                erros.Add("O campo 'Voluntário' não pode ser menor ou igual a zero!");
+            if (adocaoDto.VoluntarioId != null)
+            {
+                if (string.IsNullOrWhiteSpace(adocaoDto.VoluntarioId.ToString()) || adocaoDto.VoluntarioId <= 0)
+                {
+                    erros.Add("O campo 'Voluntário' não pode ser vazio!");
+                }
+                else
+                {
+                    var voluntario = await _voluntarioService.ObterVoluntarioPorId(adocaoDto.VoluntarioId.Value);
+                    if (voluntario == null)
+                        erros.Add("Voluntário não encontrado.");
+                    else if (voluntario.Status == StatusEnum.Inativo)
+                        erros.Add("Voluntário está inativo.");
+                }
+            }
 
-            if (adocaoDto.PontoAdocaoId != null && string.IsNullOrWhiteSpace(adocaoDto.PontoAdocaoId.ToString()))
-                erros.Add("O campo 'Ponto de Adoção' não pode ser menor ou igual a zero!");
+            if (adocaoDto.PontoAdocaoId != null)
+            {
+                if (string.IsNullOrWhiteSpace(adocaoDto.PontoAdocaoId.ToString()) || adocaoDto.PontoAdocaoId <= 0)
+                {
+                    erros.Add("O campo 'Ponto de Adoção' não pode ser vazio!");
+                }
+                else
+                {
+                    var pontoAdocao = await _pontoAdocaoService.ObterPontoAdocaoPorId(adocaoDto.PontoAdocaoId.Value);
+                    if (pontoAdocao == null)
+                        erros.Add("Ponto de adoção não encontrado.");
+                    else if (pontoAdocao.Status == StatusEnum.Inativo)
+                        erros.Add("Ponto de adoção está inativo.");
+                }
+            }
 
             return erros;
         }

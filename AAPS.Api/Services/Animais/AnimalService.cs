@@ -41,6 +41,7 @@ namespace AAPS.Api.Services.Animais
                 DataNascimento = animalDto.DataNascimento,
                 Status = animalDto.Status,
                 Disponibilidade = animalDto.Disponibilidade,
+                Devolvido = DevolvidoEnum.NãoDevolvido,
                 PessoaId = doador.Id,
             };
 
@@ -133,6 +134,8 @@ namespace AAPS.Api.Services.Animais
                 Status = animal.Status,
                 Disponibilidade = animal.Disponibilidade,
                 DoadorId = animal.PessoaId,
+                NomeDoador = animal.Pessoa.Nome,
+                Telefones = animal.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList()
             };
         }
 

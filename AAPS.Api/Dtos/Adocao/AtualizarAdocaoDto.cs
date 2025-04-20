@@ -7,5 +7,6 @@
         public int? AnimalId { get; set; }
         public int? VoluntarioId { get; set; }
         public int? PontoAdocaoId { get; set; }
+        public bool? Devolvido { get; set; } = false;
     }
 }
