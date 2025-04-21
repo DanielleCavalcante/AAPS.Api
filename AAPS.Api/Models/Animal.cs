@@ -13,7 +13,6 @@ public class Animal
     public DateTime? DataNascimento { get; set; }
     public StatusEnum Status { get; set; } = StatusEnum.Ativo;
     public DisponibilidadeEnum Disponibilidade { get; set; } = DisponibilidadeEnum.Disponivel;
-    public DevolvidoEnum Devolvido { get; set; } = DevolvidoEnum.NãoDevolvido;
 
     public int PessoaId { get; set; }
     public Pessoa Pessoa { get; set; }

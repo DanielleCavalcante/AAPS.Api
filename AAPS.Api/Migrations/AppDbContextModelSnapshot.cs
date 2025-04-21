@@ -132,9 +132,6 @@ namespace AAPS.Api.Migrations
                     b.Property<DateTime?>("DataNascimento")
                         .HasColumnType("date");
 
-                    b.Property<int>("Devolvido")
-                        .HasColumnType("int");
-
                     b.Property<int>("Disponibilidade")
                         .HasColumnType("int");
 

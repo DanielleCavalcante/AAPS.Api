@@ -174,19 +174,35 @@ namespace AAPS.Api.Services.Adocoes
                 }
             }
 
+            //var animalAtual = await _context.Animais
+            //   .Include(a => a.AnimalEventos) // para acessar os eventos sem nova query
+            //   .FirstOrDefaultAsync(a => a.Id == adocao.AnimalId);
+
             var animalAtual = await _context.Animais.FirstOrDefaultAsync(a => a.Id == adocao.AnimalId);
-            if (animalAtual != null)
-            {
-                if (adocaoDto.Devolvido == true)
-                {
-                    animalAtual.Disponibilidade = DisponibilidadeEnum.Disponivel;
-                    animalAtual.Devolvido = DevolvidoEnum.Devolvido;
-                }
-                else
-                {
-                    animalAtual.Disponibilidade = DisponibilidadeEnum.Adotado;
-                }
-            }
+
+            animalAtual.Disponibilidade = DisponibilidadeEnum.Adotado;
+            //if (animalAtual != null)
+            //{
+            //    if (adocaoDto.Devolvido == true)
+            //    {
+            //        animalAtual.Disponibilidade = DisponibilidadeEnum.Disponivel;
+            //        animalAtual.Devolvido = DevolvidoEnum.Devolvido;
+            //    }
+            //    else
+            //    {
+            //        animalAtual.Disponibilidade = DisponibilidadeEnum.Adotado;
+            //    }
+            //}
+
+            //if (animalAtual != null)
+            //{
+            //    var foiDevolvido = await _context.AnimalEventos
+            //        .AnyAsync(e => e.AnimalId == animalAtual.Id && e.Evento.Trim().ToLower() == "devolvido");
+
+            //    animalAtual.Disponibilidade = foiDevolvido
+            //        ? DisponibilidadeEnum.Disponivel
+            //        : DisponibilidadeEnum.Adotado;
+            //}
 
             await _context.SaveChangesAsync();
 

@@ -41,7 +41,6 @@ namespace AAPS.Api.Services.Animais
                 DataNascimento = animalDto.DataNascimento,
                 Status = animalDto.Status,
                 Disponibilidade = animalDto.Disponibilidade,
-                Devolvido = DevolvidoEnum.NãoDevolvido,
                 PessoaId = doador.Id,
             };
 

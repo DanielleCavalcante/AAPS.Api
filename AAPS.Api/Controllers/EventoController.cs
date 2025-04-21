@@ -9,7 +9,7 @@ namespace AAPS.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
 public class EventoController : Controller
 {
     #region ATRIBUTOS E CONSTRUTOR
