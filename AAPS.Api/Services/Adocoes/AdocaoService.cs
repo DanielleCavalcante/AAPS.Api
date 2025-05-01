@@ -6,7 +6,6 @@ using AAPS.Api.Services.Adotantes;
 using AAPS.Api.Services.Animais;
 using AAPS.Api.Services.PontosAdocao;
 using AAPS.Api.Services.Voluntarios;
-using DocumentFormat.OpenXml.Presentation;
 using Microsoft.EntityFrameworkCore;
 
 namespace AAPS.Api.Services.Adocoes

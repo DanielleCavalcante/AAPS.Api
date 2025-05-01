@@ -1,7 +1,5 @@
 ﻿using AAPS.Api.Context;
 using AAPS.Api.Dtos.Relatorio;
-using AAPS.Api.Models.Enums;
-using AAPS.Api.Services.Animais;
 using System.Data;
 using System.Globalization;
 
@@ -166,7 +164,7 @@ namespace AAPS.Api.Services.Relatorios
             }
 
             var resgatesAgrupados = animaisFiltrados
-                .Where(a => a.Pessoa != null && a.Pessoa.Cpf == "11122233344") // .EVoluntario == true
+                .Where(a => a.Pessoa != null && a.Pessoa.Cpf == "11122233344") // .EhVoluntario == true
                 .Select(a => new
                 {
                     Especie = a.Especie.ToLower().Trim(),

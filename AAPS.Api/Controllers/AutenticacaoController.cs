@@ -1,11 +1,15 @@
 ﻿using AAPS.Api.Dtos.Autenticacao;
 using AAPS.Api.Dtos.Senha;
+using AAPS.Api.Models;
+using AAPS.Api.Models.Enums;
 using AAPS.Api.Responses;
 using AAPS.Api.Services;
 using AAPS.Api.Services.Autenticacao;
 using AAPS.Api.Services.Voluntarios;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AAPS.Api.Controllers;
 
@@ -19,8 +23,9 @@ public class AutenticacaoController : Controller
     private readonly IAutenticacaoService _autenticacaoService;
     private readonly IVoluntarioService _voluntarioService;
     private readonly EmailService _emailService;
+    private readonly UserManager<Voluntario> _userManager;
 
-    public AutenticacaoController(IConfiguration configuration, IAutenticacaoService autenticacao, IVoluntarioService voluntarioService, EmailService emailService)
+    public AutenticacaoController(IConfiguration configuration, IAutenticacaoService autenticacao, IVoluntarioService voluntarioService, EmailService emailService, UserManager<Voluntario> userManager)
     {
         _configuration = configuration ??
             throw new ArgumentNullException(nameof(configuration));
@@ -29,6 +34,7 @@ public class AutenticacaoController : Controller
             throw new ArgumentNullException(nameof(autenticacao));
         _voluntarioService = voluntarioService;
         _emailService = emailService;
+        _userManager = userManager;
     }
 
     #endregion
@@ -36,6 +42,14 @@ public class AutenticacaoController : Controller
     [HttpPost("Login")]
     public async Task<ActionResult<TokenDto>> Login([FromBody] LoginDto infoUsuario)
     {
+        var voluntario = await _userManager.Users
+            .FirstOrDefaultAsync(v => v.UserName == infoUsuario.UserName && v.Pessoa.Status == StatusEnum.Ativo);
+
+        if (voluntario is null)
+        {
+            return BadRequest(ApiResponse<object>.ErroResponse(new List<string> { "Usuário está inativo ou login inválido" }));
+        }
+
         var tokenDto = await _autenticacaoService.LoginComToken(infoUsuario);
 
         if (tokenDto != null)
@@ -44,8 +58,7 @@ public class AutenticacaoController : Controller
         }
         else
         {
-            ModelState.AddModelError("LoginUsuario", "Login inválido!");
-            return BadRequest(ModelState);
+            return BadRequest(ApiResponse<object>.ErroResponse(new List<string> { "Usuário ou senha incorretos" }));
         }
     }
 

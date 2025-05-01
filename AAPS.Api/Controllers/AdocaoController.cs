@@ -1,5 +1,4 @@
 ﻿using AAPS.Api.Dtos.Adocao;
-using AAPS.Api.Dtos.Adotante;
 using AAPS.Api.Responses;
 using AAPS.Api.Services.Adocoes;
 using AAPS.Api.Services.Adotantes;

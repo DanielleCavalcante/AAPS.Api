@@ -1,6 +1,10 @@
-﻿using AAPS.Api.Models;
+﻿using AAPS.Api.Dtos.Senha;
+using AAPS.Api.Dtos.Voluntario;
+using AAPS.Api.Models;
+using AAPS.Api.Models.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 
 namespace AAPS.Api.Services.Senhas
 {
@@ -27,12 +31,25 @@ namespace AAPS.Api.Services.Senhas
 
             string novaSenha = "Aaps@123";
 
-            var removeResult = await _userManager.RemovePasswordAsync(voluntario);
-            if (!removeResult.Succeeded)
-                return false;
+            var token = await _userManager.GeneratePasswordResetTokenAsync(voluntario);
+            var resultado = await _userManager.ResetPasswordAsync(voluntario, token, novaSenha);
 
-            var addResult = await _userManager.AddPasswordAsync(voluntario, novaSenha);
-            return addResult.Succeeded;
+            return resultado.Succeeded;
+        }
+
+        public async Task<bool> AlterarSenhaAsync(int voluntarioId, AlterarSenhaDto alterarSenhaDto)
+        {
+            var voluntario = await _userManager.Users.FirstOrDefaultAsync(v => v.Id == voluntarioId);
+
+            if (voluntario == null)
+            {
+                return false;
+            }
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(voluntario);
+            var resultado = await _userManager.ResetPasswordAsync(voluntario, token, alterarSenhaDto.NovaSenha);
+
+            return resultado.Succeeded;
         }
 
         //public async Task<bool> AlterarSenhaAsync(int voluntarioId, string novaSenha)

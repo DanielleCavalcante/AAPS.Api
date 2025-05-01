@@ -120,12 +120,12 @@ public class VoluntarioService : IVoluntarioService
     {
         var voluntario = await BuscarVoluntarioPorId(id);
 
-        var role = await _userManager.GetRolesAsync(voluntario);
-
         if (voluntario == null)
         {
             return null;
         }
+
+        var role = await _userManager.GetRolesAsync(voluntario);
 
         return new VoluntarioDto
         {

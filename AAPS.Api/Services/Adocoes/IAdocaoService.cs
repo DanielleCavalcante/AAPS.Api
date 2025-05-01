@@ -1,5 +1,4 @@
 ﻿using AAPS.Api.Dtos.Adocao;
-using AAPS.Api.Dtos.PontoAdocao;
 
 namespace AAPS.Api.Services.Adocoes
 {

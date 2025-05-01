@@ -12,6 +12,7 @@ using AAPS.Api.Services.Eventos;
 using AAPS.Api.Services.PontosAdocao;
 using AAPS.Api.Services.Relatorios;
 using AAPS.Api.Services.Senhas;
+using AAPS.Api.Services.TermoAdocao;
 using AAPS.Api.Services.Voluntarios;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -42,6 +43,7 @@ builder.Services.AddScoped<IAdocaoService, AdocaoService>();
 builder.Services.AddScoped<ISenhaService, SenhaService>();
 
 builder.Services.AddScoped<IRelatorioService, RelatorioService>();
+builder.Services.AddScoped<ITermoAdocaoService, TermoAdocaoService>();
 builder.Services.AddScoped<EmailService>();
 
 //builder.Services.AddHttpClient<WhatsAppService>();
