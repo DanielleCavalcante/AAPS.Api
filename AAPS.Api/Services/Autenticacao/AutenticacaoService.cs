@@ -104,7 +104,8 @@ public class AutenticacaoService : IAutenticacaoService
         {
             Token = new JwtSecurityTokenHandler().WriteToken(token),
             Expiration = token.ValidTo,
-            Role = roles.FirstOrDefault()
+            Role = roles.FirstOrDefault(),
+            UsuarioId = usuarioAplicado.Id
         };
     }
 

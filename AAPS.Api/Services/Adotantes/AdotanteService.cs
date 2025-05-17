@@ -1,5 +1,6 @@
 ﻿using AAPS.Api.Context;
 using AAPS.Api.Dtos.Adotante;
+using AAPS.Api.Dtos.PontoAdocao;
 using AAPS.Api.Models;
 using AAPS.Api.Models.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -28,23 +29,8 @@ namespace AAPS.Api.Services.Adotantes
                 Cpf = adotanteDto.Cpf,
                 Tipo = TipoPessoaEnum.Adotante,
                 Status = adotanteDto.Status,
-            };
-
-            _context.Pessoas.Add(pessoa);
-            await _context.SaveChangesAsync();
-
-            var telefones = adotanteDto.Telefones
-                .Select(t => new Telefone
-                {
-                    NumeroTelefone = t,
-                    PessoaId = pessoa.Id
-                }).ToList();
-
-            _context.Telefones.AddRange(telefones);
-            await _context.SaveChangesAsync();
-
-            var endereco = new Endereco
-            {
+                Contato1 = adotanteDto.Contato1,
+                Contato2 = adotanteDto.Contato2,
                 Logradouro = adotanteDto.Logradouro,
                 Numero = adotanteDto.Numero,
                 Complemento = adotanteDto.Complemento,
@@ -53,11 +39,36 @@ namespace AAPS.Api.Services.Adotantes
                 Cidade = adotanteDto.Cidade,
                 Cep = adotanteDto.Cep,
                 SituacaoEndereco = adotanteDto.SituacaoEndereco,
-                PessoaId = pessoa.Id
             };
 
-            _context.Enderecos.Add(endereco);
+            _context.Pessoas.Add(pessoa);
             await _context.SaveChangesAsync();
+
+            //var telefones = adotanteDto.Telefones
+            //    .Select(t => new Telefone
+            //    {
+            //        NumeroTelefone = t,
+            //        PessoaId = pessoa.Id
+            //    }).ToList();
+
+            //_context.Telefones.AddRange(telefones);
+            //await _context.SaveChangesAsync();
+
+            //var endereco = new Endereco
+            //{
+            //    Logradouro = adotanteDto.Logradouro,
+            //    Numero = adotanteDto.Numero,
+            //    Complemento = adotanteDto.Complemento,
+            //    Bairro = adotanteDto.Bairro,
+            //    Uf = adotanteDto.Uf,
+            //    Cidade = adotanteDto.Cidade,
+            //    Cep = adotanteDto.Cep,
+            //    SituacaoEndereco = adotanteDto.SituacaoEndereco,
+            //    PessoaId = pessoa.Id
+            //};
+
+            //_context.Enderecos.Add(endereco);
+            //await _context.SaveChangesAsync();
 
             var adotante = new Adotante
             {
@@ -78,19 +89,21 @@ namespace AAPS.Api.Services.Adotantes
                 Rg = pessoa.Rg,
                 Cpf = pessoa.Cpf,
                 Status = pessoa.Status,
-                Telefones = telefones.Select(t => t.NumeroTelefone).ToList(),
+                //Telefones = telefones.Select(t => t.NumeroTelefone).ToList(),
+                Contato1 = pessoa.Contato1,
+                Contato2 = pessoa.Contato2,
                 LocalTrabalho = adotante.LocalTrabalho,
                 Facebook = adotante.Facebook,
                 Instagram = adotante.Instagram,
                 Bloqueio = adotante.Bloqueio,
-                Logradouro = endereco.Logradouro,
-                Numero = endereco.Numero,
-                Complemento = endereco.Complemento,
-                Bairro = endereco.Bairro,
-                Uf = endereco.Uf,
-                Cidade = endereco.Cidade,
-                Cep = endereco.Cep,
-                SituacaoEndereco = endereco.SituacaoEndereco
+                Logradouro = pessoa.Logradouro,
+                Numero = pessoa.Numero,
+                Complemento = pessoa.Complemento,
+                Bairro = pessoa.Bairro,
+                Uf = pessoa.Uf,
+                Cidade = pessoa.Cidade,
+                Cep = pessoa.Cep,
+                SituacaoEndereco = pessoa.SituacaoEndereco
             };
         }
 
@@ -98,8 +111,8 @@ namespace AAPS.Api.Services.Adotantes
         {
             var query = _context.Adotantes
                 .Include(a => a.Pessoa)
-                    .ThenInclude(a => a.Telefones)
-                .Include(a => a.Pessoa.Endereco)
+                //    .ThenInclude(a => a.Telefones)
+                //.Include(a => a.Pessoa.Endereco)
                 .Where(a => a.Pessoa.Tipo == TipoPessoaEnum.Adotante)
                 .AsQueryable();
 
@@ -132,19 +145,21 @@ namespace AAPS.Api.Services.Adotantes
                     Rg = a.Pessoa.Rg,
                     Cpf = a.Pessoa.Cpf,
                     Status = a.Pessoa.Status,
-                    Telefones = a.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
+                    //Telefones = a.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
+                    Contato1 = a.Pessoa.Contato1,
+                    Contato2 = a.Pessoa.Contato2,
                     LocalTrabalho = a.LocalTrabalho,
                     Facebook = a.Facebook,
                     Instagram = a.Instagram,
                     Bloqueio = a.Bloqueio,
-                    Logradouro = a.Pessoa.Endereco.Logradouro,
-                    Numero = a.Pessoa.Endereco.Numero,
-                    Complemento = a.Pessoa.Endereco.Complemento,
-                    Bairro = a.Pessoa.Endereco.Bairro,
-                    Uf = a.Pessoa.Endereco.Uf,
-                    Cidade = a.Pessoa.Endereco.Cidade,
-                    Cep = a.Pessoa.Endereco.Cep,
-                    SituacaoEndereco = a.Pessoa.Endereco.SituacaoEndereco,
+                    Logradouro = a.Pessoa.Logradouro,
+                    Numero = a.Pessoa.Numero,
+                    Complemento = a.Pessoa.Complemento,
+                    Bairro = a.Pessoa.Bairro,
+                    Uf = a.Pessoa.Uf,
+                    Cidade = a.Pessoa.Cidade,
+                    Cep = a.Pessoa.Cep,
+                    SituacaoEndereco = a.Pessoa.SituacaoEndereco,
                 })
                 .ToListAsync();
 
@@ -167,19 +182,21 @@ namespace AAPS.Api.Services.Adotantes
                 Rg = adotante.Pessoa.Rg,
                 Cpf = adotante.Pessoa.Cpf,
                 Status = adotante.Pessoa.Status,
-                Telefones = adotante.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
+                //Telefones = adotante.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
+                Contato1 = adotante.Pessoa.Contato1,
+                Contato2 = adotante.Pessoa.Contato2,
                 LocalTrabalho = adotante.LocalTrabalho,
                 Facebook = adotante.Facebook,
                 Instagram = adotante.Instagram,
                 Bloqueio = adotante.Bloqueio,
-                Logradouro = adotante.Pessoa.Endereco.Logradouro,
-                Numero = adotante.Pessoa.Endereco.Numero,
-                Complemento = adotante.Pessoa.Endereco.Complemento,
-                Bairro = adotante.Pessoa.Endereco.Bairro,
-                Uf = adotante.Pessoa.Endereco.Uf,
-                Cidade = adotante.Pessoa.Endereco.Cidade,
-                Cep = adotante.Pessoa.Endereco.Cep,
-                SituacaoEndereco = adotante.Pessoa.Endereco.SituacaoEndereco,
+                Logradouro = adotante.Pessoa.Logradouro,
+                Numero = adotante.Pessoa.Numero,
+                Complemento = adotante.Pessoa.Complemento,
+                Bairro = adotante.Pessoa.Bairro,
+                Uf = adotante.Pessoa.Uf,
+                Cidade = adotante.Pessoa.Cidade,
+                Cep = adotante.Pessoa.Cep,
+                SituacaoEndereco = adotante.Pessoa.SituacaoEndereco,
             };
         }
 
@@ -187,9 +204,9 @@ namespace AAPS.Api.Services.Adotantes
         {
             var adotantes = await _context.Adotantes
                 .Include(a => a.Pessoa)
-                    .ThenInclude(p => p.Endereco)
-                .Include(a => a.Pessoa)
-                    .ThenInclude(p => p.Telefones)
+                //    .ThenInclude(p => p.Endereco)
+                //.Include(a => a.Pessoa)
+                //    .ThenInclude(p => p.Telefones)
                 .Where(a => a.Pessoa.Status == StatusEnum.Ativo && a.Pessoa.Tipo == TipoPessoaEnum.Adotante)
                 .Select(a => new AdotanteDto
                 {
@@ -198,19 +215,21 @@ namespace AAPS.Api.Services.Adotantes
                     Rg = a.Pessoa.Rg,
                     Cpf = a.Pessoa.Cpf,
                     Status = a.Pessoa.Status,
-                    Telefones = a.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
+                    //Telefones = a.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
+                    Contato1 = a.Pessoa.Contato1,
+                    Contato2 = a.Pessoa.Contato2,
                     LocalTrabalho = a.LocalTrabalho,
                     Facebook = a.Facebook,
                     Instagram = a.Instagram,
                     Bloqueio = a.Bloqueio,
-                    Logradouro = a.Pessoa.Endereco.Logradouro,
-                    Numero = a.Pessoa.Endereco.Numero,
-                    Complemento = a.Pessoa.Endereco.Complemento,
-                    Bairro = a.Pessoa.Endereco.Bairro,
-                    Uf = a.Pessoa.Endereco.Uf,
-                    Cidade = a.Pessoa.Endereco.Cidade,
-                    Cep = a.Pessoa.Endereco.Cep,
-                    SituacaoEndereco = a.Pessoa.Endereco.SituacaoEndereco,
+                    Logradouro = a.Pessoa.Logradouro,
+                    Numero = a.Pessoa.Numero,
+                    Complemento = a.Pessoa.Complemento,
+                    Bairro = a.Pessoa.Bairro,
+                    Uf = a.Pessoa.Uf,
+                    Cidade = a.Pessoa.Cidade,
+                    Cep = a.Pessoa.Cep,
+                    SituacaoEndereco = a.Pessoa.SituacaoEndereco,
                 })
                 .ToListAsync();
 
@@ -231,46 +250,49 @@ namespace AAPS.Api.Services.Adotantes
             adotante.Pessoa.Cpf = string.IsNullOrEmpty(adotanteDto.Cpf) ? adotante.Pessoa.Cpf : adotanteDto.Cpf;
             adotante.Pessoa.Status = adotanteDto.Status.HasValue ? adotanteDto.Status.Value : adotante.Pessoa.Status;
 
-            adotante.Pessoa.Endereco.Logradouro = string.IsNullOrEmpty(adotanteDto.Logradouro) ? adotante.Pessoa.Endereco.Logradouro : adotanteDto.Logradouro;
-            adotante.Pessoa.Endereco.Numero = adotanteDto.Numero.HasValue ? adotanteDto.Numero.Value : adotante.Pessoa.Endereco.Numero;
-            adotante.Pessoa.Endereco.Complemento = string.IsNullOrEmpty(adotanteDto.Complemento) ? adotante.Pessoa.Endereco.Complemento : adotanteDto.Complemento;
-            adotante.Pessoa.Endereco.Bairro = string.IsNullOrEmpty(adotanteDto.Bairro) ? adotante.Pessoa.Endereco.Bairro : adotanteDto.Bairro;
-            adotante.Pessoa.Endereco.Uf = string.IsNullOrEmpty(adotanteDto.Uf) ? adotante.Pessoa.Endereco.Uf : adotanteDto.Uf;
-            adotante.Pessoa.Endereco.Cidade = string.IsNullOrEmpty(adotanteDto.Cidade) ? adotante.Pessoa.Endereco.Cidade : adotanteDto.Cidade;
-            adotante.Pessoa.Endereco.Cep = string.IsNullOrEmpty(adotanteDto.Cep) ? adotante.Pessoa.Endereco.Cep : adotanteDto.Cep;
-            adotante.Pessoa.Endereco.SituacaoEndereco = string.IsNullOrEmpty(adotanteDto.SituacaoEndereco) ? adotante.Pessoa.Endereco.SituacaoEndereco : adotanteDto.SituacaoEndereco;
+            adotante.Pessoa.Contato1 = string.IsNullOrEmpty(adotanteDto.Contato1) ? adotante.Pessoa.Contato1 : adotanteDto.Contato1;
+            adotante.Pessoa.Contato2 = string.IsNullOrEmpty(adotanteDto.Contato2) ? adotante.Pessoa.Contato2 : adotanteDto.Contato2;
+
+            adotante.Pessoa.Logradouro = string.IsNullOrEmpty(adotanteDto.Logradouro) ? adotante.Pessoa.Logradouro : adotanteDto.Logradouro;
+            adotante.Pessoa.Numero = adotanteDto.Numero.HasValue ? adotanteDto.Numero.Value : adotante.Pessoa.Numero;
+            adotante.Pessoa.Complemento = string.IsNullOrEmpty(adotanteDto.Complemento) ? adotante.Pessoa.Complemento : adotanteDto.Complemento;
+            adotante.Pessoa.Bairro = string.IsNullOrEmpty(adotanteDto.Bairro) ? adotante.Pessoa.Bairro : adotanteDto.Bairro;
+            adotante.Pessoa.Uf = string.IsNullOrEmpty(adotanteDto.Uf) ? adotante.Pessoa.Uf : adotanteDto.Uf;
+            adotante.Pessoa.Cidade = string.IsNullOrEmpty(adotanteDto.Cidade) ? adotante.Pessoa.Cidade : adotanteDto.Cidade;
+            adotante.Pessoa.Cep = string.IsNullOrEmpty(adotanteDto.Cep) ? adotante.Pessoa.Cep : adotanteDto.Cep;
+            adotante.Pessoa.SituacaoEndereco = string.IsNullOrEmpty(adotanteDto.SituacaoEndereco) ? adotante.Pessoa.SituacaoEndereco : adotanteDto.SituacaoEndereco;
 
             adotante.LocalTrabalho = string.IsNullOrEmpty(adotanteDto.LocalTrabalho) ? adotante.LocalTrabalho : adotanteDto.LocalTrabalho;
             adotante.Facebook = string.IsNullOrEmpty(adotanteDto.Facebook) ? adotante.Facebook : adotanteDto.Facebook;
             adotante.Instagram = string.IsNullOrEmpty(adotanteDto.Instagram) ? adotante.Instagram : adotanteDto.Instagram;
             adotante.Bloqueio = adotanteDto.Bloqueio.HasValue ? adotanteDto.Bloqueio.Value : adotante.Bloqueio;
 
-            if (adotanteDto.Telefones != null)
-            {
-                var telefonesAtuais = adotante.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList();
+            //if (adotanteDto.Telefones != null)
+            //{
+            //    var telefonesAtuais = adotante.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList();
 
-                var telefonesMantidos = adotante.Pessoa.Telefones
-                    .Where(t => adotanteDto.Telefones.Contains(t.NumeroTelefone))
-                    .ToList();
+            //    var telefonesMantidos = adotante.Pessoa.Telefones
+            //        .Where(t => adotanteDto.Telefones.Contains(t.NumeroTelefone))
+            //        .ToList();
 
-                var telefonesParaRemover = adotante.Pessoa.Telefones
-                    .Where(t => !adotanteDto.Telefones.Contains(t.NumeroTelefone))
-                    .ToList();
+            //    var telefonesParaRemover = adotante.Pessoa.Telefones
+            //        .Where(t => !adotanteDto.Telefones.Contains(t.NumeroTelefone))
+            //        .ToList();
 
-                var telefonesParaAdicionar = adotanteDto.Telefones
-                    .Where(t => !telefonesAtuais.Contains(t))
-                    .ToList();
+            //    var telefonesParaAdicionar = adotanteDto.Telefones
+            //        .Where(t => !telefonesAtuais.Contains(t))
+            //        .ToList();
 
-                _context.RemoveRange(telefonesParaRemover);
+            //    _context.RemoveRange(telefonesParaRemover);
 
-                foreach (var novoTelefone in telefonesParaAdicionar)
-                {
-                    adotante.Pessoa.Telefones.Add(new Telefone
-                    {
-                        NumeroTelefone = novoTelefone
-                    });
-                }
-            }
+            //    foreach (var novoTelefone in telefonesParaAdicionar)
+            //    {
+            //        adotante.Pessoa.Telefones.Add(new Telefone
+            //        {
+            //            NumeroTelefone = novoTelefone
+            //        });
+            //    }
+            //}
 
             await _context.SaveChangesAsync();
 
@@ -281,19 +303,21 @@ namespace AAPS.Api.Services.Adotantes
                 Rg = adotante.Pessoa.Rg,
                 Cpf = adotante.Pessoa.Cpf,
                 Status = adotante.Pessoa.Status,
-                Telefones = adotante.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
+                //Telefones = adotante.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
+                Contato1 = adotante.Pessoa.Contato1,
+                Contato2 = adotante.Pessoa.Contato2,
                 LocalTrabalho = adotante.LocalTrabalho,
                 Facebook = adotante.Facebook,
                 Instagram = adotante.Instagram,
                 Bloqueio = adotante.Bloqueio,
-                Logradouro = adotante.Pessoa.Endereco.Logradouro,
-                Numero = adotante.Pessoa.Endereco.Numero,
-                Complemento = adotante.Pessoa.Endereco.Complemento,
-                Bairro = adotante.Pessoa.Endereco.Bairro,
-                Uf = adotante.Pessoa.Endereco.Uf,
-                Cidade = adotante.Pessoa.Endereco.Cidade,
-                Cep = adotante.Pessoa.Endereco.Cep,
-                SituacaoEndereco = adotante.Pessoa.Endereco.SituacaoEndereco,
+                Logradouro = adotante.Pessoa.Logradouro,
+                Numero = adotante.Pessoa.Numero,
+                Complemento = adotante.Pessoa.Complemento,
+                Bairro = adotante.Pessoa.Bairro,
+                Uf = adotante.Pessoa.Uf,
+                Cidade = adotante.Pessoa.Cidade,
+                Cep = adotante.Pessoa.Cep,
+                SituacaoEndereco = adotante.Pessoa.SituacaoEndereco,
             };
         }
 
@@ -327,6 +351,11 @@ namespace AAPS.Api.Services.Adotantes
             if (string.IsNullOrEmpty(adotanteDto.Status.ToString()) || !Enum.IsDefined(typeof(StatusEnum), adotanteDto.Status))
                 erros.Add("O campo 'Status' é obrigatório!");
 
+            if (string.IsNullOrEmpty(adotanteDto.Contato1) || adotanteDto.Contato1.Length != 11)
+                erros.Add("O campo 'Contato 1' é obrigatório!");
+            if (string.IsNullOrEmpty(adotanteDto.Contato2) || adotanteDto.Contato2.Length != 11)
+                erros.Add("O campo 'Contato 2' é obrigatório!");
+
             if (string.IsNullOrEmpty(adotanteDto.Logradouro))
                 erros.Add("O campo 'Logradouro' é obrigatório!");
             if (string.IsNullOrEmpty(adotanteDto.Numero.ToString()) || adotanteDto.Numero <= 0)
@@ -351,8 +380,8 @@ namespace AAPS.Api.Services.Adotantes
             if (string.IsNullOrEmpty(adotanteDto.Bloqueio.ToString()) || !Enum.IsDefined(typeof(BloqueioEnum), adotanteDto.Bloqueio))
                 erros.Add("O campo 'Bloqueado' é obrigatório!");
 
-            if (adotanteDto.Telefones == null || adotanteDto.Telefones.Count < 2)
-                erros.Add("É necessário informar pelo menos dois telefones!");
+            //if (adotanteDto.Telefones == null || adotanteDto.Telefones.Count < 2)
+            //    erros.Add("É necessário informar pelo menos dois telefones!");
 
             var adotanteExistente = await _context.Adotantes
                 .Include(a => a.Pessoa)
@@ -387,6 +416,11 @@ namespace AAPS.Api.Services.Adotantes
             if (adotanteDto.Status != null && string.IsNullOrWhiteSpace(adotanteDto.Status.ToString()))
                 erros.Add("O campo 'Status' não pode ter ser vazio!");
 
+            if (adotanteDto.Contato1 != null && (string.IsNullOrWhiteSpace(adotanteDto.Contato1) || adotanteDto.Contato1.ToString().Length != 11))
+                erros.Add("O campo 'Contato 1' não pode ter ser vazio e deve ter exatamente 8 dígitos!");
+            if (adotanteDto.Contato2 != null && (string.IsNullOrWhiteSpace(adotanteDto.Contato2) || adotanteDto.Contato2.ToString().Length != 11))
+                erros.Add("O campo 'Contato 2' não pode ter ser vazio e deve ter exatamente 8 dígitos!");
+
             if (adotanteDto.Logradouro != null && string.IsNullOrWhiteSpace(adotanteDto.Logradouro))
                 erros.Add("O campo 'Logradouro' não pode ter ser vazio!");
             if (adotanteDto.Numero != null && adotanteDto.Numero <= 0)
@@ -411,8 +445,8 @@ namespace AAPS.Api.Services.Adotantes
             if (adotanteDto.Bloqueio != null && string.IsNullOrWhiteSpace(adotanteDto.Bloqueio.ToString()))
                 erros.Add("O campo 'Bloqueio' não pode ter ser vazio!");
 
-            if (adotanteDto.Telefones != null && adotanteDto.Telefones.Count < 2)
-                erros.Add("É necessário informar pelo menos dois telefones!");
+            //if (adotanteDto.Telefones != null && adotanteDto.Telefones.Count < 2)
+            //    erros.Add("É necessário informar pelo menos dois telefones!");
 
             return erros;
         }
@@ -428,9 +462,9 @@ namespace AAPS.Api.Services.Adotantes
         {
             return await _context.Adotantes
                 .Include(a => a.Pessoa)
-                    .ThenInclude(p => p.Endereco)
-                .Include(a => a.Pessoa)
-                    .ThenInclude(p => p.Telefones)
+                //    .ThenInclude(p => p.Endereco)
+                //.Include(a => a.Pessoa)
+                //    .ThenInclude(p => p.Telefones)
                 .Where(a => a.Pessoa.Tipo == TipoPessoaEnum.Adotante)
                 .FirstOrDefaultAsync(a => a.Id == id);
         }

@@ -11,8 +11,8 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
     {
     }
 
-    public DbSet<Endereco> Enderecos { get; set; }
-    public DbSet<Telefone> Telefones { get; set; }
+    //public DbSet<Endereco> Enderecos { get; set; }
+    //public DbSet<Telefone> Telefones { get; set; }
     public DbSet<Pessoa> Pessoas { get; set; }
     public DbSet<Adotante> Adotantes { get; set; }
     //public DbSet<Doador> Doadores { get; set; }
@@ -29,46 +29,46 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
 
         #region ENDEREÇO - Mapeamento
 
-        modelBuilder.Entity<Endereco>(entity =>
-        {
-            entity.ToTable("Enderecos", "dbo");
+        //modelBuilder.Entity<Endereco>(entity =>
+        //{
+        //    entity.ToTable("Enderecos", "dbo");
 
-            entity.HasKey(x => x.Id);
+        //    entity.HasKey(x => x.Id);
 
-            entity.Property(x => x.Logradouro).HasColumnType("nvarchar(150)").IsRequired();
-            entity.Property(x => x.Numero).HasColumnType("int").IsRequired();
-            entity.Property(x => x.Complemento).HasColumnType("nvarchar(100)");
-            entity.Property(x => x.Bairro).HasColumnType("nvarchar(100)").IsRequired();
-            entity.Property(x => x.Uf).HasColumnType("char(2)").IsRequired();
-            entity.Property(x => x.Cidade).HasColumnType("nvarchar(50)").IsRequired();
-            entity.Property(x => x.Cep).HasColumnType("nvarchar(8)").IsRequired();
-            entity.Property(x => x.SituacaoEndereco).HasColumnType("nvarchar(100)");
+        //    entity.Property(x => x.Logradouro).HasColumnType("nvarchar(150)").IsRequired();
+        //    entity.Property(x => x.Numero).HasColumnType("int").IsRequired();
+        //    entity.Property(x => x.Complemento).HasColumnType("nvarchar(100)");
+        //    entity.Property(x => x.Bairro).HasColumnType("nvarchar(100)").IsRequired();
+        //    entity.Property(x => x.Uf).HasColumnType("char(2)").IsRequired();
+        //    entity.Property(x => x.Cidade).HasColumnType("nvarchar(50)").IsRequired();
+        //    entity.Property(x => x.Cep).HasColumnType("nvarchar(8)").IsRequired();
+        //    entity.Property(x => x.SituacaoEndereco).HasColumnType("nvarchar(100)");
 
-            entity.Property(x => x.PessoaId).HasColumnType("int").IsRequired();
+        //    entity.Property(x => x.PessoaId).HasColumnType("int").IsRequired();
 
-            // Relacionamento com pessoa já está em Pessoa
-        });
+        //    // Relacionamento com pessoa já está em Pessoa
+        //});
 
         #endregion
 
         #region TELEFONE - Mapeamento
 
-        modelBuilder.Entity<Telefone>(entity =>
-        {
-            entity.ToTable("Telefones", "dbo");
+        //modelBuilder.Entity<Telefone>(entity =>
+        //{
+        //    entity.ToTable("Telefones", "dbo");
 
-            entity.HasKey(x => x.Id);
+        //    entity.HasKey(x => x.Id);
 
-            entity.Property(x => x.NumeroTelefone).HasColumnType("nvarchar(11)").IsRequired();
-            //entity.Property(x => x.Responsavel).HasColumnType("nvarchar(60)").IsRequired();
+        //    entity.Property(x => x.NumeroTelefone).HasColumnType("nvarchar(11)").IsRequired();
+        //    //entity.Property(x => x.Responsavel).HasColumnType("nvarchar(60)").IsRequired();
 
-            entity.Property(x => x.PessoaId).HasColumnType("int").IsRequired();
+        //    entity.Property(x => x.PessoaId).HasColumnType("int").IsRequired();
 
-            entity.HasOne(x => x.Pessoa)
-                  .WithMany(x => x.Telefones)
-                  .HasForeignKey(x => x.PessoaId)
-                  .OnDelete(DeleteBehavior.NoAction);
-        });
+        //    entity.HasOne(x => x.Pessoa)
+        //          .WithMany(x => x.Telefones)
+        //          .HasForeignKey(x => x.PessoaId)
+        //          .OnDelete(DeleteBehavior.NoAction);
+        //});
 
         #endregion
 
@@ -86,15 +86,22 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
             entity.Property(x => x.Tipo).HasColumnType("int").IsRequired();
             entity.Property(x => x.Status).HasColumnType("int").IsRequired();
 
+            entity.Property(x => x.Contato1).HasColumnType("nvarchar(11)").IsRequired();
+            entity.Property(x => x.Contato2).HasColumnType("nvarchar(11)").IsRequired();
+
+            entity.Property(x => x.Logradouro).HasColumnType("nvarchar(150)").IsRequired();
+            entity.Property(x => x.Numero).HasColumnType("int").IsRequired();
+            entity.Property(x => x.Complemento).HasColumnType("nvarchar(100)");
+            entity.Property(x => x.Bairro).HasColumnType("nvarchar(100)").IsRequired();
+            entity.Property(x => x.Uf).HasColumnType("char(2)").IsRequired();
+            entity.Property(x => x.Cidade).HasColumnType("nvarchar(50)").IsRequired();
+            entity.Property(x => x.Cep).HasColumnType("nvarchar(8)").IsRequired();
+            entity.Property(x => x.SituacaoEndereco).HasColumnType("nvarchar(100)");
+
             // Relacionamentos 1:1
             entity.HasOne(x => x.Adotante)
                   .WithOne(x => x.Pessoa)
                   .HasForeignKey<Adotante>(x => x.PessoaId)
-                  .OnDelete(DeleteBehavior.NoAction);
-
-            entity.HasOne(x => x.PontoAdocao)
-                  .WithOne(x => x.Pessoa)
-                  .HasForeignKey<PontoAdocao>(x => x.PessoaId)
                   .OnDelete(DeleteBehavior.NoAction);
 
             entity.HasOne(x => x.Voluntario)
@@ -102,14 +109,14 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
                   .HasForeignKey<Voluntario>(x => x.PessoaId)
                   .OnDelete(DeleteBehavior.NoAction);
 
-            entity.HasOne(x => x.Endereco)
-                  .WithOne(x => x.Pessoa)
-                  .HasForeignKey<Endereco>(x => x.PessoaId)
-                  .OnDelete(DeleteBehavior.NoAction);
+            //entity.HasOne(x => x.Endereco)
+            //      .WithOne(x => x.Pessoa)
+            //      .HasForeignKey<Endereco>(x => x.PessoaId)
+            //      .OnDelete(DeleteBehavior.NoAction);
 
-            // Relacionamentos 1:N
-            entity.HasMany(x => x.Telefones)
-                  .WithOne(x => x.Pessoa);
+            //// Relacionamentos 1:N
+            //entity.HasMany(x => x.Telefones)
+            //      .WithOne(x => x.Pessoa);
 
             entity.HasMany(x => x.Animais)
                   .WithOne(x => x.Pessoa);
@@ -152,7 +159,18 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
             entity.Property(x => x.Responsavel).HasColumnType("nvarchar(60)").IsRequired();
             entity.Property(x => x.Cnpj).HasColumnType("nvarchar(14)").IsRequired();
 
-            entity.Property(x => x.PessoaId).HasColumnType("int").IsRequired();
+            entity.Property(x => x.Status).HasColumnType("int").IsRequired();
+
+            entity.Property(x => x.Contato1).HasColumnType("nvarchar(11)").IsRequired();
+            entity.Property(x => x.Contato2).HasColumnType("nvarchar(11)").IsRequired();
+
+            entity.Property(x => x.Logradouro).HasColumnType("nvarchar(150)").IsRequired();
+            entity.Property(x => x.Numero).HasColumnType("int").IsRequired();
+            entity.Property(x => x.Complemento).HasColumnType("nvarchar(100)");
+            entity.Property(x => x.Bairro).HasColumnType("nvarchar(100)").IsRequired();
+            entity.Property(x => x.Uf).HasColumnType("char(2)").IsRequired();
+            entity.Property(x => x.Cidade).HasColumnType("nvarchar(50)").IsRequired();
+            entity.Property(x => x.Cep).HasColumnType("nvarchar(8)").IsRequired();
 
             // Relacionamento com pessoa já esta em Pessoa
 
@@ -196,6 +214,7 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
             entity.Property(x => x.DataNascimento).HasColumnType("date");
             entity.Property(x => x.Status).HasColumnType("int").IsRequired();
             entity.Property(x => x.Disponibilidade).HasColumnType("int").IsRequired();
+            entity.Property(x => x.Resgatado).HasColumnType("bit").IsRequired();
 
             entity.Property(x => x.PessoaId).HasColumnType("int").IsRequired();
             
@@ -266,6 +285,8 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
             entity.HasKey(x => x.Id);
 
             entity.Property(x => x.Data).HasColumnType("date").IsRequired();
+            entity.Property(x => x.Cancelada).HasColumnType("bit").IsRequired();
+
 
             entity.Property(x => x.AnimalId).HasColumnType("int").IsRequired();
             entity.Property(x => x.AdotanteId).HasColumnType("int").IsRequired();

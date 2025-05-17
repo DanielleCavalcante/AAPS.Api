@@ -73,4 +73,17 @@ public class PerfilController : Controller
             return BadRequest(ApiResponse<object>.ErroResponse(new List<string> { "Erro ao alterar a senha." }));
         }
     }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult> ObterPerfilPorId(int id)
+    {
+        var voluntario = await _voluntarioService.ObterVoluntarioPorId(id);
+
+        if (voluntario is null)
+        {
+            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { $"Voluntário de id = {id} não encontrado." }));
+        }
+
+        return Ok(ApiResponse<object>.SucessoResponse(voluntario));
+    }
 }

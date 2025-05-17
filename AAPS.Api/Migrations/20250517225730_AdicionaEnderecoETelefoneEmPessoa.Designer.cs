@@ -4,6 +4,7 @@ using AAPS.Api.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AAPS.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250517225730_AdicionaEnderecoETelefoneEmPessoa")]
+    partial class AdicionaEnderecoETelefoneEmPessoa
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -238,6 +241,9 @@ namespace AAPS.Api.Migrations
                     b.Property<int>("Numero")
                         .HasColumnType("int");
 
+                    b.Property<int?>("PontoAdocaoId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Rg")
                         .HasColumnType("nvarchar(9)");
 
@@ -255,6 +261,8 @@ namespace AAPS.Api.Migrations
                         .HasColumnType("char(2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PontoAdocaoId");
 
                     b.ToTable("Pessoas", "dbo");
                 });
@@ -573,6 +581,15 @@ namespace AAPS.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("Pessoa");
+                });
+
+            modelBuilder.Entity("AAPS.Api.Models.Pessoa", b =>
+                {
+                    b.HasOne("AAPS.Api.Models.PontoAdocao", "PontoAdocao")
+                        .WithMany()
+                        .HasForeignKey("PontoAdocaoId");
+
+                    b.Navigation("PontoAdocao");
                 });
 
             modelBuilder.Entity("AAPS.Api.Models.Voluntario", b =>

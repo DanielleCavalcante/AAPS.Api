@@ -10,12 +10,15 @@ public class AdotanteDto
     public required string Cpf { get; set; }
     public required StatusEnum Status { get; set; }
 
-    public required List<string> Telefones { get; set; }
+    //public required List<string> Telefones { get; set; }
+    public required string Contato1 { get; set; }
+    public required string Contato2 { get; set; }
 
     public required string LocalTrabalho { get; set; }
     public required string Facebook { get; set; }
     public required string Instagram { get; set; }
     public required BloqueioEnum Bloqueio { get; set; }
+
     public required string Logradouro { get; set; }
     public required int Numero { get; set; }
     public string? Complemento { get; set; }

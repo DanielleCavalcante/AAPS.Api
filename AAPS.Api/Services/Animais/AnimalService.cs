@@ -41,6 +41,7 @@ namespace AAPS.Api.Services.Animais
                 DataNascimento = animalDto.DataNascimento,
                 Status = animalDto.Status,
                 Disponibilidade = animalDto.Disponibilidade,
+                Resgatado = animalDto.Resgatado,
                 PessoaId = doador.Id,
             };
 
@@ -58,6 +59,7 @@ namespace AAPS.Api.Services.Animais
                 DataNascimento = animal.DataNascimento,
                 Status = animal.Status,
                 Disponibilidade = animal.Disponibilidade,
+                Resgatado = animal.Resgatado,
                 DoadorId = animal.PessoaId,
             };
         }
@@ -103,6 +105,7 @@ namespace AAPS.Api.Services.Animais
                     DataNascimento = a.DataNascimento,
                     Status = a.Status,
                     Disponibilidade = a.Disponibilidade,
+                    Resgatado = a.Resgatado,
                     DoadorId = a.PessoaId,
                 })
                 .ToListAsync();
@@ -132,9 +135,10 @@ namespace AAPS.Api.Services.Animais
                 DataNascimento = animal.DataNascimento,
                 Status = animal.Status,
                 Disponibilidade = animal.Disponibilidade,
+                Resgatado = animal.Resgatado,
                 DoadorId = animal.PessoaId,
                 NomeDoador = animal.Pessoa.Nome,
-                Telefones = animal.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList()
+                //Telefones = animal.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList()
             };
         }
 
@@ -154,8 +158,9 @@ namespace AAPS.Api.Services.Animais
                     Sexo = a.Sexo,
                     DataNascimento = a.DataNascimento,
                     Status = a.Status,
-                    DoadorId = a.PessoaId,
                     Disponibilidade = a.Disponibilidade,
+                    Resgatado = a.Resgatado,
+                    DoadorId = a.PessoaId,
                 });
 
             return await animais.ToListAsync();
@@ -177,8 +182,9 @@ namespace AAPS.Api.Services.Animais
             animal.Sexo = string.IsNullOrEmpty(animalDto.Sexo) ? animal.Sexo : animalDto.Sexo;
             animal.DataNascimento = animalDto.DataNascimento.HasValue ? animalDto.DataNascimento.Value : animal.DataNascimento;
             animal.Status = animalDto.Status.HasValue ? animalDto.Status.Value : animal.Status;
-            animal.PessoaId = animalDto.DoadorId.HasValue ? animalDto.DoadorId.Value : animal.PessoaId;
             animal.Disponibilidade = animalDto.Disponibilidade.HasValue ? animalDto.Disponibilidade.Value : animal.Disponibilidade;
+            animal.Resgatado = animalDto.Resgatado.HasValue ? animalDto.Resgatado.Value : animal.Resgatado;
+            animal.PessoaId = animalDto.DoadorId.HasValue ? animalDto.DoadorId.Value : animal.PessoaId;
 
             await _context.SaveChangesAsync();
 
@@ -193,6 +199,7 @@ namespace AAPS.Api.Services.Animais
                 DataNascimento = animal.DataNascimento,
                 Status = animal.Status,
                 Disponibilidade = animal.Disponibilidade,
+                Resgatado = animal.Resgatado,
                 DoadorId = animal.PessoaId,
             };
         }
@@ -231,6 +238,8 @@ namespace AAPS.Api.Services.Animais
                 erros.Add("O campo 'Status' é obrigatório!");
             if (string.IsNullOrEmpty(animalDto.Disponibilidade.ToString()) || !Enum.IsDefined(typeof(DisponibilidadeEnum), animalDto.Disponibilidade))
                 erros.Add("O campo 'Status' é obrigatório!");
+            if (string.IsNullOrEmpty(animalDto.Resgatado.ToString()))
+                erros.Add("O campo 'Resgatado' é obrigatório!");
             if (string.IsNullOrEmpty(animalDto.DoadorId.ToString()) || animalDto.DoadorId <= 0)
                 erros.Add("O campo 'Doador' é obrigatório!");
 
@@ -270,6 +279,8 @@ namespace AAPS.Api.Services.Animais
                 erros.Add("O campo 'Status' não pode ter ser vazio!");
             if (animalDto.Disponibilidade != null && string.IsNullOrWhiteSpace(animalDto.Disponibilidade.ToString()))
                 erros.Add("O campo 'Status' não pode ter ser vazio!");
+            if (animalDto.Resgatado != null && string.IsNullOrWhiteSpace(animalDto.Resgatado.ToString()))
+                erros.Add("O campo 'Resgatado' não pode ter ser vazio!");
             if (animalDto.DoadorId != null && string.IsNullOrWhiteSpace(animalDto.DoadorId.ToString()))
                 erros.Add("O campo 'Doador' não pode ter ser vazio!");
 

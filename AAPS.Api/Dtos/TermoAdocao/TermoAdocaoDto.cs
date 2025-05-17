@@ -2,6 +2,7 @@
 {
     public class TermoAdocaoDto
     {
+        public int NumeroTermo { get; set; }
         public string Nome { get; set; }
         public string Rg { get; set; }
         public string Cpf { get; set; }
@@ -19,7 +20,7 @@
         public string TipoAnimal { get; set; } // Cão / Gato
         public string Cor { get; set; }
         public string Sexo { get; set; } // F / M
-        public int Idade { get; set; }
+        public string Idade { get; set; }
         public bool Vermifugado { get; set; }
         public bool Vacinado { get; set; }
         public bool Castrado { get; set; }
@@ -28,7 +29,6 @@
         public string DoadorTelefone { get; set; }
 
         public string PontoAdocao { get; set; }
-
-        public string Assinatura { get; set; } = "__________________________________________";
+        public DateTime DataAdocao { get; set; }
     }
 }

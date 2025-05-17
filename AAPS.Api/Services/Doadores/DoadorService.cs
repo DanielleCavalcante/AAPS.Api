@@ -29,23 +29,8 @@ namespace AAPS.Api.Services.Doadores
                 Cpf = doadorDto.Cpf,
                 Tipo = TipoPessoaEnum.Doador,
                 Status = doadorDto.Status,
-            };
-
-            _context.Pessoas.Add(doador);
-            await _context.SaveChangesAsync();
-
-            var telefones = doadorDto.Telefones
-                .Select(t => new Telefone
-                {
-                    NumeroTelefone = t,
-                    PessoaId = doador.Id
-                }).ToList();
-
-            _context.Telefones.AddRange(telefones);
-            await _context.SaveChangesAsync();
-
-            var endereco = new Endereco
-            {
+                Contato1 = doadorDto.Contato1,
+                Contato2 = doadorDto.Contato2,
                 Logradouro = doadorDto.Logradouro,
                 Numero = doadorDto.Numero,
                 Complemento = doadorDto.Complemento,
@@ -53,11 +38,35 @@ namespace AAPS.Api.Services.Doadores
                 Uf = doadorDto.Uf,
                 Cidade = doadorDto.Cidade,
                 Cep = doadorDto.Cep,
-                PessoaId = doador.Id
             };
 
-            _context.Enderecos.Add(endereco);
+            _context.Pessoas.Add(doador);
             await _context.SaveChangesAsync();
+
+            //var telefones = doadorDto.Telefones
+            //    .Select(t => new Telefone
+            //    {
+            //        NumeroTelefone = t,
+            //        PessoaId = doador.Id
+            //    }).ToList();
+
+            //_context.Telefones.AddRange(telefones);
+            //await _context.SaveChangesAsync();
+
+            //var endereco = new Endereco
+            //{
+            //    Logradouro = doadorDto.Logradouro,
+            //    Numero = doadorDto.Numero,
+            //    Complemento = doadorDto.Complemento,
+            //    Bairro = doadorDto.Bairro,
+            //    Uf = doadorDto.Uf,
+            //    Cidade = doadorDto.Cidade,
+            //    Cep = doadorDto.Cep,
+            //    PessoaId = doador.Id
+            //};
+
+            //_context.Enderecos.Add(endereco);
+            //await _context.SaveChangesAsync();
 
             return new DoadorDto
             {
@@ -66,7 +75,9 @@ namespace AAPS.Api.Services.Doadores
                 Rg = doadorDto.Rg,
                 Cpf = doadorDto.Cpf,
                 Status = doadorDto.Status,
-                Telefones = telefones.Select(t => t.NumeroTelefone).ToList(),
+                //Telefones = telefones.Select(t => t.NumeroTelefone).ToList(),
+                Contato1 = doadorDto.Contato1,
+                Contato2 = doadorDto.Contato2,
                 Logradouro = doadorDto.Logradouro,
                 Numero = doadorDto.Numero,
                 Complemento = doadorDto.Complemento,
@@ -80,7 +91,7 @@ namespace AAPS.Api.Services.Doadores
         public async Task<IEnumerable<DoadorDto>> ObterDoadores(FiltroDoadorDto filtro)
         {
             var query = _context.Pessoas
-                .Include(d => d.Telefones)
+                //.Include(d => d.Telefones)
                 .Where(d => d.Tipo == TipoPessoaEnum.Doador)
                 .AsQueryable();
 
@@ -108,14 +119,16 @@ namespace AAPS.Api.Services.Doadores
                     Rg = d.Rg,
                     Cpf = d.Cpf,
                     Status = d.Status,
-                    Telefones = d.Telefones.Select(t => t.NumeroTelefone).ToList(),
-                    Logradouro = d.Endereco.Logradouro,
-                    Numero = d.Endereco.Numero,
-                    Complemento = d.Endereco.Complemento,
-                    Bairro = d.Endereco.Bairro,
-                    Uf = d.Endereco.Uf,
-                    Cidade = d.Endereco.Cidade,
-                    Cep = d.Endereco.Cep,
+                    //Telefones = d.Telefones.Select(t => t.NumeroTelefone).ToList(),
+                    Contato1 = d.Contato1,
+                    Contato2 = d.Contato2,
+                    Logradouro = d.Logradouro,
+                    Numero = d.Numero,
+                    Complemento = d.Complemento,
+                    Bairro = d.Bairro,
+                    Uf = d.Uf,
+                    Cidade = d.Cidade,
+                    Cep = d.Cep,
                 })
                 .ToListAsync();
 
@@ -138,21 +151,23 @@ namespace AAPS.Api.Services.Doadores
                 Rg = doador?.Rg,
                 Cpf = doador?.Cpf,
                 Status = doador.Status,
-                Telefones = doador.Telefones.Select(t => t.NumeroTelefone).ToList(),
-                Logradouro = doador.Endereco.Logradouro,
-                Numero = doador.Endereco.Numero,
-                Complemento = doador.Endereco.Complemento,
-                Bairro = doador.Endereco.Bairro,
-                Uf = doador.Endereco.Uf,
-                Cidade = doador.Endereco.Cidade,
-                Cep = doador.Endereco.Cep,
+                //Telefones = doador.Telefones.Select(t => t.NumeroTelefone).ToList(),
+                Contato1 = doador.Contato1,
+                Contato2 = doador.Contato2,
+                Logradouro = doador.Logradouro,
+                Numero = doador.Numero,
+                Complemento = doador.Complemento,
+                Bairro = doador.Bairro,
+                Uf = doador.Uf,
+                Cidade = doador.Cidade,
+                Cep = doador.Cep,
             };
         }
 
         public async Task<IEnumerable<DoadorDto>> ObterDoadoresAtivos()
         {
             var doadores = _context.Pessoas
-                .Include(d => d.Telefones)
+                //.Include(d => d.Telefones)
                 .Where(d => d.Status == StatusEnum.Ativo && d.Tipo == TipoPessoaEnum.Doador)
                 .Select(d => new DoadorDto
                 {
@@ -161,14 +176,16 @@ namespace AAPS.Api.Services.Doadores
                     Rg = d.Rg,
                     Cpf = d.Cpf,
                     Status = d.Status,
-                    Telefones = d.Telefones.Select(t => t.NumeroTelefone).ToList(),
-                    Logradouro = d.Endereco.Logradouro,
-                    Numero = d.Endereco.Numero,
-                    Complemento = d.Endereco.Complemento,
-                    Bairro = d.Endereco.Bairro,
-                    Uf = d.Endereco.Uf,
-                    Cidade = d.Endereco.Cidade,
-                    Cep = d.Endereco.Cep,
+                    //Telefones = d.Telefones.Select(t => t.NumeroTelefone).ToList(),
+                    Contato1 = d.Contato1,
+                    Contato2 = d.Contato2,
+                    Logradouro = d.Logradouro,
+                    Numero = d.Numero,
+                    Complemento = d.Complemento,
+                    Bairro = d.Bairro,
+                    Uf = d.Uf,
+                    Cidade = d.Cidade,
+                    Cep = d.Cep,
                 });
 
             return await doadores.ToListAsync();
@@ -188,40 +205,43 @@ namespace AAPS.Api.Services.Doadores
             doador.Cpf = string.IsNullOrEmpty(doadorDto.Cpf) ? doador.Cpf : doadorDto.Cpf;
             doador.Status = doadorDto.Status.HasValue ? doadorDto.Status.Value : doador.Status;
 
-            doador.Endereco.Logradouro = string.IsNullOrEmpty(doadorDto.Logradouro) ? doador.Endereco.Logradouro : doadorDto.Logradouro;
-            doador.Endereco.Numero = doadorDto.Numero.HasValue ? doadorDto.Numero.Value : doador.Endereco.Numero;
-            doador.Endereco.Complemento = string.IsNullOrEmpty(doadorDto.Complemento) ? doador.Endereco.Complemento : doadorDto.Complemento;
-            doador.Endereco.Bairro = string.IsNullOrEmpty(doadorDto.Bairro) ? doador.Endereco.Bairro : doadorDto.Bairro;
-            doador.Endereco.Uf = string.IsNullOrEmpty(doadorDto.Uf) ? doador.Endereco.Uf : doadorDto.Uf;
-            doador.Endereco.Cidade = string.IsNullOrEmpty(doadorDto.Cidade) ? doador.Endereco.Cidade : doadorDto.Cidade;
-            doador.Endereco.Cep = string.IsNullOrEmpty(doadorDto.Cep) ? doador.Endereco.Cep : doadorDto.Cep;
+            doador.Contato1 = string.IsNullOrEmpty(doadorDto.Contato1) ? doador.Contato1 : doadorDto.Contato1;
+            doador.Contato2 = string.IsNullOrEmpty(doadorDto.Contato2) ? doador.Contato2 : doadorDto.Contato2;
 
-            if (doadorDto.Telefones != null)
-            {
-                var telefonesAtuais = doador.Telefones.Select(t => t.NumeroTelefone).ToList();
+            doador.Logradouro = string.IsNullOrEmpty(doadorDto.Logradouro) ? doador.Logradouro : doadorDto.Logradouro;
+            doador.Numero = doadorDto.Numero.HasValue ? doadorDto.Numero.Value : doador.Numero;
+            doador.Complemento = string.IsNullOrEmpty(doadorDto.Complemento) ? doador.Complemento : doadorDto.Complemento;
+            doador.Bairro = string.IsNullOrEmpty(doadorDto.Bairro) ? doador.Bairro : doadorDto.Bairro;
+            doador.Uf = string.IsNullOrEmpty(doadorDto.Uf) ? doador.Uf : doadorDto.Uf;
+            doador.Cidade = string.IsNullOrEmpty(doadorDto.Cidade) ? doador.Cidade : doadorDto.Cidade;
+            doador.Cep = string.IsNullOrEmpty(doadorDto.Cep) ? doador.Cep : doadorDto.Cep;
 
-                var telefonesMantidos = doador.Telefones
-                    .Where(t => doadorDto.Telefones.Contains(t.NumeroTelefone))
-                    .ToList();
+            //if (doadorDto.Telefones != null)
+            //{
+            //    var telefonesAtuais = doador.Telefones.Select(t => t.NumeroTelefone).ToList();
 
-                var telefonesParaRemover = doador.Telefones
-                    .Where(t => !doadorDto.Telefones.Contains(t.NumeroTelefone))
-                    .ToList();
+            //    var telefonesMantidos = doador.Telefones
+            //        .Where(t => doadorDto.Telefones.Contains(t.NumeroTelefone))
+            //        .ToList();
 
-                var telefonesParaAdicionar = doadorDto.Telefones
-                    .Where(t => !telefonesAtuais.Contains(t))
-                    .ToList();
+            //    var telefonesParaRemover = doador.Telefones
+            //        .Where(t => !doadorDto.Telefones.Contains(t.NumeroTelefone))
+            //        .ToList();
 
-                _context.RemoveRange(telefonesParaRemover);
+            //    var telefonesParaAdicionar = doadorDto.Telefones
+            //        .Where(t => !telefonesAtuais.Contains(t))
+            //        .ToList();
 
-                foreach (var novoTelefone in telefonesParaAdicionar)
-                {
-                    doador.Telefones.Add(new Telefone
-                    {
-                        NumeroTelefone = novoTelefone
-                    });
-                }
-            }
+            //    _context.RemoveRange(telefonesParaRemover);
+
+            //    foreach (var novoTelefone in telefonesParaAdicionar)
+            //    {
+            //        doador.Telefones.Add(new Telefone
+            //        {
+            //            NumeroTelefone = novoTelefone
+            //        });
+            //    }
+            //}
 
             await _context.SaveChangesAsync();
 
@@ -232,14 +252,16 @@ namespace AAPS.Api.Services.Doadores
                 Rg = doador.Rg,
                 Cpf = doador.Cpf,
                 Status = doador.Status,
-                Telefones = doador.Telefones.Select(t => t.NumeroTelefone).ToList(),
-                Logradouro = doador.Endereco.Logradouro,
-                Numero = doador.Endereco.Numero,
-                Complemento = doador.Endereco.Complemento,
-                Bairro = doador.Endereco.Bairro,
-                Uf = doador.Endereco.Uf,
-                Cidade = doador.Endereco.Cidade,
-                Cep = doador.Endereco.Cep,
+                //Telefones = doador.Telefones.Select(t => t.NumeroTelefone).ToList(),
+                Contato1 = doador.Contato1,
+                Contato2 = doador.Contato2,
+                Logradouro = doador.Logradouro,
+                Numero = doador.Numero,
+                Complemento = doador.Complemento,
+                Bairro = doador.Bairro,
+                Uf = doador.Uf,
+                Cidade = doador.Cidade,
+                Cep = doador.Cep,
             };
         }
 
@@ -272,6 +294,11 @@ namespace AAPS.Api.Services.Doadores
             if (string.IsNullOrEmpty(doadorDto.Status.ToString()) || !Enum.IsDefined(typeof(StatusEnum), doadorDto.Status))
                 erros.Add("O campo 'Status' é obrigatório!");
 
+            if (string.IsNullOrEmpty(doadorDto.Contato1) || doadorDto.Contato1.Length != 11)
+                erros.Add("O campo 'Contato 1' é obrigatório!");
+            if (string.IsNullOrEmpty(doadorDto.Contato2) || doadorDto.Contato2.Length != 11)
+                erros.Add("O campo 'Contato 2' é obrigatório!");
+
             if (string.IsNullOrEmpty(doadorDto.Logradouro))
                 erros.Add("O campo 'Logradouro' é obrigatório!");
             if (string.IsNullOrEmpty(doadorDto.Numero.ToString()) || doadorDto.Numero <= 0)
@@ -285,8 +312,8 @@ namespace AAPS.Api.Services.Doadores
             if (string.IsNullOrEmpty(doadorDto.Cep) || doadorDto.Cep.Length != 8)
                 erros.Add("O campo 'CEP' é obrigatório e deve conter exatamente 8 dígitos!");
 
-            if (doadorDto.Telefones == null || doadorDto.Telefones.Count < 2)
-                erros.Add("É necessário informar pelo menos dois telefones!");
+            //if (doadorDto.Telefones == null || doadorDto.Telefones.Count < 2)
+            //    erros.Add("É necessário informar pelo menos dois telefones!");
 
             var doadorExistente = await _context.Pessoas
                 .Where(d =>
@@ -317,6 +344,11 @@ namespace AAPS.Api.Services.Doadores
             if (doadorDto.Status != null && string.IsNullOrWhiteSpace(doadorDto.Status.ToString()))
                 erros.Add("O campo 'Status' não pode ter ser vazio!");
 
+            if (doadorDto.Contato1 != null && (string.IsNullOrWhiteSpace(doadorDto.Contato1) || doadorDto.Contato1.ToString().Length != 11))
+                erros.Add("O campo 'Contato 1' não pode ter ser vazio e deve ter exatamente 8 dígitos!");
+            if (doadorDto.Contato2 != null && (string.IsNullOrWhiteSpace(doadorDto.Contato2) || doadorDto.Contato2.ToString().Length != 11))
+                erros.Add("O campo 'Contato 2' não pode ter ser vazio e deve ter exatamente 8 dígitos!");
+
             if (doadorDto.Logradouro != null && string.IsNullOrWhiteSpace(doadorDto.Logradouro))
                 erros.Add("O campo 'Logradouro' não pode ter ser vazio!");
             if (doadorDto.Numero != null && doadorDto.Numero <= 0)
@@ -330,8 +362,8 @@ namespace AAPS.Api.Services.Doadores
             if (doadorDto.Cep != null && (string.IsNullOrWhiteSpace(doadorDto.Cep) || doadorDto.Cep.ToString().Length != 8))
                 erros.Add("O campo 'CEP' não pode ter ser vazio e deve ter exatamente 8 dígitos!");
 
-            if (doadorDto.Telefones != null && doadorDto.Telefones.Count < 2)
-                erros.Add("É necessário informar pelo menos dois telefones!");
+            //if (doadorDto.Telefones != null && doadorDto.Telefones.Count < 2)
+            //    erros.Add("É necessário informar pelo menos dois telefones!");
 
             return erros;
         }
@@ -341,8 +373,8 @@ namespace AAPS.Api.Services.Doadores
         private async Task<Pessoa?> BuscarDoadorPorId(int id)
         {
             return await _context.Pessoas
-                .Include(p => p.Endereco)
-                .Include(p => p.Telefones)
+                //.Include(p => p.Endereco)
+                //.Include(p => p.Telefones)
                 .Where(p => p.Tipo == TipoPessoaEnum.Doador)
                 .FirstOrDefaultAsync(d => d.Id == id);
         }

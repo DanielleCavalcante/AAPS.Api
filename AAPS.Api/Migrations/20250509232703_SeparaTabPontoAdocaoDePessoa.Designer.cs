@@ -4,6 +4,7 @@ using AAPS.Api.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AAPS.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250509232703_SeparaTabPontoAdocaoDePessoa")]
+    partial class SeparaTabPontoAdocaoDePessoa
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,9 +67,6 @@ namespace AAPS.Api.Migrations
 
                     b.Property<int>("AnimalId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("Cancelada")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime>("Data")
                         .HasColumnType("date");
@@ -157,9 +157,6 @@ namespace AAPS.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(25)");
 
-                    b.Property<bool>("Resgatado")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Sexo")
                         .IsRequired()
                         .HasColumnType("nvarchar(10)");
@@ -172,6 +169,54 @@ namespace AAPS.Api.Migrations
                     b.HasIndex("PessoaId");
 
                     b.ToTable("Animais", "dbo");
+                });
+
+            modelBuilder.Entity("AAPS.Api.Models.Endereco", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Bairro")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Cep")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(8)");
+
+                    b.Property<string>("Cidade")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Complemento")
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Logradouro")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("Numero")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PessoaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SituacaoEndereco")
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Uf")
+                        .IsRequired()
+                        .HasColumnType("char(2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PessoaId")
+                        .IsUnique();
+
+                    b.ToTable("Enderecos", "dbo");
                 });
 
             modelBuilder.Entity("AAPS.Api.Models.Evento", b =>
@@ -202,47 +247,17 @@ namespace AAPS.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Bairro")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Cep")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(8)");
-
-                    b.Property<string>("Cidade")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Complemento")
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Contato1")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(11)");
-
-                    b.Property<string>("Contato2")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(11)");
-
                     b.Property<string>("Cpf")
                         .HasColumnType("nvarchar(11)");
-
-                    b.Property<string>("Logradouro")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("Nome")
                         .HasColumnType("nvarchar(60)");
 
-                    b.Property<int>("Numero")
+                    b.Property<int?>("PontoAdocaoId")
                         .HasColumnType("int");
 
                     b.Property<string>("Rg")
                         .HasColumnType("nvarchar(9)");
-
-                    b.Property<string>("SituacaoEndereco")
-                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -250,11 +265,9 @@ namespace AAPS.Api.Migrations
                     b.Property<int>("Tipo")
                         .HasColumnType("int");
 
-                    b.Property<string>("Uf")
-                        .IsRequired()
-                        .HasColumnType("char(2)");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("PontoAdocaoId");
 
                     b.ToTable("Pessoas", "dbo");
                 });
@@ -319,6 +332,28 @@ namespace AAPS.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PontosAdocao", "dbo");
+                });
+
+            modelBuilder.Entity("AAPS.Api.Models.Telefone", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("NumeroTelefone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(11)");
+
+                    b.Property<int>("PessoaId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PessoaId");
+
+                    b.ToTable("Telefones", "dbo");
                 });
 
             modelBuilder.Entity("AAPS.Api.Models.Voluntario", b =>
@@ -575,6 +610,37 @@ namespace AAPS.Api.Migrations
                     b.Navigation("Pessoa");
                 });
 
+            modelBuilder.Entity("AAPS.Api.Models.Endereco", b =>
+                {
+                    b.HasOne("AAPS.Api.Models.Pessoa", "Pessoa")
+                        .WithOne("Endereco")
+                        .HasForeignKey("AAPS.Api.Models.Endereco", "PessoaId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Pessoa");
+                });
+
+            modelBuilder.Entity("AAPS.Api.Models.Pessoa", b =>
+                {
+                    b.HasOne("AAPS.Api.Models.PontoAdocao", "PontoAdocao")
+                        .WithMany()
+                        .HasForeignKey("PontoAdocaoId");
+
+                    b.Navigation("PontoAdocao");
+                });
+
+            modelBuilder.Entity("AAPS.Api.Models.Telefone", b =>
+                {
+                    b.HasOne("AAPS.Api.Models.Pessoa", "Pessoa")
+                        .WithMany("Telefones")
+                        .HasForeignKey("PessoaId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Pessoa");
+                });
+
             modelBuilder.Entity("AAPS.Api.Models.Voluntario", b =>
                 {
                     b.HasOne("AAPS.Api.Models.Pessoa", "Pessoa")
@@ -659,6 +725,10 @@ namespace AAPS.Api.Migrations
                     b.Navigation("Adotante");
 
                     b.Navigation("Animais");
+
+                    b.Navigation("Endereco");
+
+                    b.Navigation("Telefones");
 
                     b.Navigation("Voluntario");
                 });

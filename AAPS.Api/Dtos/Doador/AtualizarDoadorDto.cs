@@ -9,7 +9,10 @@ namespace AAPS.Api.Dtos.Doador
         public string? Cpf { get; set; }
         public StatusEnum? Status { get; set; }
 
-        public List<string?> Telefones { get; set; }
+        //public List<string?> Telefones { get; set; }
+
+        public string? Contato1 { get; set; }
+        public string? Contato2 { get; set; }
 
         public string? Logradouro { get; set; }
         public int? Numero { get; set; }

@@ -11,11 +11,24 @@ public class Pessoa
     public TipoPessoaEnum Tipo {  get; set; } 
     public StatusEnum Status { get; set; } = StatusEnum.Ativo;
 
+    public string Contato1 { get; set; }
+    public string Contato2 { get; set; }
+
+    public string Logradouro { get; set; }
+    public int Numero { get; set; }
+    public string? Complemento { get; set; }
+    public string Bairro { get; set; }
+    public string Uf { get; set; }
+    public string Cidade { get; set; }
+    public string Cep { get; set; }
+
+    public string? SituacaoEndereco { get; set; }
+
     // Relacionamentos
     public Adotante? Adotante { get; set; }
-    public PontoAdocao? PontoAdocao { get; set; }
+    //public PontoAdocao? PontoAdocao { get; set; }
     public Voluntario? Voluntario { get; set; }
-    public Endereco? Endereco { get; set; }
-    public ICollection<Telefone>? Telefones { get; set; } = new List<Telefone>();
+    //public Endereco? Endereco { get; set; }
+    //public ICollection<Telefone>? Telefones { get; set; } = new List<Telefone>();
     public ICollection<Animal>? Animais { get; set; } = new List<Animal>();
 }

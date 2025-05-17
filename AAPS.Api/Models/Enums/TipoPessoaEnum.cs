@@ -8,7 +8,7 @@ namespace AAPS.Api.Models.Enums
     {
         Adotante = 1,
         Doador = 2,
-        PontoAdocao = 3,
+        PontoAdocao = 3, // nao tem mais
         Voluntario = 4
     }
 }

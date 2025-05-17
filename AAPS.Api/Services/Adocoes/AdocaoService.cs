@@ -1,5 +1,6 @@
 ﻿using AAPS.Api.Context;
 using AAPS.Api.Dtos.Adocao;
+using AAPS.Api.Dtos.Animal;
 using AAPS.Api.Models;
 using AAPS.Api.Models.Enums;
 using AAPS.Api.Services.Adotantes;
@@ -66,6 +67,7 @@ namespace AAPS.Api.Services.Adocoes
             var adocao = new Adocao
             {
                 Data = adocaoDto.Data,
+                Cancelada = false,
                 AdotanteId = adocaoDto.AdotanteId,
                 AnimalId = adocaoDto.AnimalId,
                 VoluntarioId = adocaoDto.VoluntarioId,
@@ -81,6 +83,7 @@ namespace AAPS.Api.Services.Adocoes
             {
                 Id = adocao.Id,
                 Data = adocao.Data,
+                Cancelada = adocao.Cancelada,
                 AdotanteId = adocao.AdotanteId,
                 AnimalId = adocao.AnimalId,
                 VoluntarioId = adocao.VoluntarioId,
@@ -105,8 +108,13 @@ namespace AAPS.Api.Services.Adocoes
                     a.Adotante.Pessoa.Nome.ToLower().Contains(buscaLower) ||
                     a.Animal.Nome.Contains(buscaLower) ||
                     a.Voluntario.Pessoa.Nome.Contains(buscaLower) ||
-                    a.PontoAdocao.Pessoa.Nome.Contains(buscaLower)
+                    a.PontoAdocao.NomeFantasia.Contains(buscaLower)
                 );
+            }
+
+            if (filtro.Cancelada)
+            {
+                query = query.Where(a => a.Cancelada == filtro.Cancelada == true);
             }
 
             var adocoesDto = await query
@@ -114,6 +122,7 @@ namespace AAPS.Api.Services.Adocoes
                 {
                     Id = a.Id,
                     Data = a.Data,
+                    Cancelada = a.Cancelada,
                     NomeAdotante = a.Adotante.Pessoa.Nome,
                     AdotanteId = a.AdotanteId,
                     NomeAnimal = a.Animal.Nome,
@@ -141,6 +150,7 @@ namespace AAPS.Api.Services.Adocoes
             {
                 Id = adocao.Id,
                 Data = adocao.Data,
+                Cancelada = adocao.Cancelada,
                 AdotanteId = adocao.AdotanteId,
                 AnimalId = adocao.AnimalId,
                 VoluntarioId = adocao.VoluntarioId,
@@ -159,6 +169,7 @@ namespace AAPS.Api.Services.Adocoes
             var animalAnteriorId = adocao.AnimalId;
 
             adocao.Data = adocaoDto.Data.HasValue ? adocaoDto.Data.Value : adocao.Data;
+            adocao.Cancelada = adocaoDto.Cancelada.HasValue ? adocaoDto.Cancelada.Value : adocao.Cancelada;
             adocao.AdotanteId = adocaoDto.AdotanteId.HasValue ? adocaoDto.AdotanteId.Value : adocao.AdotanteId;
             adocao.AnimalId = adocaoDto.AnimalId.HasValue ? adocaoDto.AnimalId.Value : adocao.AnimalId;
             adocao.VoluntarioId = adocaoDto.VoluntarioId.HasValue ? adocaoDto.VoluntarioId.Value : adocao.VoluntarioId;
@@ -209,6 +220,7 @@ namespace AAPS.Api.Services.Adocoes
             {
                 Id = adocao.Id,
                 Data = adocao.Data,
+                Cancelada = adocao.Cancelada,
                 AdotanteId = adocao.AdotanteId,
                 AnimalId = adocao.AnimalId,
                 VoluntarioId = adocao.VoluntarioId,
@@ -259,6 +271,8 @@ namespace AAPS.Api.Services.Adocoes
 
             if (adocaoDto.Data != null && adocaoDto.Data == DateTime.MinValue && string.IsNullOrWhiteSpace(adocaoDto.Data.ToString()))
                 erros.Add("O campo 'Data' não pode estar vazio!");
+            if (adocaoDto.Cancelada != null && string.IsNullOrWhiteSpace(adocaoDto.Cancelada.ToString()))
+                erros.Add("O campo 'Cancelada' não pode ter ser vazio!");
 
             if (adocaoDto.AdotanteId != null)
             {

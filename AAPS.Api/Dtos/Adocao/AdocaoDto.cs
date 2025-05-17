@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public required DateTime Data { get; set; }
+        public required bool Cancelada { get; set; }
 
         public string NomeAdotante { get; set; }
         public required int AdotanteId { get; set; }

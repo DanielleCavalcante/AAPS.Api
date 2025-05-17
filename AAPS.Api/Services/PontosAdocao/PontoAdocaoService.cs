@@ -21,27 +21,49 @@ namespace AAPS.Api.Services.PontosAdocao
 
         public async Task<PontoAdocaoDto> CriarPontoAdocao(CriarPontoAdocaoDto pontoAdocaoDto)
         {
-            var pessoa = new Pessoa
+            //var pessoa = new Pessoa
+            //{
+            //    Tipo = TipoPessoaEnum.PontoAdocao,
+            //    Status = pontoAdocaoDto.Status,
+            //};
+
+            //_context.Pessoas.Add(pessoa);
+            //await _context.SaveChangesAsync();
+
+            //var telefones = pontoAdocaoDto.Telefones
+            //    .Select(t => new Telefone
+            //    {
+            //        NumeroTelefone = t,
+            //        PessoaId = pessoa.Id
+            //    }).ToList();
+
+            //_context.Telefones.AddRange(telefones);
+            //await _context.SaveChangesAsync();
+
+            //var endereco = new Endereco
+            //{
+            //    Logradouro = pontoAdocaoDto.Logradouro,
+            //    Numero = pontoAdocaoDto.Numero,
+            //    Complemento = pontoAdocaoDto.Complemento,
+            //    Bairro = pontoAdocaoDto.Bairro,
+            //    Uf = pontoAdocaoDto.Uf,
+            //    Cidade = pontoAdocaoDto.Cidade,
+            //    Cep = pontoAdocaoDto.Cep,
+            //    PessoaId = pessoa.Id
+            //};
+
+            //_context.Enderecos.Add(endereco);
+            //await _context.SaveChangesAsync();
+
+            var pontoAdocao = new PontoAdocao
             {
-                Tipo = TipoPessoaEnum.PontoAdocao,
-                Status = pontoAdocaoDto.Status,
-            };
+                NomeFantasia = pontoAdocaoDto.NomeFantasia,
+                Responsavel = pontoAdocaoDto.Responsavel,
+                Cnpj = pontoAdocaoDto.Cnpj,
 
-            _context.Pessoas.Add(pessoa);
-            await _context.SaveChangesAsync();
+                Contato1 = pontoAdocaoDto.Contato1,
+                Contato2 = pontoAdocaoDto.Contato2,
 
-            var telefones = pontoAdocaoDto.Telefones
-                .Select(t => new Telefone
-                {
-                    NumeroTelefone = t,
-                    PessoaId = pessoa.Id
-                }).ToList();
-
-            _context.Telefones.AddRange(telefones);
-            await _context.SaveChangesAsync();
-
-            var endereco = new Endereco
-            {
                 Logradouro = pontoAdocaoDto.Logradouro,
                 Numero = pontoAdocaoDto.Numero,
                 Complemento = pontoAdocaoDto.Complemento,
@@ -49,18 +71,6 @@ namespace AAPS.Api.Services.PontosAdocao
                 Uf = pontoAdocaoDto.Uf,
                 Cidade = pontoAdocaoDto.Cidade,
                 Cep = pontoAdocaoDto.Cep,
-                PessoaId = pessoa.Id
-            };
-
-            _context.Enderecos.Add(endereco);
-            await _context.SaveChangesAsync();
-
-            var pontoAdocao = new PontoAdocao
-            {
-                NomeFantasia = pontoAdocaoDto.NomeFantasia,
-                Responsavel = pontoAdocaoDto.Responsavel,
-                Cnpj = pontoAdocaoDto.Cnpj,
-                PessoaId = pessoa.Id
             };
 
             _context.PontosAdocao.Add(pontoAdocao);
@@ -72,7 +82,11 @@ namespace AAPS.Api.Services.PontosAdocao
                 Responsavel = pontoAdocaoDto.Responsavel,
                 Cnpj = pontoAdocaoDto.Cnpj,
                 Status = pontoAdocaoDto.Status,
-                Telefones = telefones.Select(t => t.NumeroTelefone).ToList(),
+                //Telefones = telefones.Select(t => t.NumeroTelefone).ToList(),
+
+                Contato1 = pontoAdocaoDto.Contato1,
+                Contato2 = pontoAdocaoDto.Contato2,
+
                 Logradouro = pontoAdocaoDto.Logradouro,
                 Numero = pontoAdocaoDto.Numero,
                 Complemento = pontoAdocaoDto.Complemento,
@@ -86,9 +100,9 @@ namespace AAPS.Api.Services.PontosAdocao
         public async Task<IEnumerable<PontoAdocaoDto>> ObterPontosAdocao(FiltroPontoAdocaoDto filtro)
         {
             var query = _context.PontosAdocao
-                .Include(p => p.Pessoa)
-                    .ThenInclude(p => p.Telefones)
-                .Where(p => p.Pessoa.Tipo == TipoPessoaEnum.PontoAdocao)
+                //.Include(p => p.Pessoa)
+                //    .ThenInclude(p => p.Telefones)
+                //.Where(p => p.Pessoa.Tipo == TipoPessoaEnum.PontoAdocao)
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(filtro.Busca))
@@ -104,7 +118,7 @@ namespace AAPS.Api.Services.PontosAdocao
 
             if (filtro.Status.HasValue)
             {
-                query = query.Where(a => a.Pessoa.Status == filtro.Status.Value);
+                query = query.Where(a => a.Status == filtro.Status.Value);
             }
 
             var pontoAdocaoDto = await query
@@ -114,15 +128,18 @@ namespace AAPS.Api.Services.PontosAdocao
                     NomeFantasia = p.NomeFantasia,
                     Responsavel = p.Responsavel,
                     Cnpj = p.Cnpj,
-                    Status = p.Pessoa.Status,
-                    Telefones = p.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
-                    Logradouro = p.Pessoa.Endereco.Logradouro,
-                    Numero = p.Pessoa.Endereco.Numero,
-                    Complemento = p.Pessoa.Endereco.Complemento,
-                    Bairro = p.Pessoa.Endereco.Bairro,
-                    Uf = p.Pessoa.Endereco.Uf,
-                    Cidade = p.Pessoa.Endereco.Cidade,
-                    Cep = p.Pessoa.Endereco.Cep,
+                    Status = p.Status,
+
+                    Contato1 = p.Contato1,
+                    Contato2 = p.Contato2,
+                    //Telefones = p.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
+                    Logradouro = p.Logradouro,
+                    Numero = p.Numero,
+                    Complemento = p.Complemento,
+                    Bairro = p.Bairro,
+                    Uf = p.Uf,
+                    Cidade = p.Cidade,
+                    Cep = p.Cep,
                 })
                 .ToListAsync();
 
@@ -144,41 +161,49 @@ namespace AAPS.Api.Services.PontosAdocao
                 NomeFantasia = pontoAdocao.NomeFantasia,
                 Responsavel = pontoAdocao.Responsavel,
                 Cnpj = pontoAdocao.Cnpj,
-                Status = pontoAdocao.Pessoa.Status,
-                Telefones = pontoAdocao.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
-                Logradouro = pontoAdocao.Pessoa.Endereco.Logradouro,
-                Numero = pontoAdocao.Pessoa.Endereco.Numero,
-                Complemento = pontoAdocao.Pessoa.Endereco.Complemento,
-                Bairro = pontoAdocao.Pessoa.Endereco.Bairro,
-                Uf = pontoAdocao.Pessoa.Endereco.Uf,
-                Cidade = pontoAdocao.Pessoa.Endereco.Cidade,
-                Cep = pontoAdocao.Pessoa.Endereco.Cep,
+                Status = pontoAdocao.Status,
+                //Telefones = pontoAdocao.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
+
+                Contato1 = pontoAdocao.Contato1,
+                Contato2 = pontoAdocao.Contato2,
+
+                Logradouro = pontoAdocao.Logradouro,
+                Numero = pontoAdocao.Numero,
+                Complemento = pontoAdocao.Complemento,
+                Bairro = pontoAdocao.Bairro,
+                Uf = pontoAdocao.Uf,
+                Cidade = pontoAdocao.Cidade,
+                Cep = pontoAdocao.Cep,
             };
         }
 
         public async Task<IEnumerable<PontoAdocaoDto>> ObterPontosAdocaoAtivos()
         {
             var pontosAdocao = await _context.PontosAdocao
-                .Include(p => p.Pessoa)
-                    .ThenInclude(p => p.Endereco)
-                .Include(p => p.Pessoa)
-                    .ThenInclude(p => p.Endereco)
-                .Where(p => p.Pessoa.Status == StatusEnum.Ativo && p.Pessoa.Tipo == TipoPessoaEnum.PontoAdocao)
+                //.Include(p => p.Pessoa)
+                //    .ThenInclude(p => p.Endereco)
+                //.Include(p => p.Pessoa)
+                //    .ThenInclude(p => p.Endereco)
+                .Where(p => p.Status == StatusEnum.Ativo /*&& p.Pessoa.Tipo == TipoPessoaEnum.PontoAdocao*/)
                 .Select(p => new PontoAdocaoDto
                 {
                     Id = p.Id,
                     NomeFantasia = p.NomeFantasia,
                     Responsavel = p.Responsavel,
                     Cnpj = p.Cnpj,
-                    Status = p.Pessoa.Status,
-                    Telefones = p.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
-                    Logradouro = p.Pessoa.Endereco.Logradouro,
-                    Numero = p.Pessoa.Endereco.Numero,
-                    Complemento = p.Pessoa.Endereco.Complemento,
-                    Bairro = p.Pessoa.Endereco.Bairro,
-                    Uf = p.Pessoa.Endereco.Uf,
-                    Cidade = p.Pessoa.Endereco.Cidade,
-                    Cep = p.Pessoa.Endereco.Cep,
+                    Status = p.Status,
+                    //Telefones = p.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
+
+                    Contato1 = p.Contato1,
+                    Contato2 = p.Contato2,
+
+                    Logradouro = p.Logradouro,
+                    Numero = p.Numero,
+                    Complemento = p.Complemento,
+                    Bairro = p.Bairro,
+                    Uf = p.Uf,
+                    Cidade = p.Cidade,
+                    Cep = p.Cep,
                 })
                 .ToListAsync();
 
@@ -194,46 +219,50 @@ namespace AAPS.Api.Services.PontosAdocao
                 return null;
             }
 
-            pontoAdocao.Pessoa.Status = pontoAdocaoDto.Status.HasValue ? pontoAdocaoDto.Status.Value : pontoAdocao.Pessoa.Status;
+            pontoAdocao.Status = pontoAdocaoDto.Status.HasValue ? pontoAdocaoDto.Status.Value : pontoAdocao.Status;
 
             pontoAdocao.NomeFantasia = string.IsNullOrEmpty(pontoAdocaoDto.NomeFantasia) ? pontoAdocao.NomeFantasia : pontoAdocaoDto.NomeFantasia;
             pontoAdocao.Responsavel = string.IsNullOrEmpty(pontoAdocaoDto.Responsavel) ? pontoAdocao.Responsavel : pontoAdocaoDto.Responsavel;
             pontoAdocao.Cnpj = string.IsNullOrEmpty(pontoAdocaoDto.Cnpj) ? pontoAdocao.Cnpj : pontoAdocaoDto.Cnpj;
 
-            pontoAdocao.Pessoa.Endereco.Logradouro = string.IsNullOrEmpty(pontoAdocaoDto.Logradouro) ? pontoAdocao.Pessoa.Endereco.Logradouro : pontoAdocaoDto.Logradouro;
-            pontoAdocao.Pessoa.Endereco.Numero = pontoAdocaoDto.Numero.HasValue ? pontoAdocaoDto.Numero.Value : pontoAdocao.Pessoa.Endereco.Numero;
-            pontoAdocao.Pessoa.Endereco.Complemento = string.IsNullOrEmpty(pontoAdocaoDto.Complemento) ? pontoAdocao.Pessoa.Endereco.Complemento : pontoAdocaoDto.Complemento;
-            pontoAdocao.Pessoa.Endereco.Bairro = string.IsNullOrEmpty(pontoAdocaoDto.Bairro) ? pontoAdocao.Pessoa.Endereco.Bairro : pontoAdocaoDto.Bairro;
-            pontoAdocao.Pessoa.Endereco.Uf = string.IsNullOrEmpty(pontoAdocaoDto.Uf) ? pontoAdocao.Pessoa.Endereco.Uf : pontoAdocaoDto.Uf;
-            pontoAdocao.Pessoa.Endereco.Cidade = string.IsNullOrEmpty(pontoAdocaoDto.Cidade) ? pontoAdocao.Pessoa.Endereco.Cidade : pontoAdocaoDto.Cidade;
-            pontoAdocao.Pessoa.Endereco.Cep = string.IsNullOrEmpty(pontoAdocaoDto.Cep) ? pontoAdocao.Pessoa.Endereco.Cep : pontoAdocaoDto.Cep;
+            pontoAdocao.Logradouro = string.IsNullOrEmpty(pontoAdocaoDto.Logradouro) ? pontoAdocao.Logradouro : pontoAdocaoDto.Logradouro;
+            pontoAdocao.Numero = pontoAdocaoDto.Numero.HasValue ? pontoAdocaoDto.Numero.Value : pontoAdocao.Numero;
+            pontoAdocao.Complemento = string.IsNullOrEmpty(pontoAdocaoDto.Complemento) ? pontoAdocao.Complemento : pontoAdocaoDto.Complemento;
+            pontoAdocao.Bairro = string.IsNullOrEmpty(pontoAdocaoDto.Bairro) ? pontoAdocao.Bairro : pontoAdocaoDto.Bairro;
+            pontoAdocao.Uf = string.IsNullOrEmpty(pontoAdocaoDto.Uf) ? pontoAdocao.Uf : pontoAdocaoDto.Uf;
+            pontoAdocao.Cidade = string.IsNullOrEmpty(pontoAdocaoDto.Cidade) ? pontoAdocao.Cidade : pontoAdocaoDto.Cidade;
+            pontoAdocao.Cep = string.IsNullOrEmpty(pontoAdocaoDto.Cep) ? pontoAdocao.Cep : pontoAdocaoDto.Cep;
 
-            if (pontoAdocaoDto.Telefones != null)
-            {
-                var telefonesAtuais = pontoAdocao.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList();
+            pontoAdocao.Contato1 = string.IsNullOrEmpty(pontoAdocaoDto.Contato1) ? pontoAdocao.Contato1 : pontoAdocaoDto.Contato1;
+            pontoAdocao.Contato2 = string.IsNullOrEmpty(pontoAdocaoDto.Contato2) ? pontoAdocao.Contato2 : pontoAdocaoDto.Contato2;
 
-                var telefonesMantidos = pontoAdocao.Pessoa.Telefones
-                    .Where(t => pontoAdocaoDto.Telefones.Contains(t.NumeroTelefone))
-                    .ToList();
 
-                var telefonesParaRemover = pontoAdocao.Pessoa.Telefones
-                    .Where(t => !pontoAdocaoDto.Telefones.Contains(t.NumeroTelefone))
-                    .ToList();
+            //if (pontoAdocaoDto.Telefones != null)
+            //{
+            //    var telefonesAtuais = pontoAdocao.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList();
 
-                var telefonesParaAdicionar = pontoAdocaoDto.Telefones
-                    .Where(t => !telefonesAtuais.Contains(t))
-                    .ToList();
+            //    var telefonesMantidos = pontoAdocao.Pessoa.Telefones
+            //        .Where(t => pontoAdocaoDto.Telefones.Contains(t.NumeroTelefone))
+            //        .ToList();
 
-                _context.RemoveRange(telefonesParaRemover);
+            //    var telefonesParaRemover = pontoAdocao.Pessoa.Telefones
+            //        .Where(t => !pontoAdocaoDto.Telefones.Contains(t.NumeroTelefone))
+            //        .ToList();
 
-                foreach (var novoTelefone in telefonesParaAdicionar)
-                {
-                    pontoAdocao.Pessoa.Telefones.Add(new Telefone
-                    {
-                        NumeroTelefone = novoTelefone
-                    });
-                }
-            }
+            //    var telefonesParaAdicionar = pontoAdocaoDto.Telefones
+            //        .Where(t => !telefonesAtuais.Contains(t))
+            //        .ToList();
+
+            //    _context.RemoveRange(telefonesParaRemover);
+
+            //    foreach (var novoTelefone in telefonesParaAdicionar)
+            //    {
+            //        pontoAdocao.Pessoa.Telefones.Add(new Telefone
+            //        {
+            //            NumeroTelefone = novoTelefone
+            //        });
+            //    }
+            //}
 
             await _context.SaveChangesAsync();
 
@@ -243,15 +272,19 @@ namespace AAPS.Api.Services.PontosAdocao
                 NomeFantasia = pontoAdocao.NomeFantasia,
                 Responsavel = pontoAdocao.Responsavel,
                 Cnpj = pontoAdocao.Cnpj,
-                Status = pontoAdocao.Pessoa.Status,
-                Telefones = pontoAdocao.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
-                Logradouro = pontoAdocao.Pessoa.Endereco.Logradouro,
-                Numero = pontoAdocao.Pessoa.Endereco.Numero,
-                Complemento = pontoAdocao.Pessoa.Endereco.Complemento,
-                Bairro = pontoAdocao.Pessoa.Endereco.Bairro,
-                Uf = pontoAdocao.Pessoa.Endereco.Uf,
-                Cidade = pontoAdocao.Pessoa.Endereco.Cidade,
-                Cep = pontoAdocao.Pessoa.Endereco.Cep,
+                Status = pontoAdocao.Status,
+                //Telefones = pontoAdocao.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
+
+                Contato1 = pontoAdocao.Contato1,
+                Contato2 = pontoAdocao.Contato2,
+
+                Logradouro = pontoAdocao.Logradouro,
+                Numero = pontoAdocao.Numero,
+                Complemento = pontoAdocao.Complemento,
+                Bairro = pontoAdocao.Bairro,
+                Uf = pontoAdocao.Uf,
+                Cidade = pontoAdocao.Cidade,
+                Cep = pontoAdocao.Cep,
             };
         }
 
@@ -264,7 +297,7 @@ namespace AAPS.Api.Services.PontosAdocao
                 return false;
             }
 
-            pontoAdocao.Pessoa.Status = StatusEnum.Inativo;
+            pontoAdocao.Status = StatusEnum.Inativo;
             await _context.SaveChangesAsync();
 
             return true;
@@ -297,23 +330,29 @@ namespace AAPS.Api.Services.PontosAdocao
             if (string.IsNullOrEmpty(pontoAdocaoDto.Cep) || pontoAdocaoDto.Cep.Length != 8)
                 erros.Add("O campo 'CEP' é obrigatório e deve conter exatamente 8 dígitos!");
 
-            if (pontoAdocaoDto.Telefones == null || pontoAdocaoDto.Telefones.Count < 2)
-                erros.Add("É necessário informar pelo menos dois telefones!");
+            //if (pontoAdocaoDto.Telefones == null || pontoAdocaoDto.Telefones.Count < 2)
+            //    erros.Add("É necessário informar pelo menos dois telefones!");
+
+            if (string.IsNullOrEmpty(pontoAdocaoDto.Contato1) || pontoAdocaoDto.Contato1.Length != 11)
+                erros.Add("O campo 'Contato 1' é obrigatório!");
+            if (string.IsNullOrEmpty(pontoAdocaoDto.Contato2) || pontoAdocaoDto.Contato2.Length != 11)
+                erros.Add("O campo 'Contato 2' é obrigatório!");
+
 
             var pontoAdocaoExistente = await _context.PontosAdocao
-                .Include(p => p.Pessoa)
-                .ThenInclude(p => p.Endereco)
+                //.Include(p => p.Pessoa)
+                //.ThenInclude(p => p.Endereco)
                 .Where(p =>
                     p.NomeFantasia == pontoAdocaoDto.NomeFantasia &&
                     p.Responsavel == pontoAdocaoDto.Responsavel &&
                     p.Cnpj == pontoAdocaoDto.Cnpj &&
-                    p.Pessoa.Endereco.Logradouro == pontoAdocaoDto.Logradouro &&
-                    p.Pessoa.Endereco.Numero == pontoAdocaoDto.Numero &&
-                    p.Pessoa.Endereco.Complemento == pontoAdocaoDto.Complemento &&
-                    p.Pessoa.Endereco.Bairro == pontoAdocaoDto.Bairro &&
-                    p.Pessoa.Endereco.Uf == pontoAdocaoDto.Uf &&
-                    p.Pessoa.Endereco.Cidade == pontoAdocaoDto.Cidade &&
-                    p.Pessoa.Endereco.Cep == pontoAdocaoDto.Cep
+                    p.Logradouro == pontoAdocaoDto.Logradouro &&
+                    p.Numero == pontoAdocaoDto.Numero &&
+                    p.Complemento == pontoAdocaoDto.Complemento &&
+                    p.Bairro == pontoAdocaoDto.Bairro &&
+                    p.Uf == pontoAdocaoDto.Uf &&
+                    p.Cidade == pontoAdocaoDto.Cidade &&
+                    p.Cep == pontoAdocaoDto.Cep
                 )
                 .FirstOrDefaultAsync();
 
@@ -352,8 +391,13 @@ namespace AAPS.Api.Services.PontosAdocao
             if (pontoAdocaoDto.Cnpj != null && string.IsNullOrWhiteSpace(pontoAdocaoDto.Cnpj))
                 erros.Add("O campo 'CNPJ' não pode ser vazio!");
 
-            if (pontoAdocaoDto.Telefones != null && pontoAdocaoDto.Telefones.Count < 2)
-                erros.Add("É necessário informar pelo menos dois telefones!");
+            //if (pontoAdocaoDto.Telefones != null && pontoAdocaoDto.Telefones.Count < 2)
+            //    erros.Add("É necessário informar pelo menos dois telefones!");
+
+            if (pontoAdocaoDto.Contato1 != null && (string.IsNullOrWhiteSpace(pontoAdocaoDto.Contato1) || pontoAdocaoDto.Contato1.ToString().Length != 11))
+                erros.Add("O campo 'Contato 1' não pode ter ser vazio e deve ter exatamente 8 dígitos!");
+            if (pontoAdocaoDto.Contato2 != null && (string.IsNullOrWhiteSpace(pontoAdocaoDto.Contato2) || pontoAdocaoDto.Contato2.ToString().Length != 11))
+                erros.Add("O campo 'Contato 2' não pode ter ser vazio e deve ter exatamente 8 dígitos!");
 
             return erros;
         }
@@ -363,11 +407,11 @@ namespace AAPS.Api.Services.PontosAdocao
         private async Task<PontoAdocao?> BuscarPontoAdocaoPorId(int id)
         {
             return await _context.PontosAdocao
-                .Include(p => p.Pessoa)
-                    .ThenInclude(p => p.Endereco)
-                .Include(p => p.Pessoa)
-                    .ThenInclude(p => p.Telefones)
-                .Where(p => p.Pessoa.Tipo == TipoPessoaEnum.PontoAdocao)
+                //.Include(p => p.Pessoa)
+                //    .ThenInclude(p => p.Endereco)
+                //.Include(p => p.Pessoa)
+                //    .ThenInclude(p => p.Telefones)
+                //.Where(p => p.Pessoa.Tipo == TipoPessoaEnum.PontoAdocao)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 

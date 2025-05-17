@@ -9,7 +9,9 @@ namespace AAPS.Api.Dtos.PontoAdocao
         public string Cnpj { get; set; } = string.Empty;
         public StatusEnum Status { get; set; } = StatusEnum.Ativo;
 
-        public List<string> Telefones { get; set; } = new List<string>();
+        //public List<string> Telefones { get; set; } = new List<string>();
+        public string Contato1 { get; set; } = string.Empty;
+        public string Contato2 { get; set; } = string.Empty;
 
         public string Logradouro { get; set; } = string.Empty;
         public int Numero { get; set; } = 0;
