@@ -11,8 +11,9 @@ namespace AAPS.Api.Dtos.PontoAdocao
 
         //public List<string?> Telefones { get; set; }
 
-        public string? Contato1 { get; set; }
-        public string? Contato2 { get; set; }
+        public string? Celular { get; set; }
+        public string? Contato { get; set; }
+        public string? ResponsavelContato { get; set; }
 
         public string? Logradouro { get; set; }
         public int? Numero { get; set; }

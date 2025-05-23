@@ -61,8 +61,9 @@ namespace AAPS.Api.Services.PontosAdocao
                 Responsavel = pontoAdocaoDto.Responsavel,
                 Cnpj = pontoAdocaoDto.Cnpj,
 
-                Contato1 = pontoAdocaoDto.Contato1,
-                Contato2 = pontoAdocaoDto.Contato2,
+                Celular = pontoAdocaoDto.Celular,
+                Contato = pontoAdocaoDto.Contato,
+                ResponsavelContato = pontoAdocaoDto.ResponsavelContato,
 
                 Logradouro = pontoAdocaoDto.Logradouro,
                 Numero = pontoAdocaoDto.Numero,
@@ -84,8 +85,9 @@ namespace AAPS.Api.Services.PontosAdocao
                 Status = pontoAdocaoDto.Status,
                 //Telefones = telefones.Select(t => t.NumeroTelefone).ToList(),
 
-                Contato1 = pontoAdocaoDto.Contato1,
-                Contato2 = pontoAdocaoDto.Contato2,
+                Celular = pontoAdocaoDto.Celular,
+                Contato = pontoAdocaoDto.Contato,
+                ResponsavelContato = pontoAdocaoDto.ResponsavelContato,
 
                 Logradouro = pontoAdocaoDto.Logradouro,
                 Numero = pontoAdocaoDto.Numero,
@@ -130,8 +132,9 @@ namespace AAPS.Api.Services.PontosAdocao
                     Cnpj = p.Cnpj,
                     Status = p.Status,
 
-                    Contato1 = p.Contato1,
-                    Contato2 = p.Contato2,
+                    Celular = p.Celular,
+                    Contato = p.Contato,
+                    ResponsavelContato = p.ResponsavelContato,
                     //Telefones = p.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
                     Logradouro = p.Logradouro,
                     Numero = p.Numero,
@@ -164,8 +167,9 @@ namespace AAPS.Api.Services.PontosAdocao
                 Status = pontoAdocao.Status,
                 //Telefones = pontoAdocao.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
 
-                Contato1 = pontoAdocao.Contato1,
-                Contato2 = pontoAdocao.Contato2,
+                Celular = pontoAdocao.Celular,
+                Contato = pontoAdocao.Contato,
+                ResponsavelContato = pontoAdocao.ResponsavelContato,
 
                 Logradouro = pontoAdocao.Logradouro,
                 Numero = pontoAdocao.Numero,
@@ -194,8 +198,9 @@ namespace AAPS.Api.Services.PontosAdocao
                     Status = p.Status,
                     //Telefones = p.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
 
-                    Contato1 = p.Contato1,
-                    Contato2 = p.Contato2,
+                    Celular = p.Celular,
+                    Contato = p.Contato,
+                    ResponsavelContato = p.ResponsavelContato,
 
                     Logradouro = p.Logradouro,
                     Numero = p.Numero,
@@ -233,8 +238,9 @@ namespace AAPS.Api.Services.PontosAdocao
             pontoAdocao.Cidade = string.IsNullOrEmpty(pontoAdocaoDto.Cidade) ? pontoAdocao.Cidade : pontoAdocaoDto.Cidade;
             pontoAdocao.Cep = string.IsNullOrEmpty(pontoAdocaoDto.Cep) ? pontoAdocao.Cep : pontoAdocaoDto.Cep;
 
-            pontoAdocao.Contato1 = string.IsNullOrEmpty(pontoAdocaoDto.Contato1) ? pontoAdocao.Contato1 : pontoAdocaoDto.Contato1;
-            pontoAdocao.Contato2 = string.IsNullOrEmpty(pontoAdocaoDto.Contato2) ? pontoAdocao.Contato2 : pontoAdocaoDto.Contato2;
+            pontoAdocao.Celular = string.IsNullOrEmpty(pontoAdocaoDto.Celular) ? pontoAdocao.Celular : pontoAdocaoDto.Celular;
+            pontoAdocao.Contato = string.IsNullOrEmpty(pontoAdocaoDto.Contato) ? pontoAdocao.Contato : pontoAdocaoDto.Contato;
+            pontoAdocao.ResponsavelContato = string.IsNullOrEmpty(pontoAdocaoDto.ResponsavelContato) ? pontoAdocao.ResponsavelContato : pontoAdocaoDto.ResponsavelContato;
 
 
             //if (pontoAdocaoDto.Telefones != null)
@@ -275,8 +281,9 @@ namespace AAPS.Api.Services.PontosAdocao
                 Status = pontoAdocao.Status,
                 //Telefones = pontoAdocao.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
 
-                Contato1 = pontoAdocao.Contato1,
-                Contato2 = pontoAdocao.Contato2,
+                Celular = pontoAdocao.Celular,
+                Contato = pontoAdocao.Contato,
+                ResponsavelContato = pontoAdocao.ResponsavelContato,
 
                 Logradouro = pontoAdocao.Logradouro,
                 Numero = pontoAdocao.Numero,
@@ -333,10 +340,12 @@ namespace AAPS.Api.Services.PontosAdocao
             //if (pontoAdocaoDto.Telefones == null || pontoAdocaoDto.Telefones.Count < 2)
             //    erros.Add("É necessário informar pelo menos dois telefones!");
 
-            if (string.IsNullOrEmpty(pontoAdocaoDto.Contato1) || pontoAdocaoDto.Contato1.Length != 11)
-                erros.Add("O campo 'Contato 1' é obrigatório!");
-            if (string.IsNullOrEmpty(pontoAdocaoDto.Contato2) || pontoAdocaoDto.Contato2.Length != 11)
-                erros.Add("O campo 'Contato 2' é obrigatório!");
+            if (string.IsNullOrEmpty(pontoAdocaoDto.Celular) || pontoAdocaoDto.Celular.Length != 11)
+                erros.Add("O campo 'Celular' é obrigatório!");
+            if (string.IsNullOrEmpty(pontoAdocaoDto.Contato) || pontoAdocaoDto.Contato.Length != 11)
+                erros.Add("O campo 'Contato' é obrigatório!");
+            if (string.IsNullOrEmpty(pontoAdocaoDto.ResponsavelContato))
+                erros.Add("O campo 'Responsavel Contato' é obrigatório!");
 
 
             var pontoAdocaoExistente = await _context.PontosAdocao
@@ -394,10 +403,12 @@ namespace AAPS.Api.Services.PontosAdocao
             //if (pontoAdocaoDto.Telefones != null && pontoAdocaoDto.Telefones.Count < 2)
             //    erros.Add("É necessário informar pelo menos dois telefones!");
 
-            if (pontoAdocaoDto.Contato1 != null && (string.IsNullOrWhiteSpace(pontoAdocaoDto.Contato1) || pontoAdocaoDto.Contato1.ToString().Length != 11))
+            if (pontoAdocaoDto.Celular != null && (string.IsNullOrWhiteSpace(pontoAdocaoDto.Celular) || pontoAdocaoDto.Celular.ToString().Length != 11))
                 erros.Add("O campo 'Contato 1' não pode ter ser vazio e deve ter exatamente 8 dígitos!");
-            if (pontoAdocaoDto.Contato2 != null && (string.IsNullOrWhiteSpace(pontoAdocaoDto.Contato2) || pontoAdocaoDto.Contato2.ToString().Length != 11))
+            if (pontoAdocaoDto.Contato != null && (string.IsNullOrWhiteSpace(pontoAdocaoDto.Contato) || pontoAdocaoDto.Contato.ToString().Length != 11))
                 erros.Add("O campo 'Contato 2' não pode ter ser vazio e deve ter exatamente 8 dígitos!");
+            if (pontoAdocaoDto.ResponsavelContato != null && string.IsNullOrWhiteSpace(pontoAdocaoDto.ResponsavelContato))
+                erros.Add("O campo 'Responsavel Contato' não pode ser vazio!");
 
             return erros;
         }

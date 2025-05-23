@@ -4,6 +4,7 @@ using AAPS.Api.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AAPS.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250523112053_RemocaoRequiresNosCamposDePessoa")]
+    partial class RemocaoRequiresNosCamposDePessoa
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -207,37 +210,44 @@ namespace AAPS.Api.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Bairro")
+                        .IsRequired()
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Celular")
+                        .IsRequired()
                         .HasColumnType("nvarchar(11)");
 
                     b.Property<string>("Cep")
+                        .IsRequired()
                         .HasColumnType("nvarchar(8)");
 
                     b.Property<string>("Cidade")
+                        .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Complemento")
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Contato")
+                        .IsRequired()
                         .HasColumnType("nvarchar(11)");
 
                     b.Property<string>("Cpf")
                         .HasColumnType("nvarchar(11)");
 
                     b.Property<string>("Logradouro")
+                        .IsRequired()
                         .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasColumnType("nvarchar(60)");
 
-                    b.Property<int?>("Numero")
+                    b.Property<int>("Numero")
                         .HasColumnType("int");
 
                     b.Property<string>("ResponsavelContato")
+                        .IsRequired()
                         .HasColumnType("nvarchar(60)");
 
                     b.Property<string>("Rg")
@@ -253,6 +263,7 @@ namespace AAPS.Api.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Uf")
+                        .IsRequired()
                         .HasColumnType("char(2)");
 
                     b.HasKey("Id");

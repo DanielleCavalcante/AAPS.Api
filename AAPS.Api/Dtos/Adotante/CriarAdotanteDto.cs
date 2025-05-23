@@ -11,13 +11,15 @@ namespace AAPS.Api.Dtos.Adotante
 
         //public List<string> Telefones { get; set; } = new List<string>();
 
-        public string Contato1 { get; set; } = string.Empty;
-        public string Contato2 { get; set; } = string.Empty;
+        public string Celular { get; set; } = string.Empty;
+        public string Contato { get; set; } = string.Empty;
+        public string ResponsavelContato { get; set; } = string.Empty;
 
         public string LocalTrabalho { get; set; } = string.Empty;
         public string Facebook { get; set; } = string.Empty;
         public string Instagram { get; set; } = string.Empty;
         public BloqueioEnum Bloqueio { get; set; } = BloqueioEnum.Desbloquado;
+        public string ObservacaoBloqueio { get; set; } = string.Empty;
 
         public string Logradouro { get; set; } = string.Empty;
         public int Numero { get; set; } = 0;

@@ -10,13 +10,15 @@ namespace AAPS.Api.Dtos.Adotante
         public StatusEnum? Status { get; set; }
 
         //public List<string?> Telefones { get; set; }
-        public string? Contato1 { get; set; }
-        public string? Contato2 { get; set; }
+        public string? Celular { get; set; }
+        public string? Contato { get; set; }
+        public string? ResponsavelContato { get; set; }
 
         public string? LocalTrabalho { get; set; }
         public string? Facebook { get; set; }
         public string? Instagram { get; set; }
         public BloqueioEnum? Bloqueio { get; set; }
+        public string? ObservacaoBloqueio { get; set; }
 
         public string? Logradouro { get; set; }
         public int? Numero { get; set; }

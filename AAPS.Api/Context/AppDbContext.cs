@@ -80,22 +80,23 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
 
             entity.HasKey(x => x.Id);
 
-            entity.Property(x => x.Nome).HasColumnType("nvarchar(60)");
+            entity.Property(x => x.Nome).HasColumnType("nvarchar(60)").IsRequired();
             entity.Property(x => x.Rg).HasColumnType("nvarchar(9)");
             entity.Property(x => x.Cpf).HasColumnType("nvarchar(11)");
             entity.Property(x => x.Tipo).HasColumnType("int").IsRequired();
             entity.Property(x => x.Status).HasColumnType("int").IsRequired();
 
-            entity.Property(x => x.Contato1).HasColumnType("nvarchar(11)").IsRequired();
-            entity.Property(x => x.Contato2).HasColumnType("nvarchar(11)").IsRequired();
+            entity.Property(x => x.Celular).HasColumnType("nvarchar(11)");
+            entity.Property(x => x.Contato).HasColumnType("nvarchar(11)");
+            entity.Property(x => x.ResponsavelContato).HasColumnType("nvarchar(60)");
 
-            entity.Property(x => x.Logradouro).HasColumnType("nvarchar(150)").IsRequired();
-            entity.Property(x => x.Numero).HasColumnType("int").IsRequired();
+            entity.Property(x => x.Logradouro).HasColumnType("nvarchar(150)");
+            entity.Property(x => x.Numero).HasColumnType("int");
             entity.Property(x => x.Complemento).HasColumnType("nvarchar(100)");
-            entity.Property(x => x.Bairro).HasColumnType("nvarchar(100)").IsRequired();
-            entity.Property(x => x.Uf).HasColumnType("char(2)").IsRequired();
-            entity.Property(x => x.Cidade).HasColumnType("nvarchar(50)").IsRequired();
-            entity.Property(x => x.Cep).HasColumnType("nvarchar(8)").IsRequired();
+            entity.Property(x => x.Bairro).HasColumnType("nvarchar(100)");
+            entity.Property(x => x.Uf).HasColumnType("char(2)");
+            entity.Property(x => x.Cidade).HasColumnType("nvarchar(50)");
+            entity.Property(x => x.Cep).HasColumnType("nvarchar(8)");
             entity.Property(x => x.SituacaoEndereco).HasColumnType("nvarchar(100)");
 
             // Relacionamentos 1:1
@@ -136,6 +137,7 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
             entity.Property(x => x.Facebook).HasColumnType("nvarchar(150)").IsRequired();
             entity.Property(x => x.Instagram).HasColumnType("nvarchar(150)").IsRequired();
             entity.Property(x => x.Bloqueio).HasColumnType("int").IsRequired();
+            entity.Property(x => x.ObservacaoBloqueio).HasColumnType("nvarchar(500)");
 
             entity.Property(x => x.PessoaId).HasColumnType("int").IsRequired();
 
@@ -161,8 +163,9 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
 
             entity.Property(x => x.Status).HasColumnType("int").IsRequired();
 
-            entity.Property(x => x.Contato1).HasColumnType("nvarchar(11)").IsRequired();
-            entity.Property(x => x.Contato2).HasColumnType("nvarchar(11)").IsRequired();
+            entity.Property(x => x.Celular).HasColumnType("nvarchar(11)").IsRequired();
+            entity.Property(x => x.Contato).HasColumnType("nvarchar(11)").IsRequired();
+            entity.Property(x => x.ResponsavelContato).HasColumnType("nvarchar(60)");
 
             entity.Property(x => x.Logradouro).HasColumnType("nvarchar(150)").IsRequired();
             entity.Property(x => x.Numero).HasColumnType("int").IsRequired();

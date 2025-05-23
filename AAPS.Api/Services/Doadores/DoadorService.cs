@@ -29,8 +29,9 @@ namespace AAPS.Api.Services.Doadores
                 Cpf = doadorDto.Cpf,
                 Tipo = TipoPessoaEnum.Doador,
                 Status = doadorDto.Status,
-                Contato1 = doadorDto.Contato1,
-                Contato2 = doadorDto.Contato2,
+                Celular = doadorDto.Celular,
+                Contato = doadorDto.Contato,
+                ResponsavelContato = doadorDto.ResponsavelContato,
                 Logradouro = doadorDto.Logradouro,
                 Numero = doadorDto.Numero,
                 Complemento = doadorDto.Complemento,
@@ -76,8 +77,9 @@ namespace AAPS.Api.Services.Doadores
                 Cpf = doadorDto.Cpf,
                 Status = doadorDto.Status,
                 //Telefones = telefones.Select(t => t.NumeroTelefone).ToList(),
-                Contato1 = doadorDto.Contato1,
-                Contato2 = doadorDto.Contato2,
+                Celular = doadorDto.Celular,
+                Contato = doadorDto.Contato,
+                ResponsavelContato = doadorDto.ResponsavelContato,
                 Logradouro = doadorDto.Logradouro,
                 Numero = doadorDto.Numero,
                 Complemento = doadorDto.Complemento,
@@ -120,8 +122,9 @@ namespace AAPS.Api.Services.Doadores
                     Cpf = d.Cpf,
                     Status = d.Status,
                     //Telefones = d.Telefones.Select(t => t.NumeroTelefone).ToList(),
-                    Contato1 = d.Contato1,
-                    Contato2 = d.Contato2,
+                    Celular = d.Celular,
+                    Contato = d.Contato,
+                    ResponsavelContato = d.ResponsavelContato,
                     Logradouro = d.Logradouro,
                     Numero = d.Numero,
                     Complemento = d.Complemento,
@@ -152,8 +155,9 @@ namespace AAPS.Api.Services.Doadores
                 Cpf = doador?.Cpf,
                 Status = doador.Status,
                 //Telefones = doador.Telefones.Select(t => t.NumeroTelefone).ToList(),
-                Contato1 = doador.Contato1,
-                Contato2 = doador.Contato2,
+                Celular = doador.Celular,
+                Contato = doador.Contato,
+                ResponsavelContato = doador.ResponsavelContato,
                 Logradouro = doador.Logradouro,
                 Numero = doador.Numero,
                 Complemento = doador.Complemento,
@@ -177,8 +181,9 @@ namespace AAPS.Api.Services.Doadores
                     Cpf = d.Cpf,
                     Status = d.Status,
                     //Telefones = d.Telefones.Select(t => t.NumeroTelefone).ToList(),
-                    Contato1 = d.Contato1,
-                    Contato2 = d.Contato2,
+                    Celular = d.Celular,
+                    Contato = d.Contato,
+                    ResponsavelContato = d.ResponsavelContato,
                     Logradouro = d.Logradouro,
                     Numero = d.Numero,
                     Complemento = d.Complemento,
@@ -205,8 +210,9 @@ namespace AAPS.Api.Services.Doadores
             doador.Cpf = string.IsNullOrEmpty(doadorDto.Cpf) ? doador.Cpf : doadorDto.Cpf;
             doador.Status = doadorDto.Status.HasValue ? doadorDto.Status.Value : doador.Status;
 
-            doador.Contato1 = string.IsNullOrEmpty(doadorDto.Contato1) ? doador.Contato1 : doadorDto.Contato1;
-            doador.Contato2 = string.IsNullOrEmpty(doadorDto.Contato2) ? doador.Contato2 : doadorDto.Contato2;
+            doador.Celular = string.IsNullOrEmpty(doadorDto.Celular) ? doador.Celular : doadorDto.Celular;
+            doador.Contato = string.IsNullOrEmpty(doadorDto.Contato) ? doador.Contato : doadorDto.Contato;
+            doador.ResponsavelContato = string.IsNullOrEmpty(doadorDto.ResponsavelContato) ? doador.ResponsavelContato : doadorDto.ResponsavelContato;
 
             doador.Logradouro = string.IsNullOrEmpty(doadorDto.Logradouro) ? doador.Logradouro : doadorDto.Logradouro;
             doador.Numero = doadorDto.Numero.HasValue ? doadorDto.Numero.Value : doador.Numero;
@@ -253,8 +259,9 @@ namespace AAPS.Api.Services.Doadores
                 Cpf = doador.Cpf,
                 Status = doador.Status,
                 //Telefones = doador.Telefones.Select(t => t.NumeroTelefone).ToList(),
-                Contato1 = doador.Contato1,
-                Contato2 = doador.Contato2,
+                Celular = doador.Celular,
+                Contato = doador.Contato,
+                ResponsavelContato = doador.ResponsavelContato,
                 Logradouro = doador.Logradouro,
                 Numero = doador.Numero,
                 Complemento = doador.Complemento,
@@ -294,10 +301,12 @@ namespace AAPS.Api.Services.Doadores
             if (string.IsNullOrEmpty(doadorDto.Status.ToString()) || !Enum.IsDefined(typeof(StatusEnum), doadorDto.Status))
                 erros.Add("O campo 'Status' é obrigatório!");
 
-            if (string.IsNullOrEmpty(doadorDto.Contato1) || doadorDto.Contato1.Length != 11)
-                erros.Add("O campo 'Contato 1' é obrigatório!");
-            if (string.IsNullOrEmpty(doadorDto.Contato2) || doadorDto.Contato2.Length != 11)
-                erros.Add("O campo 'Contato 2' é obrigatório!");
+            if (string.IsNullOrEmpty(doadorDto.Celular) || doadorDto.Celular.Length != 11)
+                erros.Add("O campo 'Celular' é obrigatório!");
+            if (string.IsNullOrEmpty(doadorDto.Contato) || doadorDto.Contato.Length != 11)
+                erros.Add("O campo 'Contato' é obrigatório!");
+            if (string.IsNullOrEmpty(doadorDto.ResponsavelContato))
+                erros.Add("O campo 'Responsavel Contato' é obrigatório!");
 
             if (string.IsNullOrEmpty(doadorDto.Logradouro))
                 erros.Add("O campo 'Logradouro' é obrigatório!");
@@ -344,10 +353,12 @@ namespace AAPS.Api.Services.Doadores
             if (doadorDto.Status != null && string.IsNullOrWhiteSpace(doadorDto.Status.ToString()))
                 erros.Add("O campo 'Status' não pode ter ser vazio!");
 
-            if (doadorDto.Contato1 != null && (string.IsNullOrWhiteSpace(doadorDto.Contato1) || doadorDto.Contato1.ToString().Length != 11))
-                erros.Add("O campo 'Contato 1' não pode ter ser vazio e deve ter exatamente 8 dígitos!");
-            if (doadorDto.Contato2 != null && (string.IsNullOrWhiteSpace(doadorDto.Contato2) || doadorDto.Contato2.ToString().Length != 11))
-                erros.Add("O campo 'Contato 2' não pode ter ser vazio e deve ter exatamente 8 dígitos!");
+            if (doadorDto.Celular != null && (string.IsNullOrWhiteSpace(doadorDto.Celular) || doadorDto.Celular.ToString().Length != 11))
+                erros.Add("O campo 'Celular' não pode ter ser vazio e deve ter exatamente 8 dígitos!");
+            if (doadorDto.Contato != null && (string.IsNullOrWhiteSpace(doadorDto.Contato) || doadorDto.Contato.ToString().Length != 11))
+                erros.Add("O campo 'Contato' não pode ter ser vazio e deve ter exatamente 8 dígitos!");
+            if (doadorDto.ResponsavelContato != null && string.IsNullOrWhiteSpace(doadorDto.ResponsavelContato))
+                erros.Add("O campo 'Responsavel Contato' não pode ter ser vazio!");
 
             if (doadorDto.Logradouro != null && string.IsNullOrWhiteSpace(doadorDto.Logradouro))
                 erros.Add("O campo 'Logradouro' não pode ter ser vazio!");

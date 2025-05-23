@@ -1,6 +1,5 @@
 ﻿using AAPS.Api.Context;
 using AAPS.Api.Dtos.Adotante;
-using AAPS.Api.Dtos.PontoAdocao;
 using AAPS.Api.Models;
 using AAPS.Api.Models.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -29,8 +28,9 @@ namespace AAPS.Api.Services.Adotantes
                 Cpf = adotanteDto.Cpf,
                 Tipo = TipoPessoaEnum.Adotante,
                 Status = adotanteDto.Status,
-                Contato1 = adotanteDto.Contato1,
-                Contato2 = adotanteDto.Contato2,
+                Celular = adotanteDto.Celular,
+                Contato = adotanteDto.Contato,
+                ResponsavelContato = adotanteDto.Contato,
                 Logradouro = adotanteDto.Logradouro,
                 Numero = adotanteDto.Numero,
                 Complemento = adotanteDto.Complemento,
@@ -76,6 +76,7 @@ namespace AAPS.Api.Services.Adotantes
                 Facebook = adotanteDto.Facebook,
                 Instagram = adotanteDto.Instagram,
                 Bloqueio = adotanteDto.Bloqueio,
+                ObservacaoBloqueio = adotanteDto.ObservacaoBloqueio,
                 PessoaId = pessoa.Id
             };
 
@@ -90,12 +91,14 @@ namespace AAPS.Api.Services.Adotantes
                 Cpf = pessoa.Cpf,
                 Status = pessoa.Status,
                 //Telefones = telefones.Select(t => t.NumeroTelefone).ToList(),
-                Contato1 = pessoa.Contato1,
-                Contato2 = pessoa.Contato2,
+                Celular = pessoa.Celular,
+                Contato = pessoa.Contato,
+                ResponsavelContato = pessoa.Contato,
                 LocalTrabalho = adotante.LocalTrabalho,
                 Facebook = adotante.Facebook,
                 Instagram = adotante.Instagram,
                 Bloqueio = adotante.Bloqueio,
+                ObservacaoBloqueio = adotante.ObservacaoBloqueio,
                 Logradouro = pessoa.Logradouro,
                 Numero = pessoa.Numero,
                 Complemento = pessoa.Complemento,
@@ -146,12 +149,14 @@ namespace AAPS.Api.Services.Adotantes
                     Cpf = a.Pessoa.Cpf,
                     Status = a.Pessoa.Status,
                     //Telefones = a.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
-                    Contato1 = a.Pessoa.Contato1,
-                    Contato2 = a.Pessoa.Contato2,
+                    Celular = a.Pessoa.Celular,
+                    Contato = a.Pessoa.Contato,
+                    ResponsavelContato = a.Pessoa.Contato,
                     LocalTrabalho = a.LocalTrabalho,
                     Facebook = a.Facebook,
                     Instagram = a.Instagram,
                     Bloqueio = a.Bloqueio,
+                    ObservacaoBloqueio = a.ObservacaoBloqueio,
                     Logradouro = a.Pessoa.Logradouro,
                     Numero = a.Pessoa.Numero,
                     Complemento = a.Pessoa.Complemento,
@@ -183,12 +188,14 @@ namespace AAPS.Api.Services.Adotantes
                 Cpf = adotante.Pessoa.Cpf,
                 Status = adotante.Pessoa.Status,
                 //Telefones = adotante.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
-                Contato1 = adotante.Pessoa.Contato1,
-                Contato2 = adotante.Pessoa.Contato2,
+                Celular = adotante.Pessoa.Celular,
+                Contato = adotante.Pessoa.Contato,
+                ResponsavelContato = adotante.Pessoa.Contato,
                 LocalTrabalho = adotante.LocalTrabalho,
                 Facebook = adotante.Facebook,
                 Instagram = adotante.Instagram,
                 Bloqueio = adotante.Bloqueio,
+                ObservacaoBloqueio = adotante.ObservacaoBloqueio,
                 Logradouro = adotante.Pessoa.Logradouro,
                 Numero = adotante.Pessoa.Numero,
                 Complemento = adotante.Pessoa.Complemento,
@@ -216,12 +223,14 @@ namespace AAPS.Api.Services.Adotantes
                     Cpf = a.Pessoa.Cpf,
                     Status = a.Pessoa.Status,
                     //Telefones = a.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
-                    Contato1 = a.Pessoa.Contato1,
-                    Contato2 = a.Pessoa.Contato2,
+                    Celular = a.Pessoa.Celular,
+                    Contato = a.Pessoa.Contato,
+                    ResponsavelContato = a.Pessoa.Contato,
                     LocalTrabalho = a.LocalTrabalho,
                     Facebook = a.Facebook,
                     Instagram = a.Instagram,
                     Bloqueio = a.Bloqueio,
+                    ObservacaoBloqueio = a.ObservacaoBloqueio,
                     Logradouro = a.Pessoa.Logradouro,
                     Numero = a.Pessoa.Numero,
                     Complemento = a.Pessoa.Complemento,
@@ -250,8 +259,9 @@ namespace AAPS.Api.Services.Adotantes
             adotante.Pessoa.Cpf = string.IsNullOrEmpty(adotanteDto.Cpf) ? adotante.Pessoa.Cpf : adotanteDto.Cpf;
             adotante.Pessoa.Status = adotanteDto.Status.HasValue ? adotanteDto.Status.Value : adotante.Pessoa.Status;
 
-            adotante.Pessoa.Contato1 = string.IsNullOrEmpty(adotanteDto.Contato1) ? adotante.Pessoa.Contato1 : adotanteDto.Contato1;
-            adotante.Pessoa.Contato2 = string.IsNullOrEmpty(adotanteDto.Contato2) ? adotante.Pessoa.Contato2 : adotanteDto.Contato2;
+            adotante.Pessoa.Celular = string.IsNullOrEmpty(adotanteDto.Celular) ? adotante.Pessoa.Celular : adotanteDto.Celular;
+            adotante.Pessoa.Contato = string.IsNullOrEmpty(adotanteDto.Contato) ? adotante.Pessoa.Contato : adotanteDto.Contato;
+            adotante.Pessoa.ResponsavelContato = string.IsNullOrEmpty(adotanteDto.ResponsavelContato) ? adotante.Pessoa.ResponsavelContato : adotanteDto.ResponsavelContato;
 
             adotante.Pessoa.Logradouro = string.IsNullOrEmpty(adotanteDto.Logradouro) ? adotante.Pessoa.Logradouro : adotanteDto.Logradouro;
             adotante.Pessoa.Numero = adotanteDto.Numero.HasValue ? adotanteDto.Numero.Value : adotante.Pessoa.Numero;
@@ -304,12 +314,14 @@ namespace AAPS.Api.Services.Adotantes
                 Cpf = adotante.Pessoa.Cpf,
                 Status = adotante.Pessoa.Status,
                 //Telefones = adotante.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
-                Contato1 = adotante.Pessoa.Contato1,
-                Contato2 = adotante.Pessoa.Contato2,
+                Celular = adotante.Pessoa.Celular,
+                Contato = adotante.Pessoa.Contato,
+                ResponsavelContato = adotante.Pessoa.Contato,
                 LocalTrabalho = adotante.LocalTrabalho,
                 Facebook = adotante.Facebook,
                 Instagram = adotante.Instagram,
                 Bloqueio = adotante.Bloqueio,
+                ObservacaoBloqueio = adotante.ObservacaoBloqueio,
                 Logradouro = adotante.Pessoa.Logradouro,
                 Numero = adotante.Pessoa.Numero,
                 Complemento = adotante.Pessoa.Complemento,
@@ -351,10 +363,12 @@ namespace AAPS.Api.Services.Adotantes
             if (string.IsNullOrEmpty(adotanteDto.Status.ToString()) || !Enum.IsDefined(typeof(StatusEnum), adotanteDto.Status))
                 erros.Add("O campo 'Status' é obrigatório!");
 
-            if (string.IsNullOrEmpty(adotanteDto.Contato1) || adotanteDto.Contato1.Length != 11)
-                erros.Add("O campo 'Contato 1' é obrigatório!");
-            if (string.IsNullOrEmpty(adotanteDto.Contato2) || adotanteDto.Contato2.Length != 11)
-                erros.Add("O campo 'Contato 2' é obrigatório!");
+            if (string.IsNullOrEmpty(adotanteDto.Celular) || adotanteDto.Celular.Length != 11)
+                erros.Add("O campo 'Celular' é obrigatório!");
+            if (string.IsNullOrEmpty(adotanteDto.Contato) || adotanteDto.Contato.Length != 11)
+                erros.Add("O campo 'Contato' é obrigatório!");
+            if (string.IsNullOrEmpty(adotanteDto.ResponsavelContato))
+                erros.Add("O campo 'Responsável Contato' é obrigatório!");
 
             if (string.IsNullOrEmpty(adotanteDto.Logradouro))
                 erros.Add("O campo 'Logradouro' é obrigatório!");
@@ -416,10 +430,12 @@ namespace AAPS.Api.Services.Adotantes
             if (adotanteDto.Status != null && string.IsNullOrWhiteSpace(adotanteDto.Status.ToString()))
                 erros.Add("O campo 'Status' não pode ter ser vazio!");
 
-            if (adotanteDto.Contato1 != null && (string.IsNullOrWhiteSpace(adotanteDto.Contato1) || adotanteDto.Contato1.ToString().Length != 11))
-                erros.Add("O campo 'Contato 1' não pode ter ser vazio e deve ter exatamente 8 dígitos!");
-            if (adotanteDto.Contato2 != null && (string.IsNullOrWhiteSpace(adotanteDto.Contato2) || adotanteDto.Contato2.ToString().Length != 11))
-                erros.Add("O campo 'Contato 2' não pode ter ser vazio e deve ter exatamente 8 dígitos!");
+            if (adotanteDto.Celular != null && (string.IsNullOrWhiteSpace(adotanteDto.Celular) || adotanteDto.Celular.ToString().Length != 11))
+                erros.Add("O campo 'Celular' não pode ter ser vazio e deve ter exatamente 8 dígitos!");
+            if (adotanteDto.Contato != null && (string.IsNullOrWhiteSpace(adotanteDto.Contato) || adotanteDto.Contato.ToString().Length != 11))
+                erros.Add("O campo 'Contato' não pode ter ser vazio e deve ter exatamente 8 dígitos!");
+            if (adotanteDto.ResponsavelContato != null && string.IsNullOrWhiteSpace(adotanteDto.ResponsavelContato))
+                erros.Add("O campo 'Responsavel Contato' não pode ter ser vazio!");
 
             if (adotanteDto.Logradouro != null && string.IsNullOrWhiteSpace(adotanteDto.Logradouro))
                 erros.Add("O campo 'Logradouro' não pode ter ser vazio!");

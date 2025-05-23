@@ -12,8 +12,9 @@ public class PontoAdocaoDto
 
     //public required List<string> Telefones { get; set; }
 
-    public required string Contato1 { get; set; }
-    public required string Contato2 { get; set; }
+    public required string Celular { get; set; }
+    public required string Contato { get; set; }
+    public required string ResponsavelContato { get; set; }
 
     public required string Logradouro { get; set; }
     public required int Numero { get; set; }

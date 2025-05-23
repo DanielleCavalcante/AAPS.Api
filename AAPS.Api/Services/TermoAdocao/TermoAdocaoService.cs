@@ -8,7 +8,6 @@ using iText.Layout;
 using iText.Layout.Borders;
 using iText.Layout.Element;
 using iText.Layout.Properties;
-using System.Text.RegularExpressions;
 
 namespace AAPS.Api.Services.TermoAdocao
 {
