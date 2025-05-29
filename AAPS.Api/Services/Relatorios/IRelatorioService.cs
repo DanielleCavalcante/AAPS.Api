@@ -5,6 +5,7 @@ namespace AAPS.Api.Services.Relatorios
 {
     public interface IRelatorioService
     {
-        DataTable[] ObterDadosRelatorio(FiltroRelatorioDto filtro);
+        DataTable[] ObterDadosRelatorio(DateTime dataInicio, DateTime dataFim);
+        byte[] GerarRelatorioPdf(DateTime dataInicio, DateTime dataFim);
     }
 }

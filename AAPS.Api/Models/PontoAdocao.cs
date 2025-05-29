@@ -6,7 +6,6 @@ public class PontoAdocao
 {
     public int Id { get; set; }
     public string NomeFantasia { get; set; }
-    public string Responsavel { get; set; }
     public string Cnpj { get; set; }
 
     public StatusEnum Status { get; set; } = StatusEnum.Ativo;

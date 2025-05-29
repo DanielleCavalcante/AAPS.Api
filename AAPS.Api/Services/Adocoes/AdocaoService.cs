@@ -1,8 +1,10 @@
 ﻿using AAPS.Api.Context;
+using AAPS.Api.Dtos.Acompanhamento;
 using AAPS.Api.Dtos.Adocao;
 using AAPS.Api.Dtos.Animal;
 using AAPS.Api.Models;
 using AAPS.Api.Models.Enums;
+using AAPS.Api.Services.Acompanhamentos;
 using AAPS.Api.Services.Adotantes;
 using AAPS.Api.Services.Animais;
 using AAPS.Api.Services.PontosAdocao;
@@ -20,14 +22,16 @@ namespace AAPS.Api.Services.Adocoes
         private readonly IAnimalService _animalService;
         private readonly IVoluntarioService _voluntarioService;
         private readonly IPontoAdocaoService _pontoAdocaoService;
+        private readonly IAcompanhamentoService _acompanhamentoService;
 
-        public AdocaoService(AppDbContext context, IAdotanteService adotanteService, IAnimalService animalService, IVoluntarioService voluntarioService, IPontoAdocaoService pontoAdocaoService)
+        public AdocaoService(AppDbContext context, IAdotanteService adotanteService, IAnimalService animalService, IVoluntarioService voluntarioService, IPontoAdocaoService pontoAdocaoService, IAcompanhamentoService acompanhamentoService)
         {
             _context = context;
             _adotanteService = adotanteService;
             _animalService = animalService;
             _voluntarioService = voluntarioService;
             _pontoAdocaoService = pontoAdocaoService;
+            _acompanhamentoService = acompanhamentoService;
         }
 
         #endregion
@@ -169,7 +173,7 @@ namespace AAPS.Api.Services.Adocoes
             var animalAnteriorId = adocao.AnimalId;
 
             adocao.Data = adocaoDto.Data.HasValue ? adocaoDto.Data.Value : adocao.Data;
-            adocao.Cancelada = adocaoDto.Cancelada.HasValue ? adocaoDto.Cancelada.Value : adocao.Cancelada;
+            //adocao.Cancelada = adocaoDto.Cancelada.HasValue ? adocaoDto.Cancelada.Value : adocao.Cancelada;
             adocao.AdotanteId = adocaoDto.AdotanteId.HasValue ? adocaoDto.AdotanteId.Value : adocao.AdotanteId;
             adocao.AnimalId = adocaoDto.AnimalId.HasValue ? adocaoDto.AnimalId.Value : adocao.AnimalId;
             adocao.VoluntarioId = adocaoDto.VoluntarioId.HasValue ? adocaoDto.VoluntarioId.Value : adocao.VoluntarioId;
@@ -184,13 +188,28 @@ namespace AAPS.Api.Services.Adocoes
                 }
             }
 
+            var animalAtual = await _context.Animais.FirstOrDefaultAsync(a => a.Id == adocao.AnimalId);
+
+            animalAtual.Disponibilidade = DisponibilidadeEnum.Adotado;
+
+            await _context.SaveChangesAsync();
+
+            return new AdocaoDto
+            {
+                Id = adocao.Id,
+                Data = adocao.Data,
+                Cancelada = adocao.Cancelada,
+                AdotanteId = adocao.AdotanteId,
+                AnimalId = adocao.AnimalId,
+                VoluntarioId = adocao.VoluntarioId,
+                PontoAdocaoId = adocao.PontoAdocaoId
+            };
+
             //var animalAtual = await _context.Animais
             //   .Include(a => a.AnimalEventos) // para acessar os eventos sem nova query
             //   .FirstOrDefaultAsync(a => a.Id == adocao.AnimalId);
 
-            var animalAtual = await _context.Animais.FirstOrDefaultAsync(a => a.Id == adocao.AnimalId);
 
-            animalAtual.Disponibilidade = DisponibilidadeEnum.Adotado;
             //if (animalAtual != null)
             //{
             //    if (adocaoDto.Devolvido == true)
@@ -213,6 +232,49 @@ namespace AAPS.Api.Services.Adocoes
             //        ? DisponibilidadeEnum.Disponivel
             //        : DisponibilidadeEnum.Adotado;
             //}
+        }
+
+        //public async Task<bool> ExcluirAdocao(int id)
+        //{
+        //    var adocao = await BuscarAdocaoPorId(id);
+
+        //    if (adocao == null)
+        //    {
+        //        return false;
+        //    }
+
+        //    _context.Adocoes.Remove(adocao);
+        //    await _context.SaveChangesAsync();
+
+        //    return true;
+        //}
+
+        public async Task<AdocaoDto> CancelarAdocao(int id, CancelarAdocaoDto cancelamentoDto)
+        {
+            var adocao = await BuscarAdocaoPorId(id);
+            if (adocao == null) return null;
+
+            adocao.Cancelada = true;
+
+            var animal = await _context.Animais.FirstOrDefaultAsync(a => a.Id == adocao.AnimalId);
+            if (animal != null)
+            {
+                animal.Disponibilidade = DisponibilidadeEnum.Disponivel;
+            }
+
+            var acompanhamentoDto = new CriarAcompanhamentoDto
+            {
+                Data = cancelamentoDto.DataAcompanhamento,
+                Observacao = cancelamentoDto.Observacao,
+                AnimalId = adocao.AnimalId,
+                EventoId = cancelamentoDto.EventoId
+            };
+
+            await _acompanhamentoService.CriarAcompanhamento(acompanhamentoDto);
+
+            var adotante = await _adotanteService.ObterAdotantePorId(adocao.AdotanteId);
+
+            adotante.Bloqueio = BloqueioEnum.Bloqueado;
 
             await _context.SaveChangesAsync();
 
@@ -226,21 +288,6 @@ namespace AAPS.Api.Services.Adocoes
                 VoluntarioId = adocao.VoluntarioId,
                 PontoAdocaoId = adocao.PontoAdocaoId
             };
-        }
-
-        public async Task<bool> ExcluirAdocao(int id)
-        {
-            var adocao = await BuscarAdocaoPorId(id);
-
-            if (adocao == null)
-            {
-                return false;
-            }
-
-            _context.Adocoes.Remove(adocao);
-            await _context.SaveChangesAsync();
-
-            return true;
         }
 
         public async Task<List<string>> ValidarCriacaoAdocao(CriarAdocaoDto adocaoDto)
@@ -271,8 +318,8 @@ namespace AAPS.Api.Services.Adocoes
 
             if (adocaoDto.Data != null && adocaoDto.Data == DateTime.MinValue && string.IsNullOrWhiteSpace(adocaoDto.Data.ToString()))
                 erros.Add("O campo 'Data' não pode estar vazio!");
-            if (adocaoDto.Cancelada != null && string.IsNullOrWhiteSpace(adocaoDto.Cancelada.ToString()))
-                erros.Add("O campo 'Cancelada' não pode ter ser vazio!");
+            //if (adocaoDto.Cancelada != null && string.IsNullOrWhiteSpace(adocaoDto.Cancelada.ToString()))
+            //    erros.Add("O campo 'Cancelada' não pode ter ser vazio!");
 
             if (adocaoDto.AdotanteId != null)
             {

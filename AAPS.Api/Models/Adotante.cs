@@ -5,6 +5,7 @@ namespace AAPS.Api.Models;
 public class Adotante
 {
     public int Id { get; set; }
+    public string Email { get; set; }
     public string LocalTrabalho { get; set; }
     public string Facebook { get; set; }
     public string Instagram { get; set; }

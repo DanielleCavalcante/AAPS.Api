@@ -6,7 +6,6 @@ public class PontoAdocaoDto
 {
     public int Id { get; set; }
     public required string NomeFantasia { get; set; }
-    public required string Responsavel { get; set; }
     public required string Cnpj { get; set; }
     public required StatusEnum Status { get; set; }
 

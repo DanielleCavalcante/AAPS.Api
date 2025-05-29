@@ -58,7 +58,6 @@ namespace AAPS.Api.Services.PontosAdocao
             var pontoAdocao = new PontoAdocao
             {
                 NomeFantasia = pontoAdocaoDto.NomeFantasia,
-                Responsavel = pontoAdocaoDto.Responsavel,
                 Cnpj = pontoAdocaoDto.Cnpj,
 
                 Celular = pontoAdocaoDto.Celular,
@@ -80,7 +79,6 @@ namespace AAPS.Api.Services.PontosAdocao
             return new PontoAdocaoDto
             {
                 NomeFantasia = pontoAdocaoDto.NomeFantasia,
-                Responsavel = pontoAdocaoDto.Responsavel,
                 Cnpj = pontoAdocaoDto.Cnpj,
                 Status = pontoAdocaoDto.Status,
                 //Telefones = telefones.Select(t => t.NumeroTelefone).ToList(),
@@ -113,7 +111,6 @@ namespace AAPS.Api.Services.PontosAdocao
 
                 query = query.Where(p =>
                     p.NomeFantasia.ToLower().Contains(buscaLower) ||
-                    p.Responsavel.ToLower().Contains(buscaLower) ||
                     p.Cnpj.Contains(buscaLower)
                 );
             }
@@ -128,7 +125,6 @@ namespace AAPS.Api.Services.PontosAdocao
                 {
                     Id = p.Id,
                     NomeFantasia = p.NomeFantasia,
-                    Responsavel = p.Responsavel,
                     Cnpj = p.Cnpj,
                     Status = p.Status,
 
@@ -162,7 +158,6 @@ namespace AAPS.Api.Services.PontosAdocao
             {
                 Id = pontoAdocao.Id,
                 NomeFantasia = pontoAdocao.NomeFantasia,
-                Responsavel = pontoAdocao.Responsavel,
                 Cnpj = pontoAdocao.Cnpj,
                 Status = pontoAdocao.Status,
                 //Telefones = pontoAdocao.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
@@ -193,7 +188,6 @@ namespace AAPS.Api.Services.PontosAdocao
                 {
                     Id = p.Id,
                     NomeFantasia = p.NomeFantasia,
-                    Responsavel = p.Responsavel,
                     Cnpj = p.Cnpj,
                     Status = p.Status,
                     //Telefones = p.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
@@ -227,7 +221,6 @@ namespace AAPS.Api.Services.PontosAdocao
             pontoAdocao.Status = pontoAdocaoDto.Status.HasValue ? pontoAdocaoDto.Status.Value : pontoAdocao.Status;
 
             pontoAdocao.NomeFantasia = string.IsNullOrEmpty(pontoAdocaoDto.NomeFantasia) ? pontoAdocao.NomeFantasia : pontoAdocaoDto.NomeFantasia;
-            pontoAdocao.Responsavel = string.IsNullOrEmpty(pontoAdocaoDto.Responsavel) ? pontoAdocao.Responsavel : pontoAdocaoDto.Responsavel;
             pontoAdocao.Cnpj = string.IsNullOrEmpty(pontoAdocaoDto.Cnpj) ? pontoAdocao.Cnpj : pontoAdocaoDto.Cnpj;
 
             pontoAdocao.Logradouro = string.IsNullOrEmpty(pontoAdocaoDto.Logradouro) ? pontoAdocao.Logradouro : pontoAdocaoDto.Logradouro;
@@ -276,7 +269,6 @@ namespace AAPS.Api.Services.PontosAdocao
             {
                 Id = pontoAdocao.Id,
                 NomeFantasia = pontoAdocao.NomeFantasia,
-                Responsavel = pontoAdocao.Responsavel,
                 Cnpj = pontoAdocao.Cnpj,
                 Status = pontoAdocao.Status,
                 //Telefones = pontoAdocao.Pessoa.Telefones.Select(t => t.NumeroTelefone).ToList(),
@@ -319,8 +311,6 @@ namespace AAPS.Api.Services.PontosAdocao
 
             if (string.IsNullOrEmpty(pontoAdocaoDto.NomeFantasia))
                 erros.Add("O campo 'Nome Fantasia' é obrigatório!");
-            if (string.IsNullOrEmpty(pontoAdocaoDto.Responsavel))
-                erros.Add("O campo 'Responsavel' é obrigatório!");
             if (string.IsNullOrEmpty(pontoAdocaoDto.Cnpj))
                 erros.Add("O campo 'CNPJ' é obrigatório!");
 
@@ -353,7 +343,6 @@ namespace AAPS.Api.Services.PontosAdocao
                 //.ThenInclude(p => p.Endereco)
                 .Where(p =>
                     p.NomeFantasia == pontoAdocaoDto.NomeFantasia &&
-                    p.Responsavel == pontoAdocaoDto.Responsavel &&
                     p.Cnpj == pontoAdocaoDto.Cnpj &&
                     p.Logradouro == pontoAdocaoDto.Logradouro &&
                     p.Numero == pontoAdocaoDto.Numero &&
@@ -395,8 +384,6 @@ namespace AAPS.Api.Services.PontosAdocao
 
             if (pontoAdocaoDto.NomeFantasia != null && string.IsNullOrWhiteSpace(pontoAdocaoDto.NomeFantasia))
                 erros.Add("O campo 'Nome Fantasia' não pode ser vazio!");
-            if (pontoAdocaoDto.Responsavel != null && string.IsNullOrWhiteSpace(pontoAdocaoDto.Responsavel))
-                erros.Add("O campo 'Responsavel' não pode ser vazio!");
             if (pontoAdocaoDto.Cnpj != null && string.IsNullOrWhiteSpace(pontoAdocaoDto.Cnpj))
                 erros.Add("O campo 'CNPJ' não pode ser vazio!");
 

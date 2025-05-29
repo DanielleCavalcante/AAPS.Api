@@ -5,7 +5,6 @@ namespace AAPS.Api.Dtos.PontoAdocao
     public class AtualizaPontoAdocaoDto
     {
         public string? NomeFantasia { get; set; }
-        public string? Responsavel { get; set; }
         public string? Cnpj { get; set; }
         public StatusEnum? Status { get; set; }
 

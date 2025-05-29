@@ -5,7 +5,6 @@ using ClosedXML.Excel;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Globalization;
 
 namespace AAPS.Api.Controllers;
 
@@ -30,35 +29,59 @@ public class RelatorioController : Controller
     {
         try
         {
-            var dados = _relatorioService.ObterDadosRelatorio(filtro);
+            var partesInicio = filtro.DataInicio.Split('/');
+            int mesInicio = int.Parse(partesInicio[0]);
+            int anoInicio = int.Parse(partesInicio[1]);
+            var dataInicio = new DateTime(anoInicio, mesInicio, 1);
 
-            var nomeMes = new DateTime(filtro.Ano, filtro.Mes, 1).ToString("MMMM", new CultureInfo("pt-BR"));
-            var nomeArquivo = $"Relatório - AAPS ({nomeMes}/{filtro.Ano})".ToLower();
+            var partesFim = filtro.DataFim.Split('/');
+            int mesFim = int.Parse(partesFim[0]);
+            int anoFim = int.Parse(partesFim[1]);
+            int ultimoDiaFim = DateTime.DaysInMonth(anoFim, mesFim);
+            var dataFim = new DateTime(anoFim, mesFim, ultimoDiaFim);
+
+            var dados = _relatorioService.ObterDadosRelatorio(dataInicio, dataFim);
+
+            var dataInicioStr = dataInicio.ToString("MM/yyyy");
+            var dataFimStr = dataFim.ToString("MM/yyyy");
+
+            var nomeArquivo = $"Relatório - AAPS ({dataInicioStr} a {dataFimStr})";
 
             using (var workbook = new XLWorkbook())
             {
                 var caminhoLogo = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "aaps_logo.png");
 
-                for (int i = 0; i < dados.Length - 2; i++)
+                var abaPrincipal = workbook.Worksheets.Add("Balanço Geral");
+
+                if (System.IO.File.Exists(caminhoLogo))
                 {
-                    var nomeAba = dados[i].TableName ?? $"Aba{i + 1}";
-                    var planilha = workbook.Worksheets.Add(nomeAba);
+                    abaPrincipal.Row(1).Height = 80;
+                    abaPrincipal.Column(1).AdjustToContents();
 
-                    if (System.IO.File.Exists(caminhoLogo))
-                    {
-                        planilha.Row(1).Height = 80;
-                        planilha.Column(1).AdjustToContents();
-
-                        var img = planilha.AddPicture(caminhoLogo)
-                            .MoveTo(planilha.Cell("A1"))
-                            .Scale(0.4); 
-                    }
-
-                    var tabela = planilha.Cell(2, 2).InsertTable(dados[i]);
-                    tabela.Worksheet.Columns().AdjustToContents();
+                    var img = abaPrincipal.AddPicture(caminhoLogo)
+                        .MoveTo(abaPrincipal.Cell("A1"))
+                        .Scale(0.4);
                 }
 
-                var abaBalanco = workbook.Worksheets.Add("Balanço Mensal");
+                int linhaAtual = 3;
+
+                for (int i = 0; i < dados.Length - 1; i++)
+                {
+                    var nomeTabela = dados[i].TableName ?? $"Tabela {i + 1}";
+
+                    abaPrincipal.Cell(linhaAtual, 2).Value = nomeTabela;
+                    abaPrincipal.Cell(linhaAtual, 2).Style.Font.Bold = true;
+                    abaPrincipal.Cell(linhaAtual, 2).Style.Font.FontSize = 14;
+
+                    linhaAtual += 2;
+
+                    var tabela = abaPrincipal.Cell(linhaAtual, 2).InsertTable(dados[i]);
+                    tabela.Worksheet.Columns().AdjustToContents();
+
+                    linhaAtual += tabela.RowCount() + 3;
+                }
+
+                var abaBalanco = workbook.Worksheets.Add("Levantamento de Animais");
 
                 if (System.IO.File.Exists(caminhoLogo))
                 {
@@ -70,20 +93,19 @@ public class RelatorioController : Controller
                         .Scale(0.4);
                 }
 
-                var tabelaAdocoes = abaBalanco.Cell(2, 2).InsertTable(dados[dados.Length - 2]);
-                tabelaAdocoes.Worksheet.Columns().AdjustToContents();
+                abaBalanco.Cell(2, 2).Value = "Animais adotados no período";
+                abaBalanco.Cell(2, 2).Style.Font.Bold = true;
+                abaBalanco.Cell(2, 2).Style.Font.FontSize = 14;
 
-                // Calcula a linha onde começa a próxima tabela (após a adoções)
-                int linhaInicioResgates = 2 + tabelaAdocoes.RowCount() + 3; // espaço entre as tabelas
-
-                // Insere a tabela de Resgates
-                var tabelaResgates = abaBalanco.Cell(linhaInicioResgates, 2).InsertTable(dados[dados.Length - 1]);
-                tabelaResgates.Worksheet.Columns().AdjustToContents();
+                var tabelaBalanco = abaBalanco.Cell(4, 2).InsertTable(dados[dados.Length - 1]);
+                tabelaBalanco.Worksheet.Columns().AdjustToContents();
 
                 using (var ms = new MemoryStream())
                 {
                     workbook.SaveAs(ms);
-                    return File(ms.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{nomeArquivo}.xlsx");
+                    return File(ms.ToArray(),
+                                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                                $"{nomeArquivo}.xlsx");
                 }
             }
         }
@@ -91,5 +113,33 @@ public class RelatorioController : Controller
         {
             return BadRequest(ApiResponse<object>.ErroResponse(new List<string> { $"Erro ao gerar relatório: {ex.Message}" }));
         }
+    }
+
+    [HttpGet]
+    public IActionResult GerarRelatorioPdf([FromQuery] FiltroRelatorioDto filtro)
+    {
+        var partesInicio = filtro.DataInicio.Split('/');
+        int mesInicio = int.Parse(partesInicio[0]);
+        int anoInicio = int.Parse(partesInicio[1]);
+        var dataInicio = new DateTime(anoInicio, mesInicio, 1);
+
+        var partesFim = filtro.DataFim.Split('/');
+        int mesFim = int.Parse(partesFim[0]);
+        int anoFim = int.Parse(partesFim[1]);
+        int ultimoDiaFim = DateTime.DaysInMonth(anoFim, mesFim);
+        var dataFim = new DateTime(anoFim, mesFim, ultimoDiaFim);
+
+        if (dataInicio > dataFim)
+        {
+            return BadRequest("A data de início não pode ser maior que a data de fim.");
+        }
+
+        var dataInicioStr = dataInicio.ToString("MM/yyyy");
+        var dataFimStr = dataFim.ToString("MM/yyyy");
+
+        var pdfBytes = _relatorioService.GerarRelatorioPdf(dataInicio, dataFim);
+        var fileName = $"Relatório - AAPS ({dataInicioStr} a {dataFimStr}).pdf";
+
+        return File(pdfBytes, "application/pdf", fileName);
     }
 }

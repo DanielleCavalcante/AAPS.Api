@@ -82,6 +82,24 @@ namespace AAPS.Api.Services.Acompanhamentos
             };
         }
 
+        public async Task<List<RetornaAcompanhamentoDto>> ObterAcompanhamentosPorAnimalId(int id)
+        {
+            var acompanhamentos = await _context.Acompanhamentos
+                .Where(a => a.AnimalId == id)
+                .Select(a => new RetornaAcompanhamentoDto
+                {
+                    Id = a.Id,
+                    Data = a.Data,
+                    Observacao = a.Observacao,
+                    AnimalId = a.AnimalId,
+                    EventoId = a.EventoId,
+                    Descricao = a.Evento.Descricao
+                })
+                .ToListAsync();
+
+            return acompanhamentos;
+        }
+
         public async Task<bool> ExcluirAcompanhamento(int id)
         {
             var acompanhamento = await BuscarAcompanhamentoPorId(id);

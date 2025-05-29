@@ -2,9 +2,7 @@
 {
     public class FiltroRelatorioDto
     {
-        public int Mes { get; set; }
-        public int Ano { get; set; }
-        public string? Especie { get; set; }
-        public string? FaixaEtaria { get; set; }
+        public string DataInicio { get; set; }
+        public string DataFim { get; set; }
     }
 }

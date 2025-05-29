@@ -139,6 +139,8 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
             entity.Property(x => x.Bloqueio).HasColumnType("int").IsRequired();
             entity.Property(x => x.ObservacaoBloqueio).HasColumnType("nvarchar(500)");
 
+            entity.Property(x => x.Email).HasColumnType("nvarchar(50)").IsRequired();
+
             entity.Property(x => x.PessoaId).HasColumnType("int").IsRequired();
 
             // Relacionamento com pessoa já esta em Pessoa
@@ -158,7 +160,6 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
             entity.HasKey(x => x.Id);
 
             entity.Property(x => x.NomeFantasia).HasColumnType("nvarchar(60)").IsRequired();
-            entity.Property(x => x.Responsavel).HasColumnType("nvarchar(60)").IsRequired();
             entity.Property(x => x.Cnpj).HasColumnType("nvarchar(14)").IsRequired();
 
             entity.Property(x => x.Status).HasColumnType("int").IsRequired();

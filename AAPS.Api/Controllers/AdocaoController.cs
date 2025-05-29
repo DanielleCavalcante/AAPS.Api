@@ -100,16 +100,25 @@ public class AdocaoController : Controller
         return Ok(ApiResponse<object>.SucessoResponse($"Adoção de id = {id} atualizada com sucesso!"));
     }
 
-    [HttpDelete("{id:int}")]
-    public async Task<ActionResult> ExcluirAdocao(int id)
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> CancelarAdocao(int id, [FromBody] CancelarAdocaoDto adocaoDto)
     {
-        bool adocao = await _adocaoService.ExcluirAdocao(id);
+        var erros = new List<string>();
 
-        if (!adocao)
+        if (string.IsNullOrEmpty(adocaoDto.DataAcompanhamento.ToString()) || adocaoDto.DataAcompanhamento == DateTime.MinValue)
+            erros.Add("O campo 'Data Acompanhamento' é obrigatório!");
+
+        if (string.IsNullOrEmpty(adocaoDto.EventoId.ToString()) || adocaoDto.EventoId <= 0)
+            erros.Add("O campo 'Adotante' é obrigatório!");
+
+        var adocao = await _adocaoService.CancelarAdocao(id, adocaoDto);
+
+        if (adocao is null)
         {
             return NotFound(ApiResponse<object>.ErroResponse(new List<string> { $"Adoção de id = {id} não encontrada." }));
         }
 
-        return Ok(ApiResponse<object>.SucessoResponse($"Adoção de id = {id} foi excluída com sucesso!"));
+        return Ok(ApiResponse<object>.SucessoResponse($"Adoção de id = {id} cancelada com sucesso!"));
     }
+
 }

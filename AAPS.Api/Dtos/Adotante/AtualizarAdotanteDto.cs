@@ -9,6 +9,8 @@ namespace AAPS.Api.Dtos.Adotante
         public string? Cpf { get; set; }
         public StatusEnum? Status { get; set; }
 
+        public string? Email { get; set; }
+
         //public List<string?> Telefones { get; set; }
         public string? Celular { get; set; }
         public string? Contato { get; set; }

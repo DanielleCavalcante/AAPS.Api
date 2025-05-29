@@ -77,6 +77,7 @@ namespace AAPS.Api.Services.Adotantes
                 Instagram = adotanteDto.Instagram,
                 Bloqueio = adotanteDto.Bloqueio,
                 ObservacaoBloqueio = adotanteDto.ObservacaoBloqueio,
+                Email = adotanteDto.Email,
                 PessoaId = pessoa.Id
             };
 
@@ -99,6 +100,7 @@ namespace AAPS.Api.Services.Adotantes
                 Instagram = adotante.Instagram,
                 Bloqueio = adotante.Bloqueio,
                 ObservacaoBloqueio = adotante.ObservacaoBloqueio,
+                Email = adotante.Email,
                 Logradouro = pessoa.Logradouro,
                 Numero = pessoa.Numero,
                 Complemento = pessoa.Complemento,
@@ -157,6 +159,7 @@ namespace AAPS.Api.Services.Adotantes
                     Instagram = a.Instagram,
                     Bloqueio = a.Bloqueio,
                     ObservacaoBloqueio = a.ObservacaoBloqueio,
+                    Email = a.Email,
                     Logradouro = a.Pessoa.Logradouro,
                     Numero = a.Pessoa.Numero,
                     Complemento = a.Pessoa.Complemento,
@@ -196,6 +199,7 @@ namespace AAPS.Api.Services.Adotantes
                 Instagram = adotante.Instagram,
                 Bloqueio = adotante.Bloqueio,
                 ObservacaoBloqueio = adotante.ObservacaoBloqueio,
+                Email = adotante.Email,
                 Logradouro = adotante.Pessoa.Logradouro,
                 Numero = adotante.Pessoa.Numero,
                 Complemento = adotante.Pessoa.Complemento,
@@ -231,6 +235,7 @@ namespace AAPS.Api.Services.Adotantes
                     Instagram = a.Instagram,
                     Bloqueio = a.Bloqueio,
                     ObservacaoBloqueio = a.ObservacaoBloqueio,
+                    Email = a.Email,
                     Logradouro = a.Pessoa.Logradouro,
                     Numero = a.Pessoa.Numero,
                     Complemento = a.Pessoa.Complemento,
@@ -276,6 +281,7 @@ namespace AAPS.Api.Services.Adotantes
             adotante.Facebook = string.IsNullOrEmpty(adotanteDto.Facebook) ? adotante.Facebook : adotanteDto.Facebook;
             adotante.Instagram = string.IsNullOrEmpty(adotanteDto.Instagram) ? adotante.Instagram : adotanteDto.Instagram;
             adotante.Bloqueio = adotanteDto.Bloqueio.HasValue ? adotanteDto.Bloqueio.Value : adotante.Bloqueio;
+            adotante.Email = string.IsNullOrEmpty(adotanteDto.Email) ? adotante.Email : adotanteDto.Email;
 
             //if (adotanteDto.Telefones != null)
             //{
@@ -322,6 +328,7 @@ namespace AAPS.Api.Services.Adotantes
                 Instagram = adotante.Instagram,
                 Bloqueio = adotante.Bloqueio,
                 ObservacaoBloqueio = adotante.ObservacaoBloqueio,
+                Email = adotante.Email,
                 Logradouro = adotante.Pessoa.Logradouro,
                 Numero = adotante.Pessoa.Numero,
                 Complemento = adotante.Pessoa.Complemento,
@@ -393,6 +400,8 @@ namespace AAPS.Api.Services.Adotantes
                 erros.Add("O campo 'Instagram' é obrigatório!");
             if (string.IsNullOrEmpty(adotanteDto.Bloqueio.ToString()) || !Enum.IsDefined(typeof(BloqueioEnum), adotanteDto.Bloqueio))
                 erros.Add("O campo 'Bloqueado' é obrigatório!");
+            if (string.IsNullOrEmpty(adotanteDto.Email))
+                erros.Add("O campo 'Email' é obrigatório!");
 
             //if (adotanteDto.Telefones == null || adotanteDto.Telefones.Count < 2)
             //    erros.Add("É necessário informar pelo menos dois telefones!");
@@ -460,6 +469,8 @@ namespace AAPS.Api.Services.Adotantes
                 erros.Add("O campo 'Instagram' não pode ter ser vazio!");
             if (adotanteDto.Bloqueio != null && string.IsNullOrWhiteSpace(adotanteDto.Bloqueio.ToString()))
                 erros.Add("O campo 'Bloqueio' não pode ter ser vazio!");
+            if (adotanteDto.Email != null && string.IsNullOrWhiteSpace(adotanteDto.Email))
+                erros.Add("O campo 'Email' não pode ter ser vazio!");
 
             //if (adotanteDto.Telefones != null && adotanteDto.Telefones.Count < 2)
             //    erros.Add("É necessário informar pelo menos dois telefones!");

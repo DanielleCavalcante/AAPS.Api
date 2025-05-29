@@ -4,7 +4,6 @@ using AAPS.Api.Models;
 using AAPS.Api.Models.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Text.RegularExpressions;
 
 namespace AAPS.Api.Services.Voluntarios;
 
@@ -13,17 +12,15 @@ public class VoluntarioService : IVoluntarioService
     #region ATRIBUTOS E CONSTRUTOR
 
     private readonly AppDbContext _context;
-    private readonly EmailService _emailService;
     private readonly UserManager<Voluntario> _userManager;
     private readonly SignInManager<Voluntario> _signInManager;
     private readonly RoleManager<IdentityRole<int>> _roleManager;
 
-    public VoluntarioService(AppDbContext context, UserManager<Voluntario> userManager, SignInManager<Voluntario> signInManager, EmailService emailService, RoleManager<IdentityRole<int>> roleManager)
+    public VoluntarioService(AppDbContext context, UserManager<Voluntario> userManager, SignInManager<Voluntario> signInManager, RoleManager<IdentityRole<int>> roleManager)
     {
         _context = context;
         _userManager = userManager;
         _signInManager = signInManager;
-        _emailService = emailService;
         _roleManager = roleManager;
     }
 

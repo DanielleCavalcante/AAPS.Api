@@ -5,7 +5,6 @@ namespace AAPS.Api.Dtos.PontoAdocao
     public class CriarPontoAdocaoDto
     {
         public string NomeFantasia { get; set; } = string.Empty;
-        public string Responsavel { get; set; } = string.Empty;
         public string Cnpj { get; set; } = string.Empty;
         public StatusEnum Status { get; set; } = StatusEnum.Ativo;
 
