@@ -131,7 +131,7 @@ namespace AAPS.Api.Services.Relatorios
             foreach (var item in resgatesAgrupados)
             {
                 tabelaResgates.Rows.Add(item.Especie, item.FaixaEtaria, item.Quantidade);
-            }ex
+            }
 
             return new DataTable[] { tabelaGeral, tabelaEspecies, tabelaAdocoes, tabelaResgates, tabelaLevantamento };
         }
