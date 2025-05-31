@@ -120,7 +120,8 @@ builder.Services.AddCors(
         {
             p.AllowAnyHeader()
              .AllowAnyMethod()
-             .AllowAnyOrigin();
+             .AllowAnyOrigin()
+             .WithExposedHeaders("Content-Disposition");
         });
     });
 

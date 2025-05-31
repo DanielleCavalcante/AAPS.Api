@@ -105,7 +105,8 @@ public class AutenticacaoService : IAutenticacaoService
             Token = new JwtSecurityTokenHandler().WriteToken(token),
             Expiration = token.ValidTo,
             Role = roles.FirstOrDefault(),
-            UsuarioId = usuarioAplicado.Id
+            UsuarioId = usuarioAplicado.Id,
+            NomeUsuario = usuarioAplicado.Pessoa.Nome
         };
     }
 

@@ -161,6 +161,8 @@ namespace AAPS.Api.Services.Animais
                     Disponibilidade = a.Disponibilidade,
                     Resgatado = a.Resgatado,
                     DoadorId = a.PessoaId,
+                    NomeDoador = a.Pessoa.Nome,
+                    TelefoneDoador = a.Pessoa.Celular
                 });
 
             return await animais.ToListAsync();

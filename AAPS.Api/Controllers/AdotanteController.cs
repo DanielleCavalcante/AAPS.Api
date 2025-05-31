@@ -70,9 +70,9 @@ public class AdotanteController : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<IAsyncEnumerable<AdotanteDto>>> ObterAdotantesAtivos()
+    public async Task<ActionResult<IAsyncEnumerable<AdotanteDto>>> ObterAdotantesDesbloqueadosEAtivos()
     {
-        var adotantes = await _adotanteService.ObterAdotantesAtivos();
+        var adotantes = await _adotanteService.ObterAdotantesDesbloqueadosEAtivos();
 
         if (adotantes is null)
         {

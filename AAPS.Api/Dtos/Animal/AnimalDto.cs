@@ -16,5 +16,6 @@ public class AnimalDto
     public required bool Resgatado { get; set; }
     public required int DoadorId { get; set; }
     public string NomeDoador { get; set; }
+    public string TelefoneDoador { get; set; }
     //public List<string> Telefones { get; set; }
 }

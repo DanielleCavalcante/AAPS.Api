@@ -211,14 +211,14 @@ namespace AAPS.Api.Services.Adotantes
             };
         }
 
-        public async Task<IEnumerable<AdotanteDto>> ObterAdotantesAtivos()
+        public async Task<IEnumerable<AdotanteDto>> ObterAdotantesDesbloqueadosEAtivos()
         {
             var adotantes = await _context.Adotantes
                 .Include(a => a.Pessoa)
                 //    .ThenInclude(p => p.Endereco)
                 //.Include(a => a.Pessoa)
                 //    .ThenInclude(p => p.Telefones)
-                .Where(a => a.Pessoa.Status == StatusEnum.Ativo && a.Pessoa.Tipo == TipoPessoaEnum.Adotante)
+                .Where(a => a.Pessoa.Status == StatusEnum.Ativo && a.Bloqueio == BloqueioEnum.Desbloquado && a.Pessoa.Tipo == TipoPessoaEnum.Adotante)
                 .Select(a => new AdotanteDto
                 {
                     Id = a.Id,
@@ -281,6 +281,7 @@ namespace AAPS.Api.Services.Adotantes
             adotante.Facebook = string.IsNullOrEmpty(adotanteDto.Facebook) ? adotante.Facebook : adotanteDto.Facebook;
             adotante.Instagram = string.IsNullOrEmpty(adotanteDto.Instagram) ? adotante.Instagram : adotanteDto.Instagram;
             adotante.Bloqueio = adotanteDto.Bloqueio.HasValue ? adotanteDto.Bloqueio.Value : adotante.Bloqueio;
+            adotante.ObservacaoBloqueio = string.IsNullOrEmpty(adotanteDto.ObservacaoBloqueio) ? adotante.ObservacaoBloqueio : adotanteDto.ObservacaoBloqueio;
             adotante.Email = string.IsNullOrEmpty(adotanteDto.Email) ? adotante.Email : adotanteDto.Email;
 
             //if (adotanteDto.Telefones != null)
