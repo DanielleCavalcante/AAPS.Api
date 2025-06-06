@@ -1,11 +1,11 @@
-vesion: "3.7"
+version: "3.7"
 
 services:
-    aaps_api:
+  aaps_api:
     container_name: aaps_api
     build:
-        context: .
-        dockerfile: Dockerfile
+      context: ./AAPS.Api
+      dockerfile: ../Dockerfile
     image: aaps_api
     ports:
-        - "8075:8000"
+      - "8075:8000"
