@@ -4,8 +4,8 @@ services:
   aaps_api:
     container_name: aaps_api
     build:
-      context: ./AAPS.Api
-      dockerfile: ../Dockerfile
+      context: .
+      dockerfile: Dockerfile
     image: aaps_api
     ports:
-      - "8075:8000"
+      - "8075:8080"

@@ -1,24 +1,27 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER app
+﻿# Estágio base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 as build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /app
-COPY ["AAPS.Api/AAPS.Api/AAPS.Api.csproj", "AAPS.Api/"]
-RUN dotnet restore "./AAPS.Api/AAPS.Api.csproj"
+# Estágio de build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+# Copia o arquivo .csproj e restaura dependências
+COPY ["AAPS.Api/AAPS.Api.csproj", "AAPS.Api/"]
+RUN dotnet restore "AAPS.Api/AAPS.Api.csproj"
+
+# Copia o restante do código e builda
 COPY . .
+WORKDIR "/src/AAPS.Api"
+RUN dotnet build "AAPS.Api.csproj" -c Release -o /app/build
 
-RUN dotnet build "AAPS.Api/AAPS.Api/AAPS.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
-
+# Estágio de publicação
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "AAPS.Api/AAPS.Api/AAPS.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "AAPS.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
+# Estágio final
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-
 ENTRYPOINT ["dotnet", "AAPS.Api.dll"]
