@@ -70,6 +70,19 @@ public class AcompanhamentoController : Controller
         return Ok(ApiResponse<object>.SucessoResponse(acompanhamento));
     }
 
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult> ObterAcompanhamentosPorAnimalId(int id)
+    {
+        var acompanhamento = await _acompanhamentoService.ObterAcompanhamentosPorAnimalId(id);
+
+        if (acompanhamento is null)
+        {
+            return NotFound(ApiResponse<object>.ErroResponse(new List<string> { $"Acompanhamento não encontrado." }));
+        }
+
+        return Ok(ApiResponse<object>.SucessoResponse(acompanhamento));
+    }
+
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> ExcluirAcompanhamento(int id)
     {

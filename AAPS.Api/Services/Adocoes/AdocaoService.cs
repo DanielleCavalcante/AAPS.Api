@@ -352,8 +352,8 @@ namespace AAPS.Api.Services.Adocoes
                         erros.Add("Animal não encontrado.");
                     else if (animal.Status == StatusEnum.Inativo)
                         erros.Add("Animal está inativo.");
-                    else if (animal.Disponibilidade == DisponibilidadeEnum.Adotado)
-                        erros.Add("Animal já está adotado.");
+                    //else if (animal.Disponibilidade == DisponibilidadeEnum.Adotado)
+                    //    erros.Add("Animal já está adotado.");
                 }
             }
 
