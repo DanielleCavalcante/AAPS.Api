@@ -49,10 +49,16 @@ builder.Services.AddScoped<EmailService>();
 //builder.Services.AddHttpClient<WhatsAppService>();
 
 // configurações para o banco DbAaps
-var businessConnectionString = builder.Configuration.GetConnectionString("DbAaps");
+//var businessConnectionString = builder.Configuration.GetConnectionString("DbAaps");
+
+//builder.Services.AddDbContext<AppDbContext>(
+//    options => options.UseSqlServer(businessConnectionString));
+
+var environment = builder.Environment.IsDevelopment() ? "DbAapsLocal" : "DbAapsAzure";
+var connectionString = builder.Configuration.GetConnectionString(environment);
 
 builder.Services.AddDbContext<AppDbContext>(
-    options => options.UseSqlServer(businessConnectionString));
+    options => options.UseSqlServer(connectionString));
 
 builder.Services.AddIdentity<Voluntario, IdentityRole<int>>()
     .AddEntityFrameworkStores<AppDbContext>()
@@ -123,6 +129,13 @@ builder.Services.AddCors(
              .AllowAnyOrigin()
              .WithExposedHeaders("Content-Disposition");
         });
+        //options.AddPolicy("Cors", p =>
+        //{
+        //    p.WithOrigins("https://aaps-api.onrender.com") // Adicione a URL da API
+        //     .AllowAnyHeader()
+        //     .AllowAnyMethod()
+        //     .WithExposedHeaders("Content-Disposition");
+        //});
     });
 
 var app = builder.Build();
