@@ -32,12 +32,12 @@ public class TermoAdocaoController : Controller
     [HttpPost]
     public async Task<IActionResult> GerarPdf([FromBody] int adocaoId)
     {
+        var adocao = await _adocaoService.ObterAdocaoPorId(adocaoId);
+
         try
         {
-            var adotante = await _adotanteService.ObterAdotantePorId(adocaoId);
-
             var pdfBytes = await _termoAdocaoService.GerarPdf(adocaoId);
-            return File(pdfBytes, "application/pdf", $"TermoAdocao_{adotante.Nome}.pdf");
+            return File(pdfBytes, "application/pdf", $"TermoAdocao_{adocao.NomeAdotante}.pdf");
         }
         catch (Exception ex)
         {
