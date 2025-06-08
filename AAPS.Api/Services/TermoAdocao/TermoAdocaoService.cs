@@ -28,9 +28,9 @@ namespace AAPS.Api.Services.TermoAdocao
         private readonly IDoadorService _doadorService;
         private readonly IAcompanhamentoService _acompanhamentoService;
 
-        private const string LogoPath = "Assets/aaps_logo.png";
-        private const string FacebookIconPath = "Assets/icon_facebook.png";
-        private const string InstagramIconPath = "Assets/icon_instagram.png";
+        private const string LogoPath = "wwwroot/images/aaps_logo.png";
+        private const string FacebookIconPath = "wwwroot/images/icon_facebook.png";
+        private const string InstagramIconPath = "wwwroot/images/icon_instagram.png";
 
         public TermoAdocaoService(IAdocaoService adocaoService, IAdotanteService adotanteService, IAnimalService animalService, IPontoAdocaoService pontoAdocaoService, IDoadorService doadorService, IAcompanhamentoService acompanhamentoService)
         {
