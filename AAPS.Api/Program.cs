@@ -150,11 +150,12 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-
 app.UseMiddleware<ExcecoesMiddleware>(); // classe para lidar com erros de autenticacao
 app.UseMiddleware<AutenticacaoMiddleware>(); // classe para lidar com autenticacao
 
 app.UseCors("Cors");
+app.UseStaticFiles();
+
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
