@@ -156,6 +156,7 @@ namespace AAPS.Api.Services.Adocoes
                 Data = adocao.Data,
                 Cancelada = adocao.Cancelada,
                 AdotanteId = adocao.AdotanteId,
+                NomeAdotante = adocao.Adotante.Pessoa.Nome,
                 AnimalId = adocao.AnimalId,
                 VoluntarioId = adocao.VoluntarioId,
                 PontoAdocaoId = adocao.PontoAdocaoId
@@ -396,8 +397,13 @@ namespace AAPS.Api.Services.Adocoes
 
         private async Task<Adocao?> BuscarAdocaoPorId(int id)
         {
-            var adocao = await _context.Adocoes.FindAsync(id);
-            return adocao;
+            return await _context.Adocoes
+                .Include(a => a.Adotante)
+                    .ThenInclude(a => a.Pessoa)
+                .Include(a => a.Animal)
+                .Include(a => a.Voluntario)
+                .Include(a => a.PontoAdocao)
+                .FirstOrDefaultAsync(a => a.Id == id);
         }
 
         #endregion

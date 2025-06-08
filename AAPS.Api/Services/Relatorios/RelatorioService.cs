@@ -279,7 +279,7 @@ namespace AAPS.Api.Services.Relatorios
             QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 
             var tabelas = ObterDadosRelatorio(filtro);
-            var caminhoLogo = Path.Combine(AppContext.BaseDirectory, "wwwroot", "images", "aaps_logo.png");
+            var caminhoLogo = "wwwroot/images/aaps_logo.png";
 
             var documento = Document.Create(container =>
             {
@@ -292,11 +292,11 @@ namespace AAPS.Api.Services.Relatorios
 
                     page.Header().Row(row =>
                     {
-                        row.RelativeColumn(1)
+                        row.RelativeItem(1)
                             .Container()
                             .Height(40)
                             .Image(caminhoLogo);
-                        row.RelativeColumn(8).AlignMiddle().Text($"Relatório de {filtro.DataInicio:dd/MM/yyyy} até {filtro.DataFim:dd/MM/yyyy}")
+                        row.RelativeItem(8).AlignMiddle().Text($"Relatório de {filtro.DataInicio:dd/MM/yyyy} até {filtro.DataFim:dd/MM/yyyy}")
                             .SemiBold()
                             .FontSize(20)
                             .FontColor(Colors.Black);
