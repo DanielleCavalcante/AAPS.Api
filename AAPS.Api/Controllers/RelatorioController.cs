@@ -40,7 +40,7 @@ public class RelatorioController : Controller
 
             using (var workbook = new XLWorkbook())
             {
-                var caminhoLogo = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "aaps_logo.png");
+                var caminhoLogo = Path.Combine(AppContext.BaseDirectory, "wwwroot", "images", "aaps_logo.png");
 
                 if (dados.Length == 1)
                 {

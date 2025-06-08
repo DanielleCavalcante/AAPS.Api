@@ -279,7 +279,7 @@ namespace AAPS.Api.Services.Relatorios
             QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 
             var tabelas = ObterDadosRelatorio(filtro);
-            var caminhoLogo = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "aaps_logo.png");
+            var caminhoLogo = Path.Combine(AppContext.BaseDirectory, "wwwroot", "images", "aaps_logo.png");
 
             var documento = Document.Create(container =>
             {
