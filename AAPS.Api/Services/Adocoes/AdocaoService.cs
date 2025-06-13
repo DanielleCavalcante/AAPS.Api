@@ -116,9 +116,9 @@ namespace AAPS.Api.Services.Adocoes
                 );
             }
 
-            if (filtro.Cancelada)
+            if (filtro.Cancelada.HasValue)
             {
-                query = query.Where(a => a.Cancelada == filtro.Cancelada == true);
+                query = query.Where(a => a.Cancelada == filtro.Cancelada.Value);
             }
 
             var adocoesDto = await query
@@ -273,12 +273,16 @@ namespace AAPS.Api.Services.Adocoes
 
             await _acompanhamentoService.CriarAcompanhamento(acompanhamentoDto);
 
-            var adotante = await _adotanteService.ObterAdotantePorId(adocao.AdotanteId);
-
-            adotante.Bloqueio = BloqueioEnum.Bloqueado;
+            var adotante = await _context.Adotantes.FirstOrDefaultAsync(a => a.Id == adocao.AdotanteId);
+            if (adotante != null)
+            {
+                adotante.Bloqueio = BloqueioEnum.Bloqueado;
+            }
 
             await _context.SaveChangesAsync();
 
+
+            var teste = adotante;
             return new AdocaoDto
             {
                 Id = adocao.Id,
