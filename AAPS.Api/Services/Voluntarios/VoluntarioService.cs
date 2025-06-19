@@ -260,6 +260,9 @@ public class VoluntarioService : IVoluntarioService
 
         voluntario.UserName = string.IsNullOrWhiteSpace(voluntarioDto.UserName) ?
             voluntario.UserName : voluntarioDto.UserName;
+        voluntario.NormalizedUserName = string.IsNullOrWhiteSpace(voluntarioDto.UserName)
+            ? voluntario.NormalizedUserName
+            : voluntarioDto.UserName.ToUpper();
         voluntario.Email = string.IsNullOrWhiteSpace(voluntarioDto.Email) ?
             voluntario.Email : voluntarioDto.Email;
         voluntario.PhoneNumber = string.IsNullOrWhiteSpace(voluntarioDto.PhoneNumber) ?
