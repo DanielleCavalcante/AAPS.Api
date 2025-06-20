@@ -19,8 +19,8 @@ public class AdotanteDto
     public required string ResponsavelContato { get; set; }
 
     public required string LocalTrabalho { get; set; }
-    public required string Facebook { get; set; }
-    public required string Instagram { get; set; }
+    public string Facebook { get; set; }
+    public string Instagram { get; set; }
     public required BloqueioEnum Bloqueio { get; set; }
     public string ObservacaoBloqueio { get; set; }
 
