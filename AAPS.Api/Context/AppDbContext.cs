@@ -134,8 +134,8 @@ public class AppDbContext : IdentityDbContext<Voluntario, IdentityRole<int>, int
             entity.HasKey(x => x.Id);
 
             entity.Property(x => x.LocalTrabalho).HasColumnType("nvarchar(80)");
-            entity.Property(x => x.Facebook).HasColumnType("nvarchar(150)").IsRequired();
-            entity.Property(x => x.Instagram).HasColumnType("nvarchar(150)").IsRequired();
+            entity.Property(x => x.Facebook).HasColumnType("nvarchar(150)");
+            entity.Property(x => x.Instagram).HasColumnType("nvarchar(150)");
             entity.Property(x => x.Bloqueio).HasColumnType("int").IsRequired();
             entity.Property(x => x.ObservacaoBloqueio).HasColumnType("nvarchar(500)");
 

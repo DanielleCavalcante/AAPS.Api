@@ -395,10 +395,6 @@ namespace AAPS.Api.Services.Adotantes
 
             if (string.IsNullOrEmpty(adotanteDto.LocalTrabalho))
                 erros.Add("O campo 'Local de Trabalho' é obrigatório!");
-            if (string.IsNullOrEmpty(adotanteDto.Facebook))
-                erros.Add("O campo 'Facebook' é obrigatório!");
-            if (string.IsNullOrEmpty(adotanteDto.Instagram))
-                erros.Add("O campo 'Instagram' é obrigatório!");
             if (string.IsNullOrEmpty(adotanteDto.Bloqueio.ToString()) || !Enum.IsDefined(typeof(BloqueioEnum), adotanteDto.Bloqueio))
                 erros.Add("O campo 'Bloqueado' é obrigatório!");
             if (string.IsNullOrEmpty(adotanteDto.Email))
@@ -464,10 +460,6 @@ namespace AAPS.Api.Services.Adotantes
 
             if (adotanteDto.LocalTrabalho != null && string.IsNullOrWhiteSpace(adotanteDto.LocalTrabalho))
                 erros.Add("O campo 'Local de Trabalho' não pode ter ser vazio!");
-            if (adotanteDto.Facebook != null && string.IsNullOrWhiteSpace(adotanteDto.Facebook))
-                erros.Add("O campo 'Facebook' não pode ter ser vazio!");
-            if (adotanteDto.Instagram != null && string.IsNullOrWhiteSpace(adotanteDto.Instagram))
-                erros.Add("O campo 'Instagram' não pode ter ser vazio!");
             if (adotanteDto.Bloqueio != null && string.IsNullOrWhiteSpace(adotanteDto.Bloqueio.ToString()))
                 erros.Add("O campo 'Bloqueio' não pode ter ser vazio!");
             if (adotanteDto.Email != null && string.IsNullOrWhiteSpace(adotanteDto.Email))
