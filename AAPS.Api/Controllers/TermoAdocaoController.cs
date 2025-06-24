@@ -4,12 +4,15 @@ using AAPS.Api.Services;
 using AAPS.Api.Services.Adocoes;
 using AAPS.Api.Services.Adotantes;
 using AAPS.Api.Services.TermoAdocao;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AAPS.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
 public class TermoAdocaoController : Controller
 {
     #region ATRIBUTOS E CONSTRUTOR
