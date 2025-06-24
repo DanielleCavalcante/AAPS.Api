@@ -247,20 +247,20 @@ namespace AAPS.Api.Services.Animais
             if (string.IsNullOrEmpty(animalDto.DoadorId.ToString()) || animalDto.DoadorId <= 0)
                 erros.Add("O campo 'Doador' é obrigatório!");
 
-            var animalExistente = await _context.Animais
-                .Where(a =>
-                    a.Nome == animalDto.Nome &&
-                    a.Especie == animalDto.Especie &&
-                    a.Raca == animalDto.Raca &&
-                    a.Pelagem == animalDto.Pelagem &&
-                    a.Sexo == animalDto.Sexo
-                )
-                .FirstOrDefaultAsync();
+            //var animalExistente = await _context.Animais
+            //    .Where(a =>
+            //        a.Nome == animalDto.Nome &&
+            //        a.Especie == animalDto.Especie &&
+            //        a.Raca == animalDto.Raca &&
+            //        a.Pelagem == animalDto.Pelagem &&
+            //        a.Sexo == animalDto.Sexo
+            //    )
+            //    .FirstOrDefaultAsync();
 
-            if (animalExistente != null)
-            {
-                erros.Add($"Animal já cadastrado. Código {animalExistente.Id}");
-            }
+            //if (animalExistente != null)
+            //{
+            //    erros.Add($"Animal já cadastrado. Código {animalExistente.Id}");
+            //}
 
             return erros;
         }

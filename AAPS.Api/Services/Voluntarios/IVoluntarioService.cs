@@ -14,5 +14,5 @@ public interface IVoluntarioService
     Task<VoluntarioDto> AtualizarVoluntario(int id, AtualizarVoluntarioDto voluntarioDto);
     Task<bool> ExcluirVoluntario(int id);
     Task<List<string>> ValidarCriacaoVoluntario(CriarVoluntarioDto voluntarioDto);
-    List<string> ValidarAtualizacaoVoluntario(AtualizarVoluntarioDto voluntarioDto);
+    Task<List<string>> ValidarAtualizacaoVoluntario(int id, AtualizarVoluntarioDto voluntarioDto);
 }

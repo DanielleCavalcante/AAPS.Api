@@ -30,7 +30,7 @@ public class AdotanteController : Controller
 
         if (erros.Count > 0)
         {
-            return BadRequest(ApiResponse<object>.ErroResponse(erros, "Erro ao registrar voluntário!"));
+            return BadRequest(ApiResponse<object>.ErroResponse(erros, "Erro ao registrar adotante!"));
         }
 
         var adotante = await _adotanteService.CriarAdotante(adotanteDto);
@@ -85,7 +85,7 @@ public class AdotanteController : Controller
     [HttpPut("{id:int}")]
     public async Task<IActionResult> AtualizarAdotante(int id, [FromBody] AtualizarAdotanteDto adotanteDto)
     {
-        var erros = _adotanteService.ValidarAtualizacaoAdotante(adotanteDto);
+        var erros = await _adotanteService.ValidarAtualizacaoAdotante(id, adotanteDto);
 
         if (erros.Count > 0)
         {

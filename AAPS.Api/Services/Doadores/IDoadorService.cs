@@ -11,5 +11,5 @@ public interface IDoadorService
     Task<DoadorDto?> AtualizarDoador(int id, AtualizarDoadorDto doadorDto);
     Task<bool> ExcluirDoador(int id);
     Task<List<string>> ValidarCriacaoDoador(CriarDoadorDto doadorDto);
-    List<string> ValidarAtualizacaoDoador(AtualizarDoadorDto doadorDto);
+    Task<List<string>> ValidarAtualizacaoDoador(int id, AtualizarDoadorDto doadorDto);
 }

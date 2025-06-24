@@ -85,7 +85,7 @@ public class DoadorController : Controller
     [HttpPut("{id:int}")]
     public async Task<IActionResult> AtualizarDoador(int id, [FromBody] AtualizarDoadorDto doadorDto)
     {
-        var erros = _doadorService.ValidarAtualizacaoDoador(doadorDto);
+        var erros = await _doadorService.ValidarAtualizacaoDoador(id, doadorDto);
 
         if (erros.Count > 0)
         {

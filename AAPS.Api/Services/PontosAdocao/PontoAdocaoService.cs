@@ -342,15 +342,7 @@ namespace AAPS.Api.Services.PontosAdocao
                 //.Include(p => p.Pessoa)
                 //.ThenInclude(p => p.Endereco)
                 .Where(p =>
-                    p.NomeFantasia == pontoAdocaoDto.NomeFantasia &&
-                    p.Cnpj == pontoAdocaoDto.Cnpj &&
-                    p.Logradouro == pontoAdocaoDto.Logradouro &&
-                    p.Numero == pontoAdocaoDto.Numero &&
-                    p.Complemento == pontoAdocaoDto.Complemento &&
-                    p.Bairro == pontoAdocaoDto.Bairro &&
-                    p.Uf == pontoAdocaoDto.Uf &&
-                    p.Cidade == pontoAdocaoDto.Cidade &&
-                    p.Cep == pontoAdocaoDto.Cep
+                    p.Cnpj == pontoAdocaoDto.Cnpj
                 )
                 .FirstOrDefaultAsync();
 
@@ -362,7 +354,7 @@ namespace AAPS.Api.Services.PontosAdocao
             return erros;
         }
 
-        public List<string> ValidarAtualizacaoPontoAdocao(AtualizaPontoAdocaoDto pontoAdocaoDto)
+        public async Task<List<string>> ValidarAtualizacaoPontoAdocao(int id, AtualizaPontoAdocaoDto pontoAdocaoDto)
         {
             var erros = new List<string>();
 
@@ -396,6 +388,18 @@ namespace AAPS.Api.Services.PontosAdocao
                 erros.Add("O campo 'Contato 2' não pode ter ser vazio e deve ter exatamente 8 dígitos!");
             if (pontoAdocaoDto.ResponsavelContato != null && string.IsNullOrWhiteSpace(pontoAdocaoDto.ResponsavelContato))
                 erros.Add("O campo 'Responsavel Contato' não pode ser vazio!");
+
+
+            var pontoAdocaoExistente = await _context.PontosAdocao
+                .Where(p =>
+                    p.Cnpj == pontoAdocaoDto.Cnpj && p.Id != id
+                )
+                .FirstOrDefaultAsync();
+
+            if (pontoAdocaoExistente != null)
+            {
+                erros.Add($"Ponto de adoção já cadastrado. Código {pontoAdocaoExistente.Id}");
+            }
 
             return erros;
         }

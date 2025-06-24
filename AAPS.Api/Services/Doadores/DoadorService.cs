@@ -326,8 +326,6 @@ namespace AAPS.Api.Services.Doadores
 
             var doadorExistente = await _context.Pessoas
                 .Where(d =>
-                    d.Nome == doadorDto.Nome &&
-                    d.Rg == doadorDto.Rg &&
                     d.Cpf == doadorDto.Cpf
                 )
                 .FirstOrDefaultAsync();
@@ -340,7 +338,7 @@ namespace AAPS.Api.Services.Doadores
             return erros;
         }
 
-        public List<string> ValidarAtualizacaoDoador(AtualizarDoadorDto doadorDto)
+        public async Task<List<string>> ValidarAtualizacaoDoador(int id,AtualizarDoadorDto doadorDto)
         {
             var erros = new List<string>();
 
@@ -375,6 +373,17 @@ namespace AAPS.Api.Services.Doadores
 
             //if (doadorDto.Telefones != null && doadorDto.Telefones.Count < 2)
             //    erros.Add("É necessário informar pelo menos dois telefones!");
+
+            var doadorExistente = await _context.Pessoas
+                .Where(d =>
+                    d.Cpf == doadorDto.Cpf && d.Id != id && d.Tipo == TipoPessoaEnum.Doador
+                )
+                .FirstOrDefaultAsync();
+
+            if (doadorExistente != null)
+            {
+                erros.Add($"Doador já cadastrado. Código {doadorExistente.Id}");
+            }
 
             return erros;
         }

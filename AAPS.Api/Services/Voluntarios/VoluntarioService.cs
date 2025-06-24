@@ -338,7 +338,7 @@ public class VoluntarioService : IVoluntarioService
 
         if (!await _roleManager.RoleExistsAsync(voluntarioDto.Acesso))
         {
-            erros.Add("A role informada não existe.");
+            erros.Add("O 'acesso' informado não existe.");
         }
 
         //if (!Regex.IsMatch(voluntarioDto.Senha, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?"":{}|<>])[A-Za-z\d!@#$%^&*(),.?"":{}|<>]{8,}$"))
@@ -349,26 +349,37 @@ public class VoluntarioService : IVoluntarioService
         var usuarioExistente = await ObterVoluntarioPorUserName(voluntarioDto.UserName);
         if (usuarioExistente != null)
         {
-            erros.Add("O nome de usuário já está em uso.");
+            erros.Add("Esse nome de usuário já está em uso.");
         }
 
-        var voluntarioExistente = await _userManager.Users
-            .Where(v =>
-                v.Pessoa.Cpf == voluntarioDto.Cpf &&
-                v.Email == voluntarioDto.Email &&
-                v.PhoneNumber == voluntarioDto.PhoneNumber
-            )
+        var cpfExistente = await _userManager.Users
+            .Where(v => v.Pessoa.Cpf == voluntarioDto.Cpf)
             .FirstOrDefaultAsync();
-
-        if (voluntarioExistente != null)
+        if (cpfExistente != null)
         {
-            erros.Add($"Voluntário já cadastrado. Código {voluntarioExistente.Id}");
+            erros.Add($"Voluntário já cadastrado. Código {cpfExistente.Id}");
+        }
+
+        var emailExistente = await _userManager.Users
+            .Where(v => v.Email == voluntarioDto.Email)
+            .FirstOrDefaultAsync();
+        if (emailExistente != null)
+        {
+            erros.Add("Esse e-mail já está em uso.");
+        }
+
+        var telefoneExistente = await _userManager.Users
+            .Where(v => v.PhoneNumber == voluntarioDto.PhoneNumber)
+            .FirstOrDefaultAsync();
+        if (telefoneExistente != null)
+        {
+            erros.Add("Esse telefone já está em uso.");
         }
 
         return erros;
     }
 
-    public List<string> ValidarAtualizacaoVoluntario(AtualizarVoluntarioDto voluntarioDto)
+    public async Task<List<string>> ValidarAtualizacaoVoluntario(int id, AtualizarVoluntarioDto voluntarioDto)
     {
         var erros = new List<string>();
 
@@ -388,6 +399,40 @@ public class VoluntarioService : IVoluntarioService
         if (voluntarioDto.Acesso != null && string.IsNullOrWhiteSpace(voluntarioDto.Acesso))
             erros.Add("O campo 'Acesso' não pode ser vazio!");
 
+        if (!await _roleManager.RoleExistsAsync(voluntarioDto.Acesso))
+        {
+            erros.Add("O 'acesso' informado não existe.");
+        }
+
+        var usuarioExistente = await ObterVoluntarioPorUserName(voluntarioDto.UserName);
+        if (usuarioExistente != null && usuarioExistente.Id != id)
+        {
+            erros.Add("Esse nome de usuário já está em uso.");
+        }
+
+        var cpfExistente = await _userManager.Users
+            .Where(v => v.Pessoa.Cpf == voluntarioDto.Cpf && v.Id != id)
+            .FirstOrDefaultAsync();
+        if (cpfExistente != null)
+        {
+            erros.Add($"Voluntário já cadastrado. Código {cpfExistente.Id}");
+        }
+
+        var emailExistente = await _userManager.Users
+            .Where(v => v.Email == voluntarioDto.Email && v.Id != id)
+            .FirstOrDefaultAsync();
+        if (emailExistente != null)
+        {
+            erros.Add("Esse e-mail já está em uso.");
+        }
+
+        var telefoneExistente = await _userManager.Users
+            .Where(v => v.PhoneNumber == voluntarioDto.PhoneNumber && v.Id != id)
+            .FirstOrDefaultAsync();
+        if (telefoneExistente != null)
+        {
+            erros.Add("Esse telefone já está em uso.");
+        }
         return erros;
     }
 

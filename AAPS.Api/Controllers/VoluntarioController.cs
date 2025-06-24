@@ -99,7 +99,7 @@ public class VoluntarioController : Controller
     [HttpPut("{id:int}")]
     public async Task<IActionResult> AtualizarVoluntario(int id, [FromBody] AtualizarVoluntarioDto voluntarioDto)
     {
-        var erros = _voluntarioService.ValidarAtualizacaoVoluntario(voluntarioDto);
+        var erros = await _voluntarioService.ValidarAtualizacaoVoluntario(id, voluntarioDto);
 
         if (erros.Count > 0)
         {

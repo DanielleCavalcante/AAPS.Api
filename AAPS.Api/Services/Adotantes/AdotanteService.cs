@@ -406,8 +406,6 @@ namespace AAPS.Api.Services.Adotantes
             var adotanteExistente = await _context.Adotantes
                 .Include(a => a.Pessoa)
                 .Where(a =>
-                    a.Pessoa.Nome == adotanteDto.Nome &&
-                    a.Pessoa.Rg == adotanteDto.Rg &&
                     a.Pessoa.Cpf == adotanteDto.Cpf
                 //a.LocalTrabalho == adotanteDto.LocalTrabalho &&
                 //a.Facebook == adotanteDto.Facebook &&
@@ -423,7 +421,7 @@ namespace AAPS.Api.Services.Adotantes
             return erros;
         }
 
-        public List<string> ValidarAtualizacaoAdotante(AtualizarAdotanteDto adotanteDto)
+        public async Task<List<string>> ValidarAtualizacaoAdotante(int id, AtualizarAdotanteDto adotanteDto)
         {
             var erros = new List<string>();
 
@@ -467,6 +465,17 @@ namespace AAPS.Api.Services.Adotantes
 
             //if (adotanteDto.Telefones != null && adotanteDto.Telefones.Count < 2)
             //    erros.Add("É necessário informar pelo menos dois telefones!");
+            var adotanteExistente = await _context.Adotantes
+                .Include(a => a.Pessoa)
+                .Where(a =>
+                    a.Pessoa.Cpf == adotanteDto.Cpf && a.Id != id
+                )
+                .FirstOrDefaultAsync();
+
+            if (adotanteExistente != null)
+            {
+                erros.Add($"Adotante já cadastrado. Código {adotanteExistente.Id}");
+            }
 
             return erros;
         }

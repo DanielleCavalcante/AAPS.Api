@@ -86,7 +86,7 @@ public class PontoAdocaoController : Controller
     [HttpPut("{id:int}")]
     public async Task<IActionResult> AtualizarPontoAdocao(int id, [FromBody] AtualizaPontoAdocaoDto pontoAdocaoDto)
     {
-        var erros = _pontoAdocaoService.ValidarAtualizacaoPontoAdocao(pontoAdocaoDto);
+        var erros = await _pontoAdocaoService.ValidarAtualizacaoPontoAdocao(id, pontoAdocaoDto);
 
         if (erros.Count > 0)
         {

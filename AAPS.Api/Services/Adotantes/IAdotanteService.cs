@@ -11,5 +11,5 @@ public interface IAdotanteService
     Task<AdotanteDto?> AtualizarAdotante(int id, AtualizarAdotanteDto adotanteDto);
     Task<bool> ExcluirAdotante(int id);
     Task<List<string>> ValidarCriacaoAdotante(CriarAdotanteDto adotanteDto);
-    List<string> ValidarAtualizacaoAdotante(AtualizarAdotanteDto adotanteDto);
+    Task<List<string>> ValidarAtualizacaoAdotante(int id, AtualizarAdotanteDto adotanteDto);
 }
