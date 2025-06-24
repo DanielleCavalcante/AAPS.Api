@@ -10,7 +10,7 @@ namespace AAPS.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class PontoAdocaoController : Controller
 {
     #region ATRIBUTOS E CONSTRUTOR
@@ -24,6 +24,7 @@ public class PontoAdocaoController : Controller
 
     #endregion
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> CriarPontoAdocao([FromBody] CriarPontoAdocaoDto pontoAdocaoDto)
     {
@@ -44,6 +45,7 @@ public class PontoAdocaoController : Controller
         return Ok(ApiResponse<object>.SucessoResponse(pontoAdocao, "Ponto de Adoção criado com sucesso!"));
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<ActionResult<IAsyncEnumerable<PontoAdocao>>> ObterPontosAdocao([FromQuery] FiltroPontoAdocaoDto filtro)
     {
@@ -57,6 +59,7 @@ public class PontoAdocaoController : Controller
         return Ok(ApiResponse<object>.SucessoResponse(pontosAdocao));
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet("{id:int}")]
     public async Task<ActionResult> ObterPontoAdocaoPorId(int id)
     {
@@ -70,6 +73,7 @@ public class PontoAdocaoController : Controller
         return Ok(ApiResponse<object>.SucessoResponse(pontoAdocao));
     }
 
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<IAsyncEnumerable<PontoAdocaoDto>>> ObterPontosAdocaoAtivos()
     {
@@ -83,6 +87,7 @@ public class PontoAdocaoController : Controller
         return Ok(ApiResponse<object>.SucessoResponse(pontosAdocao));
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id:int}")]
     public async Task<IActionResult> AtualizarPontoAdocao(int id, [FromBody] AtualizaPontoAdocaoDto pontoAdocaoDto)
     {
@@ -103,6 +108,7 @@ public class PontoAdocaoController : Controller
         return Ok(ApiResponse<object>.SucessoResponse(pontoAdocao, $"Ponto de Adoção de id = {id} foi atualizado com sucesso!"));
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id:int}")]
     public async Task<ActionResult> ExcluirPontoAdocao(int id)
     {

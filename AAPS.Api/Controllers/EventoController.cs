@@ -9,7 +9,7 @@ namespace AAPS.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class EventoController : Controller
 {
     #region ATRIBUTOS E CONSTRUTOR
@@ -23,6 +23,7 @@ public class EventoController : Controller
 
     #endregion
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> CriarEvento([FromBody] CriarEventoDto eventoDto)
     {
@@ -43,6 +44,7 @@ public class EventoController : Controller
         return Ok(ApiResponse<object>.SucessoResponse(evento, "Evento criado com sucesso!"));
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<ActionResult<IAsyncEnumerable<EventoDto>>> ObterEventos([FromQuery] FiltroEventoDto filtro)
     {
@@ -56,6 +58,7 @@ public class EventoController : Controller
         return Ok(ApiResponse<object>.SucessoResponse(eventos));
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet("{id:int}")]
     public async Task<ActionResult> ObterEventoPorId(int id)
     {
@@ -82,6 +85,7 @@ public class EventoController : Controller
         return Ok(ApiResponse<object>.SucessoResponse(eventos));
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id:int}")]
     public async Task<ActionResult> AtualizarEvento(int id, [FromBody] AtualizarEventoDto eventoDto)
     {
@@ -102,6 +106,7 @@ public class EventoController : Controller
         return Ok(ApiResponse<object>.SucessoResponse(evento, "Evento atualizado com sucesso!"));
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id:int}")]
     public async Task<ActionResult> ExcluirEvento(int id)
     {
