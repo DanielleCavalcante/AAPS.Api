@@ -13,7 +13,7 @@ namespace AAPS.Api.Controllers;
 [ApiController]
 [Route("api/[controller]/[action]")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-public class TermoAdocaoController : Controlle
+public class TermoAdocaoController : Controller
 {
     #region ATRIBUTOS E CONSTRUTOR
 
