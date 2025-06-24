@@ -1,7 +1,6 @@
 ﻿using AAPS.Api.Context;
 using AAPS.Api.Dtos.Acompanhamento;
 using AAPS.Api.Dtos.Adocao;
-using AAPS.Api.Dtos.Animal;
 using AAPS.Api.Models;
 using AAPS.Api.Models.Enums;
 using AAPS.Api.Services.Acompanhamentos;
@@ -158,8 +157,11 @@ namespace AAPS.Api.Services.Adocoes
                 AdotanteId = adocao.AdotanteId,
                 NomeAdotante = adocao.Adotante.Pessoa.Nome,
                 AnimalId = adocao.AnimalId,
+                NomeAnimal = adocao.Animal.Nome,
                 VoluntarioId = adocao.VoluntarioId,
-                PontoAdocaoId = adocao.PontoAdocaoId
+                NomeVoluntario = adocao.Voluntario.Pessoa.Nome,
+                PontoAdocaoId = adocao.PontoAdocaoId,
+                NomePontoAdocao = adocao.PontoAdocao.NomeFantasia
             };
         }
 
@@ -406,6 +408,7 @@ namespace AAPS.Api.Services.Adocoes
                     .ThenInclude(a => a.Pessoa)
                 .Include(a => a.Animal)
                 .Include(a => a.Voluntario)
+                    .ThenInclude(a => a.Pessoa)
                 .Include(a => a.PontoAdocao)
                 .FirstOrDefaultAsync(a => a.Id == id);
         }
