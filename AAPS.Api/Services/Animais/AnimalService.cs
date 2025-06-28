@@ -70,7 +70,12 @@ namespace AAPS.Api.Services.Animais
 
             if (!string.IsNullOrEmpty(filtro.Busca))
             {
-                query = query.Where(a => a.Nome.Contains(filtro.Busca.ToLower()));
+                string buscaLower = filtro.Busca.ToLower();
+
+                query = query.Where(a => 
+                    a.Nome.ToLower().Contains(filtro.Busca.ToLower()) ||
+                    a.Id.ToString() == buscaLower
+                );
             }
 
             if (!string.IsNullOrEmpty(filtro.Especie))

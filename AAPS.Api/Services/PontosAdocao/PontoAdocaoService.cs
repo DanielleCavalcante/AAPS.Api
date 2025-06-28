@@ -111,7 +111,8 @@ namespace AAPS.Api.Services.PontosAdocao
 
                 query = query.Where(p =>
                     p.NomeFantasia.ToLower().Contains(buscaLower) ||
-                    p.Cnpj.Contains(buscaLower)
+                    p.Cnpj == buscaLower ||
+                    p.Id.ToString() == buscaLower
                 );
             }
 

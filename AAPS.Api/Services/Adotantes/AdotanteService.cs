@@ -127,8 +127,9 @@ namespace AAPS.Api.Services.Adotantes
 
                 query = query.Where(a =>
                     a.Pessoa.Nome.ToLower().Contains(buscaLower) ||
-                    a.Pessoa.Cpf.Contains(buscaLower) ||
-                    a.Pessoa.Rg.Contains(filtro.Busca)
+                    a.Pessoa.Cpf == buscaLower ||
+                    a.Pessoa.Rg == buscaLower ||
+                    a.Id.ToString() == buscaLower
                 );
             }
 

@@ -44,7 +44,12 @@ namespace AAPS.Api.Services.Eventos
 
             if (!string.IsNullOrEmpty(filtro.Busca))
             {
-                query = query.Where(a => a.Descricao.Contains(filtro.Busca.ToLower()));
+                string buscaLower = filtro.Busca.ToLower();
+
+                query = query.Where(e => 
+                    e.Descricao.ToLower().Contains(filtro.Busca.ToLower()) ||
+                    e.Id.ToString() == buscaLower
+                );
             }
 
             if (filtro.Status.HasValue)

@@ -77,12 +77,13 @@ public class VoluntarioService : IVoluntarioService
         {
             string buscaLower = filtro.Busca.ToLower();
 
-            query = query.Where(a =>
-                a.Pessoa.Nome.ToLower().Contains(buscaLower) ||
-                a.Pessoa.Rg.Contains(buscaLower) ||
-                a.Pessoa.Cpf.Contains(buscaLower) ||
-                a.UserName.Contains(buscaLower) ||
-                a.Email.Contains(buscaLower)
+            query = query.Where(v =>
+                v.Pessoa.Nome.ToLower().Contains(buscaLower) ||
+                v.Pessoa.Rg == buscaLower ||
+                v.Pessoa.Cpf == buscaLower ||
+                v.UserName.ToLower().Contains(buscaLower) ||
+                v.Email.ToLower().Contains(buscaLower) ||
+                v.Id.ToString() == buscaLower
             );
         }
 

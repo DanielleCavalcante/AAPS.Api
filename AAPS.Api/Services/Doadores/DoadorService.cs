@@ -103,8 +103,9 @@ namespace AAPS.Api.Services.Doadores
 
                 query = query.Where(p =>
                     p.Nome.ToLower().Contains(buscaLower) ||
-                    p.Cpf.Contains(buscaLower) ||
-                    p.Rg.Contains(filtro.Busca)
+                    p.Cpf == buscaLower ||
+                    p.Rg == buscaLower ||
+                    p.Id.ToString() == buscaLower
                 );
             }
 
