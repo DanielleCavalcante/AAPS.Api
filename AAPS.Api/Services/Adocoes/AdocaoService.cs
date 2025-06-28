@@ -140,7 +140,7 @@ namespace AAPS.Api.Services.Adocoes
             return adocoesDto;
         }
 
-        public async Task<AdocaoDto?> ObterAdocaoPorId(int id)
+        public async Task<AdocaoCompletaDto?> ObterAdocaoPorId(int id)
         {
             var adocao = await BuscarAdocaoPorId(id);
 
@@ -149,17 +149,27 @@ namespace AAPS.Api.Services.Adocoes
                 return null;
             }
 
-            return new AdocaoDto
+            return new AdocaoCompletaDto
             {
                 Id = adocao.Id,
                 Data = adocao.Data,
                 Cancelada = adocao.Cancelada,
-                AdotanteId = adocao.AdotanteId,
-                NomeAdotante = adocao.Adotante.Pessoa.Nome,
-                AnimalId = adocao.AnimalId,
-                NomeAnimal = adocao.Animal.Nome,
                 VoluntarioId = adocao.VoluntarioId,
                 NomeVoluntario = adocao.Voluntario.Pessoa.Nome,
+                AdotanteId = adocao.AdotanteId,
+                NomeAdotante = adocao.Adotante.Pessoa.Nome,
+                RgAdotante = adocao.Adotante.Pessoa.Rg,
+                CpfAdotante = adocao.Adotante.Pessoa.Cpf,
+                CelularAdotante = adocao.Adotante.Pessoa.Celular,
+                AnimalId = adocao.AnimalId,
+                NomeAnimal = adocao.Animal.Nome,
+                EspecieAnimal = adocao.Animal.Especie.ToString(),
+                IdadeAnimal = CalcularIdadeAnimal(adocao.Animal.DataNascimento),
+                SexoAnimal = adocao.Animal.Sexo.ToString(),
+                PelagemAnimal = adocao.Animal.Pelagem.ToString(),
+                DoadorId = adocao.Animal.Pessoa.Id,
+                NomeDoador = adocao.Animal.Pessoa.Nome,
+                TelefoneDoador = adocao.Animal.Pessoa.Celular,
                 PontoAdocaoId = adocao.PontoAdocaoId,
                 NomePontoAdocao = adocao.PontoAdocao.NomeFantasia
             };
@@ -407,10 +417,47 @@ namespace AAPS.Api.Services.Adocoes
                 .Include(a => a.Adotante)
                     .ThenInclude(a => a.Pessoa)
                 .Include(a => a.Animal)
+                    .ThenInclude(a => a.Pessoa)
                 .Include(a => a.Voluntario)
                     .ThenInclude(a => a.Pessoa)
                 .Include(a => a.PontoAdocao)
                 .FirstOrDefaultAsync(a => a.Id == id);
+        }
+
+        private string CalcularIdadeAnimal(DateTime? dataNascimento)
+        {
+            if (dataNascimento == null)
+                return null;
+
+            var hoje = DateTime.Today;
+            var nascimento = dataNascimento.Value;
+
+            int anos = hoje.Year - nascimento.Year;
+            int meses = hoje.Month - nascimento.Month;
+
+            if (hoje.Day < nascimento.Day)
+            {
+                meses--;
+            }
+
+            if (meses < 0)
+            {
+                anos--;
+                meses += 12;
+            }
+
+            if (anos > 0)
+            {
+                return anos == 1 ? "1 ano" : $"{anos} anos";
+            }
+            else if (meses > 0)
+            {
+                return meses == 1 ? "1 mês" : $"{meses} meses";
+            }
+            else
+            {
+                return "Menos de 1 mês";
+            }
         }
 
         #endregion

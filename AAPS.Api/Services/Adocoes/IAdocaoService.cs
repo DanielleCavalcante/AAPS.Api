@@ -6,7 +6,7 @@ namespace AAPS.Api.Services.Adocoes
     {
         Task<AdocaoDto> CriarAdocao(CriarAdocaoDto adocaoDto);
         Task<IEnumerable<AdocaoDto>> ObterAdocoes(FiltroAdocaoDto filtro);
-        Task<AdocaoDto?> ObterAdocaoPorId(int id);
+        Task<AdocaoCompletaDto?> ObterAdocaoPorId(int id);
         Task<AdocaoDto> AtualizarAdocao(int id, AtualizarAdocaoDto adocaoDto);
         //Task<bool> ExcluirAdocao(int id);
         Task<AdocaoDto> CancelarAdocao(int id, CancelarAdocaoDto cancelamentoDto);
