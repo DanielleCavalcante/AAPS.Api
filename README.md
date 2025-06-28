@@ -34,7 +34,6 @@ O sistema tem como finalidade:
 - Emissão e envio de **termos de adoção por e-mail**
 - **Acompanhamento do histórico** de saúde dos animais (vacinas, castração, cirurgias, etc.)
 - **Geração de relatórios** por período
-- Documentação interativa via **Swagger**
 
 > 🔗 O repositório do front-end que consome esta API está disponível em:  
 > [https://github.com/DanielleCavalcante/AAPS-Frontend](https://github.com/DanielleCavalcante/AAPS-Frontend)
@@ -172,7 +171,6 @@ A API conta com a interface Swagger, onde é possível visualizar e testar os en
 - Esta é uma **API RESTful** dedicada à ONG AAPS.
 - O front-end está disponível separadamente em:  
   👉 [https://github.com/DanielleCavalcante/AAPS-Frontend](https://github.com/DanielleCavalcante/AAPS-Frontend)
-- Sistema desenvolvido para fins **educacionais e sociais**.
 
 ---
 
