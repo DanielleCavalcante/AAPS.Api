@@ -12,7 +12,7 @@ namespace AAPS.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class VoluntarioController : Controller
 {
     #region ATRIBUTOS E CONSTRUTOR
@@ -30,6 +30,7 @@ public class VoluntarioController : Controller
 
     #endregion
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> CriarVoluntario([FromBody] CriarVoluntarioDto voluntarioDto)
     {
@@ -57,6 +58,7 @@ public class VoluntarioController : Controller
         return Ok(ApiResponse<object>.SucessoResponse(voluntario, $"Usuário {voluntarioDto.UserName} cadastrado com sucesso!"));
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<ActionResult<IAsyncEnumerable<VoluntarioDto>>> ObterVoluntarios([FromQuery] FiltroVoluntarioDto filtro)
     {
@@ -70,6 +72,7 @@ public class VoluntarioController : Controller
         return Ok(ApiResponse<object>.SucessoResponse(voluntarios));
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet("{id:int}")]
     public async Task<ActionResult> ObterVoluntarioPorId(int id)
     {
@@ -83,6 +86,7 @@ public class VoluntarioController : Controller
         return Ok(ApiResponse<object>.SucessoResponse(voluntario));
     }
 
+    [Authorize]
     [HttpGet]
     public async Task<ActionResult<IAsyncEnumerable<VoluntarioDto>>> ObterVoluntariosAtivos()
     {
@@ -96,6 +100,7 @@ public class VoluntarioController : Controller
         return Ok(ApiResponse<object>.SucessoResponse(voluntarios));
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id:int}")]
     public async Task<IActionResult> AtualizarVoluntario(int id, [FromBody] AtualizarVoluntarioDto voluntarioDto)
     {
@@ -116,6 +121,7 @@ public class VoluntarioController : Controller
         return Ok(ApiResponse<object>.SucessoResponse(voluntario, $"Usuário {voluntarioDto.UserName} atualizado com sucesso!"));
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id:int}")]
     public async Task<ActionResult> ExcluirVoluntario(int id)
     {
@@ -129,6 +135,7 @@ public class VoluntarioController : Controller
         return Ok(ApiResponse<object>.SucessoResponse($"Voluntário de id = {id} excluído com sucesso!"));
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> ResetarSenha([FromBody] ResetarSenhaDto dto)
     {
